@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+/**
+ * @package     Epicom_MHub
+ * @copyright   Copyright (c) 2017 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author      Eneias Ramos de Melo <eneias@gamuza.com.br>
+ */
+-->
+
+<layout version="0.1.0">
+    <admin_mhub_adminhtml_attributegroup_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_attributegroup" name="attributegroup" />
+        </reference>
+    </admin_mhub_adminhtml_attributegroup_index>
+    <admin_mhub_adminhtml_brand_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_brand" name="brand" />
+        </reference>
+    </admin_mhub_adminhtml_brand_index>
+    <admin_mhub_adminhtml_category_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_category" name="category" />
+        </reference>
+    </admin_mhub_adminhtml_category_index>
+    <admin_mhub_adminhtml_product_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_product" name="product" />
+        </reference>
+    </admin_mhub_adminhtml_product_index>
+    <admin_mhub_adminhtml_order_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_order" name="order" />
+        </reference>
+    </admin_mhub_adminhtml_order_index>
+    <admin_mhub_adminhtml_order_status_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_order_status" name="order_status" />
+        </reference>
+    </admin_mhub_adminhtml_order_status_index>
+    <admin_mhub_adminhtml_shipment_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_shipment" name="shipment" />
+        </reference>
+    </admin_mhub_adminhtml_shipment_index>
+    <admin_mhub_adminhtml_nf_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_nf" name="nf" />
+        </reference>
+    </admin_mhub_adminhtml_nf_index>
+</layout>
+

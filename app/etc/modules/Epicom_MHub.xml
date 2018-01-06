@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+/**
+ * @package     Epicom_MHub
+ * @copyright   Copyright (c) 2017 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author      Eneias Ramos de Melo <eneias@gamuza.com.br>
+ */
+-->
+
+<config>
+    <modules>
+        <Epicom_MHub>
+            <active>true</active>
+            <codePool>community</codePool>
+            <version>0.1.0</version>
+            <depends>
+                <Mage_Api />
+            </depends>
+        </Epicom_MHub>
+    </modules>
+</config>
+

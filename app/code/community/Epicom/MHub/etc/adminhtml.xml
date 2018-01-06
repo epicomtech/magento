@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+/**
+ * @package     Epicom_MHub
+ * @copyright   Copyright (c) 2017 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author      Eneias Ramos de Melo <eneias@gamuza.com.br>
+ */
+-->
+
+<config>
+    <menu>
+        <epicom module="mhub">
+            <title>Epicom</title>
+            <sort_order>100</sort_order>
+            <children>
+                <mhub module="mhub">
+                    <title>MHub</title>
+                    <sort_order>100</sort_order>
+                    <children>
+                        <attributegroup translate="title" module="mhub">
+                            <title>Manage Attribute Groups</title>
+                            <sort_order>0</sort_order>
+                            <action>admin_mhub/adminhtml_attributegroup</action>
+                        </attributegroup>
+                        <brand translate="title" module="mhub">
+                            <title>Manage Brands</title>
+                            <sort_order>10</sort_order>
+                            <action>admin_mhub/adminhtml_brand</action>
+                        </brand>
+                        <category translate="title" module="mhub">
+                            <title>Manage Categories</title>
+                            <sort_order>20</sort_order>
+                            <action>admin_mhub/adminhtml_category</action>
+                        </category>
+                        <product translate="title" module="mhub">
+                            <title>Manage Products</title>
+                            <sort_order>30</sort_order>
+                            <action>admin_mhub/adminhtml_product</action>
+                        </product>
+                        <order translate="title" module="mhub">
+                            <title>Manage Orders</title>
+                            <sort_order>40</sort_order>
+                            <action>admin_mhub/adminhtml_order</action>
+                        </order>
+                        <order_status translate="title" module="mhub">
+                            <title>Manage Orders Statuses</title>
+                            <sort_order>50</sort_order>
+                            <action>admin_mhub/adminhtml_order_status</action>
+                        </order_status>
+                        <shipment translate="title" module="mhub">
+                            <title>Manage Shipments</title>
+                            <sort_order>60</sort_order>
+                            <action>admin_mhub/adminhtml_shipment</action>
+                        </shipment>
+                        <nf translate="title" module="mhub">
+                            <title>Manage NFs</title>
+                            <sort_order>70</sort_order>
+                            <action>admin_mhub/adminhtml_nf</action>
+                        </nf>
+                    </children>
+                </mhub>
+            </children>
+        </epicom>
+    </menu>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <epicom module="mhub">
+                        <title>Epicom</title>
+                        <sort_order>1000</sort_order>
+                        <children>
+                            <mhub module="mhub">
+                                <title>MHub</title>
+                                <sort_order>1000</sort_order>
+                                <children>
+                                    <attributegroup translate="title" module="mhub">
+                                        <title>Manage Attribute Groups</title>
+                                        <sort_order>0</sort_order>
+                                    </attributegroup>
+                                    <brand translate="title" module="mhub">
+                                        <title>Manage Brands</title>
+                                        <sort_order>10</sort_order>
+                                    </brand>
+                                    <category translate="title" module="mhub">
+                                        <title>Manage Categories</title>
+                                        <sort_order>20</sort_order>
+                                    </category>
+                                    <product translate="title" module="mhub">
+                                        <title>Manage Products</title>
+                                        <sort_order>30</sort_order>
+                                    </product>
+                                    <order translate="title" module="mhub">
+                                        <title>Manage Orders</title>
+                                        <sort_order>40</sort_order>
+                                    </order>
+                                    <order_status translate="title" module="mhub">
+                                        <title>Manage Orders Statuses</title>
+                                        <sort_order>50</sort_order>
+                                    </order_status>
+                                    <shipment translate="title" module="mhub">
+                                        <title>Manage Shipments</title>
+                                        <sort_order>60</sort_order>
+                                    </shipment>
+                                    <nf translate="title" module="mhub">
+                                        <title>Manage NFs</title>
+                                        <sort_order>70</sort_order>
+                                    </nf>
+                                </children>
+                            </mhub>
+                        </children>
+                    </epicom>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <mhub translate="title" module="mhub">
+                                        <title>Epicom MHub Section</title>
+                                        <sort_order>0</sort_order>
+                                    </mhub>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>
+

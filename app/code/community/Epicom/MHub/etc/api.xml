@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+/**
+ * @package     Epicom_MHub
+ * @copyright   Copyright (c) 2017 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author      Eneias Ramos de Melo <eneias@gamuza.com.br>
+ */
+-->
+
+<config>
+    <api>
+        <resources>
+            <mhub_product translate="title" module="mhub">
+                <model>mhub/product_api</model>
+                <title>Product API</title>
+                <acl>mhub/product</acl>
+                <methods>
+                    <manage>
+                        <title>Manage product</title>
+                    </manage>
+                </methods>
+                <faults module="mhub">
+                    <product_not_exists>
+                        <code>100</code>
+                        <message>Requested product not found.</message>
+                    </product_not_exists>
+                    <product_already_exists>
+                        <code>200</code>
+                        <message>Requested product was found.</message>
+                    </product_already_exists>
+                </faults>
+            </mhub_product>
+            <mhub_cart translate="title" module="mhub">
+                <model>mhub/cart_api</model>
+                <title>Cart API</title>
+                <acl>mhub/cart</acl>
+                <methods>
+                    <calculate>
+                        <title>Calculate cart</title>
+                    </calculate>
+                </methods>
+                <faults module="mhub">
+                    <product_not_exists>
+                        <code>100</code>
+                        <message>Requested product not found.</message>
+                    </product_not_exists>
+                </faults>
+            </mhub_cart>
+            <mhub_order translate="title" module="mhub">
+                <model>mhub/order_api</model>
+                <title>Order API</title>
+                <acl>mhub/order</acl>
+                <methods>
+                    <create>
+                        <title>Create order</title>
+                    </create>
+                </methods>
+                <faults module="mhub">
+                    <order_already_exists>
+                        <code>100</code>
+                        <message>Requested order was found.</message>
+                    </order_already_exists>
+                    <product_not_exists>
+                        <code>200</code>
+                        <message>Requested product not found.</message>
+                    </product_not_exists>
+                    <invalid_product_sku>
+                        <code>300</code>
+                        <message>Invalid product sku.</message>
+                    </invalid_product_sku>
+                    <invalid_product_price>
+                        <code>400</code>
+                        <message>Invalid product price.</message>
+                    </invalid_product_price>
+                    <invalid_product_qty>
+                        <code>500</code>
+                        <message>Invalid product qty.</message>
+                    </invalid_product_qty>
+                </faults>
+            </mhub_order>
+            <mhub_order_status translate="title" module="mhub">
+                <model>mhub/order_status_api</model>
+                <title>Order Status API</title>
+                <acl>mhub/order/status</acl>
+                <methods>
+                    <approve>
+                        <title>Approve order</title>
+                    </approve>
+                    <cancel>
+                        <title>Cancel order</title>
+                    </cancel>
+                </methods>
+                <faults module="mhub">
+                    <order_not_exists>
+                        <code>100</code>
+                        <message>Requested order not found.</message>
+                    </order_not_exists>
+                    <order_has_invoices>
+                        <code>200</code>
+                        <message>Requested order has been invoiced.</message>
+                    </order_has_invoices>
+                    <order_has_canceled>
+                        <code>300</code>
+                        <message>Requested order has been canceled.</message>
+                    </order_has_canceled>
+                    <order_cannot_invoiced>
+                        <code>400</code>
+                        <message>Cannot invoice order.</message>
+                    </order_cannot_invoiced>
+                    <order_cannot_cancel>
+                        <code>500</code>
+                        <message>Cannot cancel order.</message>
+                    </order_cannot_cancel>
+                </faults>
+            </mhub_order_status>
+            <mhub_shipment translate="title" module="mhub">
+                <model>mhub/shipment_api</model>
+                <title>Shipment API</title>
+                <acl>mhub/shipment</acl>
+                <methods>
+                    <manage>
+                        <title>Manage shipment</title>
+                    </manage>
+                    <tracking>
+                        <title>Tracking order</title>
+                    </tracking>
+                    <delivered>
+                        <title>Delivered order</title>
+                    </delivered>
+                </methods>
+                <faults module="mhub">
+                    <order_not_exists>
+                        <code>100</code>
+                        <message>Requested order not found.</message>
+                    </order_not_exists>
+                    <order_item_not_exists>
+                        <code>200</code>
+                        <message>Requested order item(s) not found.</message>
+                    </order_item_not_exists>
+                    <order_has_shipped>
+                        <code>300</code>
+                        <message>Requested order has been shipped.</message>
+                    </order_has_shipped>
+                    <order_cannot_shipped>
+                        <code>400</code>
+                        <message>Requested order cannot shipped.</message>
+                    </order_cannot_shipped>
+                    <order_has_delivered>
+                        <code>500</code>
+                        <message>Requested order has been delivered.</message>
+                    </order_has_delivered>
+                    <order_cannot_delivered>
+                        <code>600</code>
+                        <message>Requested order cannot delivered.</message>
+                    </order_cannot_delivered>
+                </faults>
+            </mhub_shipment>
+        </resources>
+        <acl>
+            <resources>
+                <mhub translate="title" module="mhub">
+                    <title>MHub</title>
+                    <sort_order>100</sort_order>
+                    <product translate="title" module="mhub">
+                        <title>Product</title>
+                        <manage translate="title" module="mhub">
+                            <title>Manage</title>
+                        </manage>
+                    </product>
+                    <cart translate="title" module="mhub">
+                        <title>Cart</title>
+                        <calculate translate="title" module="mhub">
+                            <title>Calculate</title>
+                        </calculate>
+                    </cart>
+                    <order translate="title" module="mhub">
+                        <title>Order</title>
+                        <create translate="title" module="mhub">
+                            <title>Create</title>
+                        </create>
+                    </order>
+                    <order_status translate="title" module="mhub">
+                        <title>Order Status</title>
+                        <approve translate="title" module="mhub">
+                            <title>Approve</title>
+                        </approve>
+                        <cancel translate="title" module="mhub">
+                            <title>Cancel</title>
+                        </cancel>
+                    </order_status>
+                    <shipment translate="title" module="mhub">
+                        <title>Shipment</title>
+                        <manage translate="title" module="mhub">
+                            <title>Manage</title>
+                        </manage>
+                        <tracking translate="title" module="mhub">
+                            <title>Tracking</title>
+                        </tracking>
+                        <delivered translate="title" module="mhub">
+                            <title>Delivered</title>
+                        </Delivered>
+                    </shipment>
+                </mhub>
+            </resources>
+        </acl>
+    </api>
+</config>
+
