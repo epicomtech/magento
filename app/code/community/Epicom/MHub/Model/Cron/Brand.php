@@ -34,7 +34,6 @@ class Epicom_MHub_Model_Cron_Brand extends Epicom_MHub_Model_Cron_Abstract
 
             $mhubBrand = Mage::getModel ('mhub/brand')->load ($optionId, 'option_id');
             $mhubBrand->setOptionId ($optionId)
-                ->setCode ($optionId)
                 ->setName ($optionValue)
                 ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
                 ->setUpdatedAt (date ('c'))
@@ -83,7 +82,7 @@ class Epicom_MHub_Model_Cron_Brand extends Epicom_MHub_Model_Cron_Abstract
     private function updateMHubBrand (Epicom_MHub_Model_Brand $brand)
     {
         $post = array(
-            'codigo'       => $brand->getCode (),
+            'codigo'       => $brand->getOptionId (),
             'nome'         => $brand->getName (),
         );
 

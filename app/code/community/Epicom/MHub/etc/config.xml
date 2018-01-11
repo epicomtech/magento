@@ -282,6 +282,8 @@
         </payment>
         <mhub>
             <settings>
+                <url><![CDATA[https://sandboxmhubapi.epicom.com.br/v1/]]></url>
+                <ssl>1</ssl>
                 <timeout>30</timeout>
             </settings>
             <product>

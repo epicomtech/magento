@@ -15,7 +15,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 
     private function readMHubCategoriesMagento ()
     {
-        $collection = Mage::getModel('catalog/category')->getCollection ();
+        $collection = Mage::getModel ('catalog/category')->getCollection ()
             ->addAttributeToFilter (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET,      array ('notnull' => true))
             ->addAttributeToFilter (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE, array ('eq' => true))
         ;
@@ -28,13 +28,41 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
             )->where ('e.updated_at > mhub.synced_at OR mhub.synced_at IS NULL')
         ;
 
-        foreach($collection as $category)
+        $categoryIds = array ();
+
+        foreach ($collection as $category)
         {
-            $categoryId = $category->getId();
+            foreach ($category->getParentCategories () as $parent)
+            {
+                if (!in_array ($parent->getId (), $categoryIds))
+                {
+                    $categoryIds [] = $parent->getId ();
+                }
+            }
+
+            if (!in_array ($category->getId (), $categoryIds))
+            {
+                $categoryIds [] = $category->getId ();
+            }
+        }
+
+        $collection = Mage::getModel ('catalog/category')->getCollection ()
+            ->addAttributeToSelect (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET)
+            ->addAttributeToSelect (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE)
+            ->addIdFilter ($categoryIds)
+        ;
+
+        foreach ($collection as $category)
+        {
+            $categoryId = $category->getId ();
+
+            $categoryAttributeSetId = $category->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET);
+            $defaultAttributeSetId  = Mage::getStoreConfig ('mhub/attributes_set/product');
 
             $mhubCategory = Mage::getModel ('mhub/category')->load ($categoryId, 'category_id');
-            $mhubCategory->setCategoryId($categoryId)
-                ->setAttributeSetId ($category->getData(Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET))
+            $mhubCategory->setCategoryId ($categoryId)
+                ->setAttributeSetId ($categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId)
+                ->setAssociable (intval ($categoryAttributeSetId) > 0 ? true : false)
                 ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
                 ->setUpdatedAt (date ('c'))
                 ->save ();
@@ -92,12 +120,14 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
             $mageCategory = $loaded;
         }
 
+        $parentCategory = $mageCategory->getParentCategory ();
+
         $post = array(
-            'Codigo'       => $mageCategory->getId (),
-            'Nome'         => $mageCategory->getName (),
-            'CategoriaPai' => null,
-            'Associavel'   => $mageCategory->getChildrenCount () > 0 ? true : false,
-            'Ativo'        => $mageCategory->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE) ? true : false,
+            'codigo'       => $mageCategory->getId (),
+            'nome'         => $mageCategory->getName (),
+            'categoriaPai' => $parentCategory && $parentCategory->getId () ? $parentCategory->getId () : null,
+            'associavel'   => $mageCategory->getChildrenCount () > 0 ? true : false,
+            'ativo'        => $mageCategory->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE) ? true : false,
         );
 
         try

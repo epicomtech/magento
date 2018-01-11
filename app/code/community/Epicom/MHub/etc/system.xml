@@ -207,7 +207,8 @@
                         </active>
                         <url translate="label" module="mhub">
                             <label>URL</label>
-                            <frontend_type>text</frontend_type>
+                            <frontend_type>select</frontend_type>
+                            <source_model>mhub/adminhtml_system_config_source_environment</source_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -277,10 +278,29 @@
                         </auth_password>
                     </fields>
                 </settings>
+                <attributes_set translate="label" module="mhub">
+                    <label>Attributes Set</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <product translate="label" module="mhub">
+                            <label>Product Attributes Set</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>mhub/adminhtml_system_config_source_attributes_set</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </product>
+                    </fields>
+                </attributes_set>
                 <attributes translate="label" module="mhub">
                     <label>Attributes</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>10</sort_order>
+                    <sort_order>20</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -299,7 +319,7 @@
                 <category translate="label" module="mhub">
                     <label>Category</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>20</sort_order>
+                    <sort_order>30</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -318,7 +338,7 @@
                 <product translate="label" module="mhub">
                     <label>Product</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>30</sort_order>
+                    <sort_order>40</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -454,7 +474,7 @@
                 <order translate="label" module="mhub">
                     <label>Order</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>40</sort_order>
+                    <sort_order>50</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -518,7 +538,7 @@
                 <shipment translate="label" module="mhub">
                     <label>Shipment</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>50</sort_order>
+                    <sort_order>60</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>

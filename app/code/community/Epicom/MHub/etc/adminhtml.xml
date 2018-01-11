@@ -17,21 +17,21 @@
                     <title>MHub</title>
                     <sort_order>100</sort_order>
                     <children>
+                        <category translate="title" module="mhub">
+                            <title>Manage Categories</title>
+                            <sort_order>0</sort_order>
+                            <action>admin_mhub/adminhtml_category</action>
+                        </category>
                         <attributegroup translate="title" module="mhub">
                             <title>Manage Attribute Groups</title>
-                            <sort_order>0</sort_order>
+                            <sort_order>10</sort_order>
                             <action>admin_mhub/adminhtml_attributegroup</action>
                         </attributegroup>
                         <brand translate="title" module="mhub">
                             <title>Manage Brands</title>
-                            <sort_order>10</sort_order>
+                            <sort_order>20</sort_order>
                             <action>admin_mhub/adminhtml_brand</action>
                         </brand>
-                        <category translate="title" module="mhub">
-                            <title>Manage Categories</title>
-                            <sort_order>20</sort_order>
-                            <action>admin_mhub/adminhtml_category</action>
-                        </category>
                         <product translate="title" module="mhub">
                             <title>Manage Products</title>
                             <sort_order>30</sort_order>
@@ -77,18 +77,18 @@
                                 <title>MHub</title>
                                 <sort_order>1000</sort_order>
                                 <children>
+                                    <category translate="title" module="mhub">
+                                        <title>Manage Categories</title>
+                                        <sort_order>0</sort_order>
+                                    </category>
                                     <attributegroup translate="title" module="mhub">
                                         <title>Manage Attribute Groups</title>
-                                        <sort_order>0</sort_order>
+                                        <sort_order>10</sort_order>
                                     </attributegroup>
                                     <brand translate="title" module="mhub">
                                         <title>Manage Brands</title>
-                                        <sort_order>10</sort_order>
-                                    </brand>
-                                    <category translate="title" module="mhub">
-                                        <title>Manage Categories</title>
                                         <sort_order>20</sort_order>
-                                    </category>
+                                    </brand>
                                     <product translate="title" module="mhub">
                                         <title>Manage Products</title>
                                         <sort_order>30</sort_order>

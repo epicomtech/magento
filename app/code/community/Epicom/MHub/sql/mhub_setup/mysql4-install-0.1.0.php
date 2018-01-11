@@ -39,6 +39,12 @@ SQLBLOCK;
             'comment'  => 'Attribute Set ID',
         ));
     $installer->getConnection ()
+        ->addColumn ($table, 'associable', array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+            'nullable' => false,
+            'comment'  => 'Associable',
+        ));
+    $installer->getConnection ()
         ->addColumn ($table, 'status', array(
             'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
             'length'   => 255,
@@ -88,7 +94,7 @@ $installer->addAttribute ('catalog_category', Epicom_MHub_Helper_Data::CATEGORY_
     'type'             => 'int',
     'label'            => Mage::helper ('mhub')->__('Category Is Active'),
     'input'            => 'select',
-    'input_renderer'   => 'mhub/catalog_category_helper_form_boolean',
+    // 'input_renderer'   => 'mhub/catalog_category_helper_form_boolean',
     'source'           => 'eav/entity_attribute_source_boolean',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
     'visible'          => true,
@@ -99,7 +105,7 @@ $installer->addAttribute ('catalog_category', Epicom_MHub_Helper_Data::CATEGORY_
     'comparable'       => false,
     'visible_on_front' => false,
     'unique'           => false,
-    'default'          => '1',
+    // 'default'          => '1',
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
 
@@ -107,7 +113,7 @@ $installer->addAttribute ('catalog_category', Epicom_MHub_Helper_Data::CATEGORY_
     'type'             => 'int',
     'label'            => Mage::helper ('mhub')->__('Category Send Products'),
     'input'            => 'select',
-    'input_renderer'   => 'mhub/catalog_category_helper_form_boolean',
+    // 'input_renderer'   => 'mhub/catalog_category_helper_form_boolean',
     'source'           => 'eav/entity_attribute_source_boolean',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
     'visible'          => true,
@@ -118,7 +124,7 @@ $installer->addAttribute ('catalog_category', Epicom_MHub_Helper_Data::CATEGORY_
     'comparable'       => false,
     'visible_on_front' => false,
     'unique'           => false,
-    'default'          => '1',
+    // 'default'          => '1',
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
 

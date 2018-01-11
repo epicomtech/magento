@@ -117,7 +117,10 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
 
                 $mageCategory = $collection->getFirstItem ();
 
-                $mageProduct->setAttributeSetId ($mageCategory->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET));
+                $categoryAttributeSetId = $mageCategory->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET);
+                $defaultAttributeSetId  = Mage::getStoreConfig ('mhub/attributes_set/product');
+
+                $mageProduct->setAttributeSetId ($categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId);
             }
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU:
             {

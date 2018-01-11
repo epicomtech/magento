@@ -335,5 +335,10 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
 
+$defaultAttributeSetId = Mage::getModel ('catalog/product')->getDefaultAttributeSetId ();
+
+$coreConfig = Mage::getModel ('core/config');
+$coreConfig->saveConfig ('mhub/attributes_set/product', $defaultAttributeSetId);
+
 $installer->endSetup();
 

@@ -27,6 +27,12 @@ class Epicom_MHub_Block_Adminhtml_Category_Grid extends Mage_Adminhtml_Block_Wid
 
     protected function _prepareColumns()
     {
+        $categories = array ();
+        foreach (Mage::getModel ('catalog/category')->getCollection ()->addNameToResult () as $category)
+        {
+            $categories [$category->getId ()] = str_repeat (' - ', intval ($category->getLevel ())) . $category->getName ();
+        }
+
         $this->addColumn('entity_id', array(
             'header' => Mage::helper('mhub')->__('ID'),
             'align'  =>'right',
@@ -35,12 +41,22 @@ class Epicom_MHub_Block_Adminhtml_Category_Grid extends Mage_Adminhtml_Block_Wid
             'index'  => 'entity_id',
         ));
         $this->addColumn('category_id', array(
-            'header' => Mage::helper('mhub')->__('Category ID'),
-            'index'  => 'category_id',
+            'header'  => Mage::helper('mhub')->__('Category ID'),
+            'index'   => 'category_id',
+            'type'    => 'options',
+            'options' => $categories,
         ));
-        $this->addColumn('content', array(
-            'header' => Mage::helper('mhub')->__('Attribute Set ID'),
-            'index'  => 'attribute_set_id',
+        $this->addColumn('attribute_set_id', array(
+            'header'  => Mage::helper('mhub')->__('Attribute Set'),
+            'index'   => 'attribute_set_id',
+            'type'    => 'options',
+            'options' => Mage::getModel ('mhub/adminhtml_system_config_source_attributes_set')->toArray (),
+        ));
+        $this->addColumn('associable', array(
+            'header'  => Mage::helper('mhub')->__('Associable'),
+            'index'   => 'associable',
+            'type'    => 'options',
+            'options' => Mage::getModel ('adminhtml/system_config_source_yesno')->toArray (),
         ));
         $this->addColumn('status', array(
             'header'  => Mage::helper('mhub')->__('Status'),

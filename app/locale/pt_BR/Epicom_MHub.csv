@@ -56,6 +56,9 @@
 "Active","Ativo"
 "Key","Chave"
 "Attributes","Atributos"
+"Attributes Set","Conjunt de Atributos"
+"Product Attributes Set","Conjunt de Atributos do Produto"
+"Associable","Associável"
 "Category","Categoria"
 "Product","Produto"
 "Order","Pedido"
@@ -154,4 +157,5 @@
 "Edit NF","Editar Nota Fiscal"
 "Shipment Event","Evento de Entrega"
 "Invalid shipment status for ID: %s","Status de Entrega Inválido para ID: %s"
+"Production","Produção"
 
