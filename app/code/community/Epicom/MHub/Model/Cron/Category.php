@@ -76,8 +76,9 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
         $collection = Mage::getModel ('mhub/category')->getCollection ();
         $select = $collection->getSelect ();
         $select->where ('synced_at < updated_at OR synced_at IS NULL')
-               ->group ('category_id')
-               ->order ('updated_at DESC');
+               // ->group ('category_id')
+               // ->order ('updated_at DESC')
+        ;
 
         return $collection;
     }
@@ -122,10 +123,12 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 
         $parentCategory = $mageCategory->getParentCategory ();
 
+        $parentId = $parentCategory->getId () != Mage_Catalog_Model_Category::TREE_ROOT_ID ? $parentCategory->getId () : null;
+
         $post = array(
             'codigo'       => $mageCategory->getId (),
             'nome'         => $mageCategory->getName (),
-            'categoriaPai' => $parentCategory && $parentCategory->getId () ? $parentCategory->getId () : null,
+            'categoriaPai' => $parentId,
             'associavel'   => $mageCategory->getChildrenCount () > 0 ? true : false,
             'ativo'        => $mageCategory->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE) ? true : false,
         );
