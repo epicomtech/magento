@@ -217,7 +217,10 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
 
     public function run ()
     {
-        if (!$this->getStoreConfig ('active')) return false;
+        if (!$this->getStoreConfig ('active') || $this->getHelper ()->isMarketplace ())
+        {
+            return false;
+        }
 
         $result = $this->readMHubShipmentsMagento ();
         if (!$result) return false;

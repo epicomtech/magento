@@ -154,6 +154,8 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
         /**
          * Attributes
          */
+        if (!$this->getHelper ()->isMarketplace ()) return true;
+
         $categoriesAttributesMethod = str_replace ('{categoryId}', $mageCategory->getId (), self::CATEGORIES_ATTRIBUTES_METHOD);
 
         $collection = Mage::getResourceModel ('eav/entity_attribute_collection');

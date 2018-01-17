@@ -153,7 +153,10 @@ class Epicom_MHub_Model_Cron_Order_Status extends Epicom_MHub_Model_Cron_Abstrac
 
     public function run ()
     {
-        if (!$this->getStoreConfig ('active')) return false;
+        if (!$this->getStoreConfig ('active') || !$this->getHelper ()->isMarketplace ())
+        {
+            return false;
+        }
 
         $result = $this->readMHubOrdersStatusesMagento ();
         if (!$result) return false;

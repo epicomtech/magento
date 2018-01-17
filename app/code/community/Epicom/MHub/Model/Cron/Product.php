@@ -377,7 +377,10 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
     public function run ()
     {
-        if (!$this->getStoreConfig ('active')) return false;
+        if (!$this->getStoreConfig ('active') || $this->getHelper ()->isMarketplace ())
+        {
+            return false;
+        }
 
         $result = $this->readMHubProductsMagento ();
         if (!$result) return false;
