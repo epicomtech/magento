@@ -7,7 +7,7 @@
 
 class Epicom_MHub_Model_Cron_Order_Status extends Epicom_MHub_Model_Cron_Abstract
 {
-    const ORDERS_CONFIRMATION_POST_METHOD = '/marketplace/pedidos/{orderId}';
+    const ORDERS_CONFIRMATION_POST_METHOD = 'pedidos/{orderId}';
 
     private $_confirmFilter = null;
     private $_cancelFilter  = null;

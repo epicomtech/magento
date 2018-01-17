@@ -7,10 +7,11 @@
 
 class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
 {
-    const PRODUCTS_INFO_METHOD         = 'marketplace/produtos/{productId}';
-    const PRODUCTS_SKUS_METHOD         = 'marketplace/produtos/{productId}/skus/{productSku}';
-    const PRODUCTS_AVAILABILITY_METHOD = 'marketplace/produtos/{productId}/skus/{productSku}/disponibilidade';
-    const PRODUCTS_TRACKING_METHOD     = 'marketplace/ofertas';
+    const PRODUCTS_INFO_METHOD         = 'produtos/{productId}';
+    const PRODUCTS_SKUS_METHOD         = 'produtos/{productId}/skus/{productSku}';
+    const PRODUCTS_AVAILABILITY_METHOD = 'produtos/{productId}/skus/{productSku}/disponibilidade';
+
+    const PRODUCTS_TRACKING_METHOD     = 'ofertas';
 
     public function manage ($type, $send_date, $parameters)
     {

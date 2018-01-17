@@ -5,7 +5,7 @@
  * @author      Eneias Ramos de Melo <eneias@gamuza.com.br>
  */
 
-class Epicom_MHub_NotificationController extends Epicom_MHub_Controller_Action
+class Epicom_MHub_MarketplaceController extends Epicom_MHub_Controller_Action
 {
     public function indexAction ()
     {

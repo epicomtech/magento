@@ -7,8 +7,8 @@
 
 class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
 {
-    const SHIPMENTS_POST_METHOD  = '/fornecedor/pedidos/{orderId}/entregas';
-    const SHIPMENTS_PATCH_METHOD = '/fornecedor/pedidos/{orderId}/entregas/{shipmentId}';
+    const SHIPMENTS_POST_METHOD  = 'pedidos/{orderId}/entregas';
+    const SHIPMENTS_PATCH_METHOD = 'pedidos/{orderId}/entregas/{shipmentId}';
 
     private function readMHubShipmentsMagento ()
     {

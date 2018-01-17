@@ -41,6 +41,9 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const API_ENVIRONMENT_URL_SANDBOX    = 'https://sandboxmhubapi.epicom.com.br/v1/';
     const API_ENVIRONMENT_URL_PRODUCTION = 'https://mhubapi.epicom.com.br/v1/';
 
+    const API_MODE_MARKETPLACE = 'marketplace';
+    const API_MODE_PROVIDER    = 'fornecedor';
+
     const API_PRODUCT_UPDATED_SKU          = 'alteracao_sku';
     const API_PRODUCT_UPDATED_PRICE        = 'preco_alterado';
     const API_PRODUCT_UPDATED_STOCK        = 'estoque_alterado';
@@ -71,6 +74,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $timeout = $this->getStoreConfig ('timeout');
         $url = $this->getStoreConfig ('url');
+        $mode = $this->getStoreconfig ('mode');
         $key = $this->getStoreConfig ('key');
         $token = $this->getStoreConfig ('token');
         $ssl = $this->getStoreConfig ('ssl');
@@ -78,7 +82,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
         $curl = curl_init ();
 
         curl_setopt ($curl, CURLOPT_TIMEOUT, $timeout);
-        curl_setopt ($curl, CURLOPT_URL, $url . $method);
+        curl_setopt ($curl, CURLOPT_URL, $url . $mode . '/' . $method);
         curl_setopt ($curl, CURLOPT_USERPWD, "{$key}:{$token}");
         curl_setopt ($curl, CURLOPT_HTTPHEADER, array ('Content-Type: application/json'));
         curl_setopt ($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -147,6 +151,11 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     public function getStoreConfig ($key)
     {
         return Mage::getStoreConfig ("mhub/settings/{$key}");
+    }
+
+    public function isMarketplace ()
+    {
+        return !strcmp ($this->getStoreConfig ('mode'), self::API_MODE_MARKETPLACE);
     }
 
     public function validatePostcode ($rawPostcode)

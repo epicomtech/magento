@@ -7,7 +7,7 @@
 
 class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 {
-    const ORDERS_POST_METHOD = '/marketplace/pedidos';
+    const ORDERS_POST_METHOD = 'pedidos';
 
     private function readMHubOrdersMagento ()
     {

@@ -7,7 +7,7 @@
 
 class Epicom_MHub_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_Action
 {
-    const SHIPMENTS_EVENTS_POST_METHOD = '/fornecedor/pedidos/{orderId}/entregas/{shipmentId}/eventos';
+    const SHIPMENTS_EVENTS_POST_METHOD = 'pedidos/{orderId}/entregas/{shipmentId}/eventos';
 
     protected function _isAllowed()
     {

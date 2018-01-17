@@ -7,7 +7,7 @@
 
 class Epicom_MHub_Model_Cron_Brand extends Epicom_MHub_Model_Cron_Abstract
 {
-    const BRANDS_POST_METHOD = '/fornecedor/marcas';
+    const BRANDS_POST_METHOD = 'marcas';
 
     private function readMHubBrandsMagento ()
     {

@@ -7,7 +7,7 @@
 
 class Epicom_MHub_Model_Config
 {
-    const CART_CALCULATE_METHOD = 'marketplace/calculocarrinho';
+    const CART_CALCULATE_METHOD = 'calculocarrinho';
 
     public function addAttributeOptionValue ($attributeId, $data)
     {

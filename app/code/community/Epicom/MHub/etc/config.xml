@@ -23,6 +23,11 @@
             <mhub>
                 <class>Epicom_MHub_Block</class>
             </mhub>
+            <adminhtml>
+                <rewrite>
+                    <page_menu>Epicom_MHub_Block_Adminhtml_Page_Menu</page_menu>
+                </rewrite>
+            </adminhtml>
         </blocks>
         <models>
             <mhub>
@@ -283,6 +288,7 @@
         <mhub>
             <settings>
                 <url><![CDATA[https://sandboxmhubapi.epicom.com.br/v1/]]></url>
+                <mode>marketplace</mode>
                 <ssl>1</ssl>
                 <timeout>30</timeout>
             </settings>

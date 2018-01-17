@@ -22,16 +22,22 @@
                             <sort_order>0</sort_order>
                             <action>admin_mhub/adminhtml_category</action>
                         </category>
-                        <attributegroup translate="title" module="mhub">
-                            <title>Manage Attribute Groups</title>
-                            <sort_order>10</sort_order>
-                            <action>admin_mhub/adminhtml_attributegroup</action>
-                        </attributegroup>
                         <brand translate="title" module="mhub">
                             <title>Manage Brands</title>
-                            <sort_order>20</sort_order>
+                            <sort_order>10</sort_order>
                             <action>admin_mhub/adminhtml_brand</action>
+                            <depends>
+                                <helper method="isMarketplace" active="0">mhub</helper>
+                            </depends>
                         </brand>
+                        <attributegroup translate="title" module="mhub">
+                            <title>Manage Attribute Groups</title>
+                            <sort_order>20</sort_order>
+                            <action>admin_mhub/adminhtml_attributegroup</action>
+                            <depends>
+                                <helper method="isMarketplace" active="1">mhub</helper>
+                            </depends>
+                        </attributegroup>
                         <product translate="title" module="mhub">
                             <title>Manage Products</title>
                             <sort_order>30</sort_order>
@@ -81,14 +87,14 @@
                                         <title>Manage Categories</title>
                                         <sort_order>0</sort_order>
                                     </category>
-                                    <attributegroup translate="title" module="mhub">
-                                        <title>Manage Attribute Groups</title>
-                                        <sort_order>10</sort_order>
-                                    </attributegroup>
                                     <brand translate="title" module="mhub">
                                         <title>Manage Brands</title>
-                                        <sort_order>20</sort_order>
+                                        <sort_order>10</sort_order>
                                     </brand>
+                                    <attributegroup translate="title" module="mhub">
+                                        <title>Manage Attribute Groups</title>
+                                        <sort_order>20</sort_order>
+                                    </attributegroup>
                                     <product translate="title" module="mhub">
                                         <title>Manage Products</title>
                                         <sort_order>30</sort_order>

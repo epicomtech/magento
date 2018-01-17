@@ -7,11 +7,11 @@
 
 class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 {
-    const CATEGORIES_POST_METHOD       = '/marketplace/categorias';
-    const CATEGORIES_PATCH_METHOD      = '/marketplace/categorias/{categoryId}';
-    const CATEGORIES_ATTRIBUTES_METHOD = '/marketplace/categorias/{categoryId}/atributos';
+    const CATEGORIES_POST_METHOD       = 'categorias';
+    const CATEGORIES_PATCH_METHOD      = 'categorias/{categoryId}';
+    const CATEGORIES_ATTRIBUTES_METHOD = 'categorias/{categoryId}/atributos';
 
-    const ATTRIBUTES_METHOD = '/marketplace/atributos';
+    const ATTRIBUTES_METHOD = 'atributos';
 
     private function readMHubCategoriesMagento ()
     {

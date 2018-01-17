@@ -7,12 +7,13 @@
 
 class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 {
-    const PRODUCTS_POST_METHOD       = '/fornecedor/produtos';
-    const PRODUCTS_PATCH_METHOD      = '/fornecedor/produtos/{productId}';
-    const PRODUCTS_SKUS_POST_METHOD  = '/fornecedor/produtos/{productCode}/skus';
-    const PRODUCTS_SKUS_PATCH_METHOD = '/fornecedor/produtos/{productCode}/skus/{productSku}';
-    const PRODUCTS_SKUS_AVAILABLE_POST_METHOD  = '/fornecedor/produtos/{productCode}/skus/{productSku}/disponibilidades';
-    const PRODUCTS_SKUS_AVAILABLE_PATCH_METHOD = '/fornecedor/produtos/{productCode}/skus/{productSku}/disponibilidades/{marketplaceCode}';
+    const PRODUCTS_POST_METHOD       = 'produtos';
+    const PRODUCTS_PATCH_METHOD      = 'produtos/{productId}';
+    const PRODUCTS_SKUS_POST_METHOD  = 'produtos/{productCode}/skus';
+    const PRODUCTS_SKUS_PATCH_METHOD = 'produtos/{productCode}/skus/{productSku}';
+
+    const PRODUCTS_SKUS_AVAILABLE_POST_METHOD  = 'produtos/{productCode}/skus/{productSku}/disponibilidades';
+    const PRODUCTS_SKUS_AVAILABLE_PATCH_METHOD = 'produtos/{productCode}/skus/{productSku}/disponibilidades/{marketplaceCode}';
 
     protected $_codeAttribute      = null;
     protected $_modelAttribute     = null;

@@ -7,8 +7,8 @@
 
 class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
 {
-    const ORDER_SHIPMENT_INFO_METHOD  = 'marketplace/pedidos/{orderId}/entregas/{shipmentId}';
-    const ORDER_SHIPMENT_EVENT_METHOD = 'marketplace/pedidos/{orderId}/entregas/{shipmentId}/eventos/{eventId}';
+    const ORDER_SHIPMENT_INFO_METHOD  = 'pedidos/{orderId}/entregas/{shipmentId}';
+    const ORDER_SHIPMENT_EVENT_METHOD = 'pedidos/{orderId}/entregas/{shipmentId}/eventos/{eventId}';
 
     public function manage ($type, $send_date, $parameters)
     {
