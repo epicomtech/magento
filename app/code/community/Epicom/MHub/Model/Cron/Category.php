@@ -129,8 +129,8 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
             'codigo'       => $mageCategory->getId (),
             'nome'         => $mageCategory->getName (),
             'categoriaPai' => $parentId,
-            'associavel'   => $mageCategory->getChildrenCount () > 0 ? true : false,
-            'ativo'        => $mageCategory->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE) ? true : false,
+            'associavel'   => boolval ($category->getAssociable ()), // $mageCategory->getChildrenCount () > 0 ? true : false,
+            'ativo'        => true // $mageCategory->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE) ? true : false,
         );
 
         try

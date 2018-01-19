@@ -77,7 +77,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
         $mode = $this->getStoreconfig ('mode');
         $key = $this->getStoreConfig ('key');
         $token = $this->getStoreConfig ('token');
-        $ssl = $this->getStoreConfig ('ssl');
+        $ssl = intval ($this->getStoreConfig ('ssl'));
 
         $curl = curl_init ();
 
@@ -88,7 +88,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
         curl_setopt ($curl, CURLOPT_RETURNTRANSFER, 1);
         // SSL off?
         curl_setopt ($curl, CURLOPT_SSL_VERIFYPEER, $ssl);
-        curl_setopt ($curl, CURLOPT_SSL_VERIFYHOST, $ssl);
+        curl_setopt ($curl, CURLOPT_SSL_VERIFYHOST, $ssl ? 2 : 0);
 
         if ($post != null)
         {

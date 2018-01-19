@@ -38,8 +38,6 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
     private function readMHubProductsMagento ()
     {
-        $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
-
         // categories
         $collection = Mage::getModel ('catalog/category')->getCollection ()
             ->addAttributeToFilter (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET,          array ('notnull' => true))
@@ -55,7 +53,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         $collection = Mage::getModel ('catalog/product')->getCollection ()
             ->joinField ('category_id', 'catalog/category_product', 'category_id', 'product_id = entity_id', null, 'inner')
             ->addAttributeToFilter ('category_id', array ('in' => $mageCategoryIds))
-            // ->addAttributeToFilter ($productCodeAttribute, array ('notnull' => true))
+            ->addAttributeToSelect ($this->_codeAttribute)
         ;
 
         $productOperation = Epicom_MHub_Helper_Data::OPERATION_OUT;
@@ -79,7 +77,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
             $mhubProduct = $mhubProductCollection->getFirstItem ();
 
-            $productCode = $product->getData ($productCodeAttribute);
+            $productCode = $product->getData ($this->_codeAttribute);
 
             $mhubProduct->setProductId ($productId)
                 ->setExternalCode ($productCode ? $productCode : $productId)
@@ -218,7 +216,9 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
         if (!strcmp ($mageProduct->getTypeId (), Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE))
         {
-            $childrenIds = Mage::getModel ('catalog/product_type_configurable')->getChildrenIds ($productId);
+            $result = Mage::getModel ('catalog/product_type_configurable')->getChildrenIds ($productId);
+
+            if (!empty ($result [0]) && count ($childrenIds [0]) > 0) $childrenIds = $result [0];
         }
 
         /**
