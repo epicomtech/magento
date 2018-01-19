@@ -172,7 +172,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-
+/*
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SKU,  array(
     'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product SKU'),
@@ -188,7 +188,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-
+*/
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SUMMARY,  array(
     'type'             => 'text',
     'label'            => Mage::helper ('mhub')->__('Product Summary'),
@@ -270,7 +270,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-
+/*
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SHORT_NAME,  array(
     'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product Short Name'),
@@ -286,7 +286,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-
+*/
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_HEIGHT,  array(
     'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product Height'),

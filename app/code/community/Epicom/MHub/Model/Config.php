@@ -11,9 +11,9 @@ class Epicom_MHub_Model_Config
 
     public function addAttributeOptionValue ($attributeId, $data)
     {
-        $label   = $data ['label'];
-        $order   = $data ['order'];
-        $default = $data ['default'];
+        $label   = !empty ($data ['label']) ? $data ['label'] : array ();
+        $order   = !empty ($data ['order']) ? $data ['order'] : 0;
+        $default = !empty ($data ['default']) ? $data ['default'] : null;
 
         $resource = Mage::getSingleton ('core/resource');
         $write    = $resource->getConnection ('core_write');

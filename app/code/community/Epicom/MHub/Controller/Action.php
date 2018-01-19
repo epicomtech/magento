@@ -33,7 +33,7 @@ class Epicom_MHub_Controller_Action extends Mage_Core_Controller_Front_Action
             }
         }
 
-        return parent::_construct ();
+        Mage::app ()->setCurrentStore (Mage_Core_Model_App::ADMIN_STORE_ID);
     }
 }
 

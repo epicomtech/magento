@@ -23,8 +23,8 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
         /**
          * Transaction
          */
-        $productId  = $parameters ['idProduto'];
-        $productSku = $parameters ['idSku'];
+        $productId  = strval ($parameters ['idProduto']);
+        $productSku = strval ($parameters ['idSku']);
 
         if (empty ($productId) || empty ($productSku))
         {
@@ -96,7 +96,7 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
             {
                 if (!$productNotExists)
                 {
-                    $this->_fault ('product_already_exists');
+                    return Mage::app ()->getResponse ()->setBody ('Product Already Exists'); // $this->_fault ('product_already_exists');
                 }
 
                 // default
@@ -127,8 +127,11 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
             {
                 // child
                 $mageProduct->setName ($productsSkusResult->nome);
-                $mageProduct->setStatus ($productsSkusResult->ativo);
                 $mageProduct->setUrl ($productsSkusResult->nome);
+                $mageProduct->setStatus ($productsSkusResult->ativo
+                    ? Mage_Catalog_Model_Product_Status::STATUS_ENABLED
+                    : Mage_Catalog_Model_Product_Status::STATUS_DISABLED
+                );
 
                 $productWeight = intval ($productsSkusResult->dimensoes->peso);
                 $mageProduct->setWeight ($productWeight > 0 ? $productWeight : 999999);
@@ -157,30 +160,38 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 $mageProduct->setMetaKeyword ($productsInfoResult->palavrasChave);
 
                 // brand
-                $productBrandAttribute   = Mage::getStoreConfig ('mhub/product/brand');
-                $productBrandAttributeId = $this->getConfig ()->getAttributeId ($productBrandAttribute);
+                $productBrandValue = $productsInfoResult->marca;
+                if (!empty ($productBrandValue))
+                {
+                    $productBrandAttribute   = Mage::getStoreConfig ('mhub/product/brand');
+                    $productBrandAttributeId = $this->getConfig ()->getAttributeId ($productBrandAttribute);
 
-                $productBrandAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productBrandAttributeId, array(
-                    'order' => '0',
-                    'label' => array (
-                        array ('store_code' => 'admin', 'value' => $productsInfoResult->marca)
-                    ),
-                ));
+                    $productBrandAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productBrandAttributeId, array(
+                        'order' => '0',
+                        'label' => array (
+                            array ('store_code' => 'admin', 'value' => $productBrandValue)
+                        ),
+                    ));
 
-                $mageProduct->setData ($productBrandAttribute, $productBrandAttributeOptionId);
+                    $mageProduct->setData ($productBrandAttribute, $productBrandAttributeOptionId);
+                }
 
                 // manufacturer
-                $productManufacturerAttribute   = Mage::getStoreConfig ('mhub/product/manufacturer');
-                $productManufacturerAttributeId = $this->getConfig ()->getAttributeId ($productManufacturerAttribute);
+                $productManufacturerValue = $productsInfoResult->codigoFornecedor;
+                if (!empty ($productManufacturerValue))
+                {
+                    $productManufacturerAttribute   = Mage::getStoreConfig ('mhub/product/manufacturer');
+                    $productManufacturerAttributeId = $this->getConfig ()->getAttributeId ($productManufacturerAttribute);
 
-                $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($productManufacturerAttributeId, array(
-                    'order' => '0',
-                    'label' => array (
-                        array ('store_code' => 'admin', 'value' => $productsInfoResult->codigoFornecedor)
-                    ),
-                ));
+                    $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($productManufacturerAttributeId, array(
+                        'order' => '0',
+                        'label' => array (
+                            array ('store_code' => 'admin', 'value' => $productManufacturerValue)
+                        ),
+                    ));
 
-                $mageProduct->setData ($productManufacturerAttribute, $productManufacturerOptionId);
+                    $mageProduct->setData ($productManufacturerAttribute, $productManufacturerOptionId);
+                }
 
                 // attributes
                 $attributesResult = null;
