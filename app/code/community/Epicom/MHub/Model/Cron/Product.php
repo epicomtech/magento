@@ -40,7 +40,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
     {
         // categories
         $collection = Mage::getModel ('catalog/category')->getCollection ()
-            ->addAttributeToFilter (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET,          array ('notnull' => true))
+            // ->addAttributeToFilter (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET,          array ('notnull' => true))
             ->addAttributeToFilter (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE,     array ('eq' => true))
             ->addAttributeToFilter (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SENDPRODUCTS, array ('eq' => true))
         ;
