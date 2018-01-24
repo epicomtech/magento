@@ -77,6 +77,7 @@ $installer->addAttribute('catalog_category', Epicom_MHub_Helper_Data::CATEGORY_A
     'type'             => 'int',
     'label'            => Mage::helper('mhub')->__('Category Attribute Set'),
     'input'            => 'select',
+    'input_renderer'   => 'mhub/catalog_category_helper_form_attributeSets',
     'source'           => 'mhub/eav_entity_attribute_source_category_attributeSets',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
     'visible'          => true,
