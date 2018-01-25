@@ -107,7 +107,7 @@ SQLBLOCK;
 }
 
 addMHubProductsTable ($installer, Epicom_MHub_Helper_Data::PRODUCT_TABLE, 'Epicom MHub Product');
-
+/*
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID,  array(
     'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product ID'),
@@ -140,7 +140,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-
+*/
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_BRAND,  array(
     'type'             => 'int',
     'label'            => Mage::helper ('mhub')->__('Product Brand'),
@@ -163,13 +163,13 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'input'            => 'text',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
     'visible'          => true,
-    'required'         => false,
+    'required'         => true,
     'user_defined'     => true,
     'searchable'       => false,
     'filterable'       => false,
     'comparable'       => false,
-    'visible_on_front' => false,
-    'unique'           => false,
+    'visible_on_front' => true,
+    'unique'           => true,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
 /*
@@ -221,7 +221,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-
+/*
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_OUT_OF_LINE,  array(
     'type'             => 'int',
     'label'            => Mage::helper ('mhub')->__('Product Out Of Line'),
@@ -254,46 +254,46 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-
-$installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MODEL,  array(
-    'type'             => 'varchar',
-    'label'            => Mage::helper ('mhub')->__('Product Model'),
-    'input'            => 'text',
-    'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-    'visible'          => true,
-    'required'         => false,
-    'user_defined'     => true,
-    'searchable'       => false,
-    'filterable'       => false,
-    'comparable'       => false,
-    'visible_on_front' => false,
-    'unique'           => false,
-    'group'            => Mage::helper ('mhub')->__('Epicom')
-));
-/*
-$installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SHORT_NAME,  array(
-    'type'             => 'varchar',
-    'label'            => Mage::helper ('mhub')->__('Product Short Name'),
-    'input'            => 'text',
-    'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-    'visible'          => true,
-    'required'         => false,
-    'user_defined'     => true,
-    'searchable'       => false,
-    'filterable'       => false,
-    'comparable'       => false,
-    'visible_on_front' => false,
-    'unique'           => false,
-    'group'            => Mage::helper ('mhub')->__('Epicom')
-));
 */
+$installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MODEL,  array(
+    'type'             => 'int',
+    'label'            => Mage::helper ('mhub')->__('Product Model'),
+    'input'            => 'select',
+    'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+    'visible'          => true,
+    'required'         => false,
+    'user_defined'     => true,
+    'searchable'       => false,
+    'filterable'       => false,
+    'comparable'       => false,
+    'visible_on_front' => false,
+    'unique'           => false,
+    'group'            => Mage::helper ('mhub')->__('Epicom')
+));
+
+$installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_OFFER_TITLE,  array(
+    'type'             => 'varchar',
+    'label'            => Mage::helper ('mhub')->__('Product Offer Title'),
+    'input'            => 'text',
+    'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+    'visible'          => true,
+    'required'         => false,
+    'user_defined'     => true,
+    'searchable'       => false,
+    'filterable'       => false,
+    'comparable'       => false,
+    'visible_on_front' => false,
+    'unique'           => false,
+    'group'            => Mage::helper ('mhub')->__('Epicom')
+));
+
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_HEIGHT,  array(
     'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product Height'),
     'input'            => 'text',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
     'visible'          => true,
-    'required'         => false,
+    'required'         => true,
     'user_defined'     => true,
     'searchable'       => false,
     'filterable'       => false,
@@ -309,7 +309,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'input'            => 'text',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
     'visible'          => true,
-    'required'         => false,
+    'required'         => true,
     'user_defined'     => true,
     'searchable'       => false,
     'filterable'       => false,
@@ -325,7 +325,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'input'            => 'text',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
     'visible'          => true,
-    'required'         => false,
+    'required'         => true,
     'user_defined'     => true,
     'searchable'       => false,
     'filterable'       => false,

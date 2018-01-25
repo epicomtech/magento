@@ -352,6 +352,7 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
+<!--
                         <id translate="label" module="mhub">
                             <label>Product ID</label>
                             <frontend_type>select</frontend_type>
@@ -361,6 +362,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </id>
+-->
                         <code translate="label" module="mhub">
                             <label>Product Code</label>
                             <frontend_type>select</frontend_type>
@@ -388,6 +390,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </ean>
+<!--
                         <sku translate="label" module="mhub">
                             <label>Product SKU</label>
                             <frontend_type>select</frontend_type>
@@ -397,6 +400,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </sku>
+-->
                         <summary translate="label" module="mhub">
                             <label>Product Summary</label>
                             <frontend_type>select</frontend_type>
@@ -415,6 +419,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </url>
+<!--
                         <out_of_line translate="label" module="mhub">
                             <label>Product Out Of Line</label>
                             <frontend_type>select</frontend_type>
@@ -424,6 +429,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </out_of_line>
+-->
                         <manufacturer translate="label" module="mhub">
                             <label>Product Manufacturer</label>
                             <frontend_type>select</frontend_type>
@@ -442,15 +448,15 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </model>
-                        <short_name translate="label" module="mhub">
-                            <label>Product Short Name</label>
+                        <offer_title translate="label" module="mhub">
+                            <label>Product Offer Title</label>
                             <frontend_type>select</frontend_type>
                             <source_model>mhub/adminhtml_system_config_source_attributes_product_code</source_model>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </short_name>
+                        </offer_title>
                         <height translate="label" module="mhub">
                             <label>Product Height</label>
                             <frontend_type>select</frontend_type>

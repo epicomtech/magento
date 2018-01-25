@@ -293,17 +293,23 @@
                 <timeout>30</timeout>
             </settings>
             <product>
+                <!--
                 <id>mhub_product_id</id>
-                <code>mhub_product_code</code>
+                -->
+                <code>sku</code><!-- mhub_product_code -->
                 <brand>mhub_product_brand</brand>
                 <ean>mhub_product_ean</ean>
-                <sku>sku</sku><!-- mhub_product_sku -->
+                <!--
+                <sku>mhub_product_sku</sku>
+                -->
                 <summary>mhub_product_summary</summary>
                 <url>mhub_product_url</url>
+                <!--
                 <out_of_line>mhub_product_out_of_line</out_of_line>
-                <manufacturer>mhub_product_manufacturer</manufacturer>
+                -->
+                <manufacturer>manufacturer</manufacturer><!-- mhub_product_manufacturer -->
                 <model>mhub_product_model</model>
-                <short_name>short_description</short_name><!-- mhub_product_short_name -->
+                <offer_title>mhub_product_offer_title</offer_title>
                 <height>mhub_product_height</height>
                 <width>mhub_product_width</width>
                 <length>mhub_product_length</length>

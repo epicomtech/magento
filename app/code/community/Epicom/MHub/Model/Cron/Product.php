@@ -18,7 +18,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
     protected $_codeAttribute      = null;
     protected $_modelAttribute     = null;
     protected $_eanAttribute       = null;
-    protected $_outOfLineAttribute = null;
+    // protected $_outOfLineAttribute = null;
+    protected $_offerTitle         = null;
     protected $_heightAttribute    = null;
     protected $_widthAttribute     = null;
     protected $_lengthAttribute    = null;
@@ -30,7 +31,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         $this->_codeAttribute      = Mage::getStoreConfig ('mhub/product/code');
         $this->_modelAttribute     = Mage::getStoreConfig ('mhub/product/model');
         $this->_eanAttribute       = Mage::getStoreConfig ('mhub/product/ean');
-        $this->_outOfLineAttribute = Mage::getStoreConfig ('mhub/product/out_of_line');
+        // $this->_outOfLineAttribute = Mage::getStoreConfig ('mhub/product/out_of_line');
+        $this->_offerTitleAttribute = Mage::getStoreConfig ('mhub/product/offer_title');
         $this->_heightAttribute    = Mage::getStoreConfig ('mhub/product/height');
         $this->_widthAttribute     = Mage::getStoreConfig ('mhub/product/width');
         $this->_lengthAttribute    = Mage::getStoreConfig ('mhub/product/length');
@@ -49,42 +51,45 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
         $mageCategoryIds = array_keys ($collection->exportToArray (array ('entity_id')));
 
-        // products
-        $collection = Mage::getModel ('catalog/product')->getCollection ()
-            ->joinField ('category_id', 'catalog/category_product', 'category_id', 'product_id = entity_id', null, 'inner')
-            ->addAttributeToFilter ('category_id', array ('in' => $mageCategoryIds))
-            ->addAttributeToSelect ($this->_codeAttribute)
-        ;
-
-        $productOperation = Epicom_MHub_Helper_Data::OPERATION_OUT;
-
-        $select = $collection->getSelect ()
-            ->joinLeft(
-                array ('mhub' => Epicom_MHub_Helper_Data::PRODUCT_TABLE),
-                "e.entity_id = mhub.product_id AND mhub.operation = '{$productOperation}'",
-                array('mhub_updated_at' => 'mhub.updated_at', 'mhub_synced_at' => 'mhub.synced_at')
-            )->where ('e.updated_at > mhub.synced_at OR mhub.synced_at IS NULL')
-        ;
-
-        foreach ($collection as $product)
+        foreach ($mageCategoryIds as $_id)
         {
-            $productId = $product->getId();
-
-            $mhubProductCollection = Mage::getModel ('mhub/product')->getCollection ()
-                ->addFieldToFilter ('product_id', $productId)
-                ->addFieldToFilter ('operation',  $productOperation)
+            // products
+            $collection = Mage::getModel ('catalog/product')->getCollection ()
+                ->joinField ('category_id', 'catalog/category_product', 'category_id', 'product_id = entity_id', null, 'inner')
+                ->addAttributeToFilter ('category_id', array ('in' => $_id))
+                ->addAttributeToSelect ($this->_codeAttribute)
             ;
 
-            $mhubProduct = $mhubProductCollection->getFirstItem ();
+            $productOperation = Epicom_MHub_Helper_Data::OPERATION_OUT;
 
-            $productCode = $product->getData ($this->_codeAttribute);
+            $select = $collection->getSelect ()
+                ->joinLeft(
+                    array ('mhub' => Epicom_MHub_Helper_Data::PRODUCT_TABLE),
+                    "e.entity_id = mhub.product_id AND mhub.operation = '{$productOperation}'",
+                    array('mhub_updated_at' => 'mhub.updated_at', 'mhub_synced_at' => 'mhub.synced_at')
+                )->where ('e.updated_at > mhub.synced_at OR mhub.synced_at IS NULL')
+            ;
 
-            $mhubProduct->setProductId ($productId)
-                ->setExternalCode ($productCode ? $productCode : $productId)
-                ->setOperation ($productOperation)
-                ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
-                ->setUpdatedAt (date ('c'))
-                ->save ();
+            foreach ($collection as $product)
+            {
+                $productId = $product->getId();
+
+                $mhubProductCollection = Mage::getModel ('mhub/product')->getCollection ()
+                    ->addFieldToFilter ('product_id', $productId)
+                    ->addFieldToFilter ('operation',  $productOperation)
+                ;
+
+                $mhubProduct = $mhubProductCollection->getFirstItem ();
+
+                $productCode = $product->getData ($this->_codeAttribute);
+
+                $mhubProduct->setProductId ($productId)
+                    ->setExternalCode ($productCode ? $productCode : $productId)
+                    ->setOperation ($productOperation)
+                    ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
+                    ->setUpdatedAt (date ('c'))
+                    ->save ();
+            }
         }
 
         return true;
@@ -97,7 +102,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         $select->where ('synced_at < updated_at OR synced_at IS NULL')
                ->where (sprintf ("operation = '%s'", Epicom_MHub_Helper_Data::OPERATION_OUT))
                ->group ('product_id')
-               ->order ('updated_at DESC');
+               ->order ('updated_at DESC')
+        ;
 
         return $collection;
     }
@@ -142,14 +148,20 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             $mageProduct = $loaded;
         }
 
-        $mageCategory = Mage::getModel ('catalog/category')->loadByAttribute (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET, $mageProduct->getAttributeSetId ());
+        $collection = Mage::getModel ('catalog/category')->getCollection ()
+            ->addAttributeToFilter (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE,     array ('eq' => true))
+            ->addAttributeToFilter (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SENDPRODUCTS, array ('eq' => true))
+            ->addIdFilter ($mageProduct->getCategoryIds ())
+        ;
+
+        $mageCategoryId = $collection->count () > 0 ? $collection->getFirstItem ()->getId () : null;
 
         $post = array(
             'codigo'          => $product->getExternalCode (),
             'nome'            => $mageProduct->getName (),
             'nomeReduzido'    => $mageProduct->getShortDescription (),
             'descricao'       => $mageProduct->getDescription (),
-            'codigoCategoria' => $mageCategory->getId (),
+            'codigoCategoria' => $mageCategoryId,
             'codigoMarca'     => $mageProduct->getData ($brandAttribute),
             'palavrasChave'   => $mageProduct->getMetaKeyword (),
             'grupos'          => array ()
@@ -231,7 +243,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 $this->_codeAttribute,
                 $this->_modelAttribute,
                 $this->_eanAttribute,
-                $this->_outOfLineAttribute,
+                // $this->_outOfLineAttribute,
+                $this->_offerTitle,
                 $this->_heightAttribute,
                 $this->_widthAttribute,
                 $this->_lengthAttribute,
@@ -247,12 +260,12 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
             $post = array(
                 'nome'            => $mageProduct->getName (),
-                'nomeReduzido'    => $mageProduct->getShortDescription (),
+                'nomeReduzido'    => $mageProduct->getData ($this->_offerTitleAttribute), // $mageProduct->getShortDescription (),
                 'url'             => $mageProduct->getUrlModel ()->getUrl ($mageProduct),
                 'codigo'          => $productCode,
                 'modelo'          => $mageProduct->getData ($this->_modelAttribute),
                 'ean'             => $mageProduct->getData ($this->_eanAttribute),
-                'foraDeLinha'     => boolval ($mageProduct->getData ($this->_outOfLineAttribute)),
+                'foraDeLinha'     => false, // boolval ($mageProduct->getData ($this->_outOfLineAttribute)),
                 'estoque'         => intval ($mageProduct->getQty ()),
                 'dimensoes' => array(
                     'altura'      => $mageProduct->getData ($this->_heightAttribute),
@@ -319,7 +332,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             /**
              * Availability
              */
-            $priceFrom = $mageProduct->getSpecialPrice () ? $mageProduct->getPrice () : 0;
+            $priceFrom = $mageProduct->getSpecialPrice () ? $mageProduct->getPrice () : null;
             $priceTo   = $mageProduct->getSpecialPrice () ? $mageProduct->getSpecialPrice () : $mageProduct->getPrice ();
 
             $post = array(

@@ -36,5 +36,20 @@ class Epicom_MHub_Model_Cron
     {
         Mage::getModel ('mhub/cron_shipment')->run ();
     }
+
+    public function runQueue ()
+    {
+        $this->runBrand ();
+
+        $this->runCategory ();
+
+        $this->runProduct ();
+
+        $this->runOrder ();
+
+        $this->runOrderStatus ();
+
+        $this->runShipment ();
+    }
 }
 
