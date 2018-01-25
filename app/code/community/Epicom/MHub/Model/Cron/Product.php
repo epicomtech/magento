@@ -19,7 +19,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
     protected $_modelAttribute     = null;
     protected $_eanAttribute       = null;
     // protected $_outOfLineAttribute = null;
-    protected $_offerTitle         = null;
+    protected $_offerTitleAttribute = null;
     protected $_heightAttribute    = null;
     protected $_widthAttribute     = null;
     protected $_lengthAttribute    = null;
@@ -159,7 +159,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         $post = array(
             'codigo'          => $product->getExternalCode (),
             'nome'            => $mageProduct->getName (),
-            'nomeReduzido'    => $mageProduct->getShortDescription (),
+            'nomeReduzido'    => $mageProduct->getData ($this->_offerTitleAttribute), // $mageProduct->getShortDescription (),
             'descricao'       => $mageProduct->getDescription (),
             'codigoCategoria' => $mageCategoryId,
             'codigoMarca'     => $mageProduct->getData ($brandAttribute),
@@ -230,7 +230,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         {
             $result = Mage::getModel ('catalog/product_type_configurable')->getChildrenIds ($productId);
 
-            if (!empty ($result [0]) && count ($childrenIds [0]) > 0) $childrenIds = $result [0];
+            if (!empty ($result [0]) && count ($childrenIds [0]) > 0) $childrenIds = array_merge ($childrenIds, $result [0]);
         }
 
         /**
@@ -244,7 +244,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 $this->_modelAttribute,
                 $this->_eanAttribute,
                 // $this->_outOfLineAttribute,
-                $this->_offerTitle,
+                $this->_offerTitleAttribute,
                 $this->_heightAttribute,
                 $this->_widthAttribute,
                 $this->_lengthAttribute,

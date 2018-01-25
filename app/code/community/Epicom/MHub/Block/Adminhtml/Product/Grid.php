@@ -120,8 +120,9 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
         $this->setMassactionIdField('entity_id');
         $this->getMassactionBlock()->setFormFieldName('entity_ids');
         $this->getMassactionBlock()->setUseSelectAll(true);
+
         $this->getMassactionBlock()->addItem('remove_products', array(
-            'label'   => Mage::helper('mhub')->__('Remove Products'),
+            'label'   => Mage::helper('mhub')->__('Remove Product(s)'),
             'url'     => $this->getUrl('*/adminhtml_product/massRemove'),
             'confirm' => Mage::helper('mhub')->__('Are you sure?')
         ));
