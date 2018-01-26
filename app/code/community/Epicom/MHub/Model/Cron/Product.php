@@ -230,7 +230,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         {
             $result = Mage::getModel ('catalog/product_type_configurable')->getChildrenIds ($productId);
 
-            if (!empty ($result [0]) && count ($childrenIds [0]) > 0) $childrenIds = array_merge ($childrenIds, $result [0]);
+            if (!empty ($result [0]) && count ($childrenIds [0]) > 0) $childrenIds = $result [0];
         }
 
         /**
@@ -252,6 +252,17 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             ->joinTable (array ('stock' => 'cataloginventory/stock_item'),
                 'product_id = entity_id', array ('qty', 'is_in_stock'), null, 'left')
         ;
+
+        if (count ($mhubAttributeGroups) > 0)
+        {
+            foreach ($mhubAttributeGroups as $id => $group)
+            {
+                foreach ($group as $code)
+                {
+                    $collection->addAttributeToSelect ($code);
+                }
+            }
+        }
 
         foreach ($collection as $mageProduct)
         {
