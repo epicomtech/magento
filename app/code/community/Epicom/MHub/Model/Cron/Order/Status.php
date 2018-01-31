@@ -74,7 +74,7 @@ class Epicom_MHub_Model_Cron_Order_Status extends Epicom_MHub_Model_Cron_Abstrac
             {
                 $this->logMHubOrderStatus ($order, $e->getMessage ());
 
-                Mage::logException ($e);
+                self::logException ($e);
             }
 
             if (!empty ($result)) $this->cleanupMHubOrderStatus ($order);

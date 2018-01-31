@@ -107,13 +107,13 @@ SQLBLOCK;
 }
 
 addMHubProductsTable ($installer, Epicom_MHub_Helper_Data::PRODUCT_TABLE, 'Epicom MHub Product');
-/*
+
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID,  array(
     'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product ID'),
     'input'            => 'text',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-    'visible'          => true,
+    'visible'          => false,
     'required'         => false,
     'user_defined'     => true,
     'searchable'       => false,
@@ -124,7 +124,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'group'            => Mage::helper ('mhub')->__('Epicom'),
     'used_in_product_listing' => true,
 ));
-
+/*
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_CODE,  array(
     'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product Code'),

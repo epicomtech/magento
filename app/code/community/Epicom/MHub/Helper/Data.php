@@ -19,10 +19,8 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const CATEGORY_ATTRIBUTE_SET          = 'mhub_category_attributeset';
     const CATEGORY_ATTRIBUTE_ISACTIVE     = 'mhub_category_isactive';
     const CATEGORY_ATTRIBUTE_SENDPRODUCTS = 'mhub_category_sendproducts';
-/*
     const PRODUCT_ATTRIBUTE_ID            = 'mhub_product_id';
-    const PRODUCT_ATTRIBUTE_SKU           = 'mhub_product_sku';
-*/
+    // const PRODUCT_ATTRIBUTE_SKU           = 'mhub_product_sku';
     const PRODUCT_ATTRIBUTE_CODE          = 'mhub_product_code';
     const PRODUCT_ATTRIBUTE_BRAND         = 'mhub_product_brand';
     const PRODUCT_ATTRIBUTE_EAN           = 'mhub_product_ean';

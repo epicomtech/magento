@@ -75,6 +75,11 @@ class Epicom_MHub_Model_Cron_Abstract
         }
     }
 
+    protected function logException (Exception $e)
+    {
+        Mage::log ("\n" . $e->__toString (), Zend_Log::ERR, Epicom_MHub_Helper_Data::LOG);
+    }
+
     protected function message ($text)
     {
         Mage::log ($text, null, Epicom_MHub_Helper_Data::LOG);

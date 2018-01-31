@@ -70,7 +70,7 @@ class Epicom_MHub_Model_Cron_Brand extends Epicom_MHub_Model_Cron_Abstract
             {
                 $this->logMHubBrand ($brand, $e->getMessage ());
 
-                Mage::logException ($e);
+                self::logException ($e);
             }
 
             if (!empty ($result)) $this->cleanupMHubBrand ($brand);

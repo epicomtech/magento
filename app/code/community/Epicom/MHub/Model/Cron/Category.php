@@ -97,7 +97,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
             {
                 $this->logMHubCategory ($category, $e->getMessage ());
 
-                Mage::logException ($e);
+                self::logException ($e);
             }
 
             if (!empty ($result)) $this->cleanupMHubCategory ($category);

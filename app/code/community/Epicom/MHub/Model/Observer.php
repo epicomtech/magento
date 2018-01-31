@@ -14,13 +14,13 @@ class Epicom_MHub_Model_Observer
     {
         $quote = $observer->getQuote ();
 
-        $productSku = Mage::getStoreConfig ('mhub/product/id');
+        $productId = Mage::getStoreConfig ('mhub/product/id');
 
         $isEpicom = false;
 
         foreach ($quote->getAllItems () as $item)
         {
-            if ($item->getData ($productSku) !== null)
+            if ($item->getData ($productId) !== null)
             {
                 $quote->setIsEpicom (1);
 
@@ -35,16 +35,17 @@ class Epicom_MHub_Model_Observer
     {
         $quoteItem = $observer->getQuoteItem ();
         $product   = $observer->getProduct ();
-/*
+
         $productId   = $product->getData (Mage::getStoreConfig ('mhub/product/id'));
-        $productSku  = $product->getData (Mage::getStoreConfig ('mhub/product/sku'));
-*/
-        $productCode = $product->getData (Mage::getStoreConfig ('mhub/product/code'));
 /*
-        $quoteItem->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID,   $productId);
-        $quoteItem->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SKU,  $productSku);
+        $productSku  = $product->getData (Mage::getStoreConfig ('mhub/product/sku'));
+        $productCode = $product->getData (Mage::getStoreConfig ('mhub/product/code'));
 */
+        $quoteItem->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID,   $productId);
+/*
+        $quoteItem->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SKU,  $productSku);
         $quoteItem->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_CODE, $productCode);
+*/
     }
 
     public function salesOrderPlaceBefore (Varien_Event_Observer $observer)
@@ -59,9 +60,14 @@ class Epicom_MHub_Model_Observer
             ->addFieldToFilter ('base_discount_amount', array ('gt' => 0))
         ;
 
-        if ($orderItems->count() > 0)
+        if ($orderItems->count () > 0)
         {
             Mage::throwException (Mage::helper ('rule')->__('Invalid discount amount.'));
+        }
+
+        if ($order->getQuote ()->getIsEpicom ())
+        {
+            Mage::getModel ('mhub/cron_order')->setOrderId ($order->getId ())->run (); // RESERVE
         }
     }
 

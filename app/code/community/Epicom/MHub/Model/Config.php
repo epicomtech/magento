@@ -124,7 +124,7 @@ class Epicom_MHub_Model_Config
 
     public function getShippingPrices ($postCode, $unique = false)
     {
-        $productSkuAttribute = Mage::getStoreConfig ('mhub/product/sku');
+        $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
 
         $result = array ();
 
@@ -138,7 +138,7 @@ class Epicom_MHub_Model_Config
 
         $collection = Mage::getModel ('catalog/product')->getCollection ()
             ->addAttributeToFilter ('entity_id', array ('in' => array_keys ($result)))
-            ->AddAttributeToSelect ($productSkuAttribute, array ('gt' => 0))
+            ->AddAttributeToSelect ($productIdAttribute, array ('notnull' => true))
         ;
 
         if (!$collection->count ()) return false;
@@ -151,7 +151,7 @@ class Epicom_MHub_Model_Config
         foreach ($collection as $product)
         {
             $post ['itens'][] = array (
-                'id'         => $product->getData ($productSkuAttribute),
+                'id'         => $product->getData ($productIdAttribute),
                 'quantidade' => $result [$product->getId ()]
             );
         }

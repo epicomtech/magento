@@ -63,12 +63,12 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
          */
         $productNotExists = false;
 
-        $productSkuAttribute = Mage::getStoreConfig ('mhub/product/sku');
+        $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
 
-        $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
-        if (!$mageProduct || !$mageProduct->getId())
+        // $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
+        // if (!$mageProduct || !$mageProduct->getId())
         {
-            $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute ($productSkuAttribute, $productSku);
+            $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute ($productCodeAttribute, $productSku);
             if (!$mageProduct || !$mageProduct->getId())
             {
                 $productNotExists = true;
@@ -81,7 +81,7 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
         }
 
         $mageProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
-        $mageProduct->setData ($productSkuAttribute, $productSku);
+        $mageProduct->setData ($productCodeAttribute, $productSku);
 
         /**
          * Parse
@@ -212,7 +212,12 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 $mageProduct->save ();
 
                 // images
-                $baseImageSet = false;
+                $mediaApi = Mage::getModel ('catalog/product_attribute_media_api');
+
+                foreach ($mediaApi->items ($mageProduct->getId ()) as $item)
+                {
+                    $mediaApi->remove ($mageProduct->getId (), $item ['file']);
+                }
 
                 foreach ($productsSkusResult->imagens as $id => $image)
                 {
@@ -230,7 +235,7 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
 
                         try
                         {
-                            Mage::getModel ('catalog/product_attribute_media_api')->create ($mageProduct->getId (), $_image);
+                            $mediaApi->create ($mageProduct->getId (), $_image);
                         }
                         catch (Exception $e)
                         {

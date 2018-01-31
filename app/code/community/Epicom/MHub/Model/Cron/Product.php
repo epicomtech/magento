@@ -124,7 +124,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             {
                 $this->logMHubProduct ($product, $e->getMessage ());
 
-                Mage::logException ($e);
+                self::logException ($e);
             }
 
             if (!empty ($result)) $this->cleanupMHubProduct ($product);

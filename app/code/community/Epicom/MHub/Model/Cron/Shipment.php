@@ -83,7 +83,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
             {
                 $this->logMHubShipment ($shipment, $e->getMessage ());
 
-                Mage::logException ($e);
+                self::logException ($e);
             }
 
             if (!empty ($externalShipmentId)) $this->cleanupMHubShipment ($shipment, $externalShipmentId);

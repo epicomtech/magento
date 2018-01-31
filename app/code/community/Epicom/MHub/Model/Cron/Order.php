@@ -9,14 +9,23 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 {
     const ORDERS_POST_METHOD = 'pedidos';
 
+    protected $_orderId = null;
+
     private function readMHubOrdersMagento ()
     {
         $orderStatus = Mage::getStoreConfig ('mhub/order/reserve_filter');
 
-        $collection = Mage::getModel ('sales/order')->getCollection ()
-            ->addAttributeToFilter ('main_table.status', array ('eq' => $orderStatus))
-            ->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true))
-        ;
+        $collection = Mage::getModel ('sales/order')->getCollection ();
+
+        if ($this->_orderId)
+        {
+            $collection->addAttributeToFilter ('entity_id', array ('eq' => $this->_orderId));
+        }
+        else
+        {
+            $collection->addAttributeToFilter ('main_table.status', array ('eq' => $orderStatus));
+            $collection->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true));
+        }
 
         $select = $collection->getSelect ()
             ->joinLeft(
@@ -25,7 +34,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
                 array('mhub_updated_at' => 'mhub.updated_at', 'mhub_synced_at' => 'mhub.synced_at')
             )->where ('main_table.created_at > mhub.synced_at OR mhub.synced_at IS NULL');
 
-        foreach($collection as $order)
+        foreach ($collection as $order)
         {
             $orderId = $order->getId();
 
@@ -36,7 +45,8 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
                 ->setUpdatedAt (date ('c'))
                 ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
                 ->setMessage (new Zend_Db_Expr ('NULL'))
-                ->save ();
+                ->save ()
+            ;
         }
 
         return true;
@@ -45,11 +55,12 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
     private function readMHubOrdersCollection ()
     {
         $collection = Mage::getModel ('mhub/order')->getCollection ();
-        $select = $collection->getSelect ();
-        $select->where ('synced_at < updated_at OR synced_at IS NULL')
-               // ->group ('order_id')
-               // ->order ('updated_at DESC')
-        ;
+        $select = $collection->getSelect ()->where ('synced_at < updated_at OR synced_at IS NULL');
+
+        if ($this->_orderId)
+        {
+            $collection->addFieldToFilter ('order_id', array ('eq' => $this->_orderId));
+        }
 
         return $collection;
     }
@@ -68,7 +79,12 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             {
                 $this->logMHubOrder ($order, $e->getMessage ());
 
-                Mage::logException ($e);
+                self::logException ($e);
+
+                if ($this->_orderId)
+                {
+                    throw new Exception (__('Order saving error: %s', $order->getOrderIncrementId ()));
+                }
             }
 
             if (!empty ($externalOrderId)) $this->cleanupMHubOrder ($order, $externalOrderId);
@@ -185,6 +201,13 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
     private function logMHubOrder (Epicom_MHub_Model_Order $order, $message = null)
     {
         $order->setStatus (Epicom_MHub_Helper_Data::STATUS_ERROR)->setMessage ($message)->save ();
+    }
+
+    public function setOrderId ($id)
+    {
+        $this->_orderId = $id;
+
+        return $this;
     }
 
     public function run ()
