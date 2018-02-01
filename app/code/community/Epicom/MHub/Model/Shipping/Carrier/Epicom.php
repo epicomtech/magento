@@ -80,12 +80,16 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
             {
                 if (strcmp ($item->status, 'ok'))
                 {
+                    $ids = array ();
+
+                    foreach ($item->itens as $_item) $ids [] = $_item->id;
+
                     $erromsg = $this->getConfigData ('specificerrmsg');
 
                     $error = Mage::getModel ('shipping/rate_result_error')
                         ->setCarrier ($this->_code)
                         ->setCarrierTitle ($this->getConfigData ('title'))
-                        ->setErrorMessage ($errmsg ? $errmsg : $item->status)
+                        ->setErrorMessage ($errmsg ? $errmsg : sprintf ('%s: %s', $item->status, implode (',', $ids)))
                     ;
 
                     // $result->append ($error);

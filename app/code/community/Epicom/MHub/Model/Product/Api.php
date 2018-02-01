@@ -63,16 +63,10 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
          */
         $productNotExists = false;
 
-        $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
-
-        // $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
-        // if (!$mageProduct || !$mageProduct->getId())
+        $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productSku);
+        if (!$mageProduct || !$mageProduct->getId ())
         {
-            $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute ($productCodeAttribute, $productSku);
-            if (!$mageProduct || !$mageProduct->getId())
-            {
-                $productNotExists = true;
-            }
+            $productNotExists = true;
         }
 
         if ($productNotExists)
@@ -80,8 +74,7 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
             $mageProduct = Mage::getModel ('catalog/product');
         }
 
-        $mageProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
-        $mageProduct->setData ($productCodeAttribute, $productSku);
+        $mageProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productSku);
 
         /**
          * Parse
@@ -140,8 +133,8 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 $productCodeAttribute         = Mage::getStoreConfig ('mhub/product/code');
                 $productEanAttribute          = Mage::getStoreConfig ('mhub/product/ean');
                 $productUrlAttribute          = Mage::getStoreConfig ('mhub/product/url');
-                $productOutOfLineAttribute    = Mage::getStoreConfig ('mhub/product/out_of_line');
-                $productShortNameAttribute    = Mage::getStoreConfig ('mhub/product/short_name');
+                // $productOutOfLineAttribute    = Mage::getStoreConfig ('mhub/product/out_of_line');
+                $productOfferTitleAttribute    = Mage::getStoreConfig ('mhub/product/offer_title');
                 $productHeightAttribute       = Mage::getStoreConfig ('mhub/product/height');
                 $productWidthAttribute        = Mage::getStoreConfig ('mhub/product/width');
                 $productLengthAttribute       = Mage::getStoreConfig ('mhub/product/length');
@@ -149,8 +142,8 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 $mageProduct->setData ($productCodeAttribute, $productsSkusResult->codigo);
                 $mageProduct->setData ($productEanAttribute, $productsSkusResult->ean);
                 $mageProduct->setData ($productUrlAttribute, $productsSkusResult->url);
-                $mageProduct->setData ($productOutOfLineAttribute, $productsSkusResult->foraDeLinha);
-                $mageProduct->setData ($productShortNameAttribute, $productsSkusResult->nomeReduzido);
+                // $mageProduct->setData ($productOutOfLineAttribute, $productsSkusResult->foraDeLinha);
+                $mageProduct->setData ($productOfferTitleAttribute, $productsSkusResult->nomeReduzido);
                 $mageProduct->setData ($productHeightAttribute, $productsSkusResult->dimensoes->altura);
                 $mageProduct->setData ($productWidthAttribute, $productsSkusResult->dimensoes->largura);
                 $mageProduct->setData ($productLengthAttribute, $productsSkusResult->dimensoes->comprimento);
