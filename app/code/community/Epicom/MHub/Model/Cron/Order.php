@@ -43,6 +43,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
                 ->setOrderIncrementId ($order->getIncrementId())
                 ->setOrderExternalId ($order->getExtOrderId())
                 ->setUpdatedAt (date ('c'))
+                ->setOperation (Epicom_MHub_Helper_Data::OPERATION_OUT)
                 ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
                 ->setMessage (new Zend_Db_Expr ('NULL'))
                 ->save ()
@@ -111,6 +112,9 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         $billingAddress  = Mage::getModel('sales/order_address')->load($mageOrder->getBillingAddressId ());
         $shippingAddress = Mage::getModel('sales/order_address')->load($mageOrder->getShippingAddressId ());
 
+		$rawPostcode = $billingAddress->getPostcode();
+		$postCode    = Mage::helper ('mhub')->validatePostcode ($rawPostcode);
+
         $post = array(
             'codigoPedido' => $mageOrder->getIncrementId(),
             'dataPedido'   => date ('c', strtotime ($mageOrder->getCreatedAt())),
@@ -125,7 +129,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             ),
             'endereco' => array(
                 'bairro' => $billingAddress->getStreet4(),
-                'cep'    => $billingAddress->getPostcode(),
+                'cep'    => $postCode,
                 'cidade' => $billingAddress->getCity(),
                 'complemento' => $billingAddress->getStreet3(),
                 'estado'      => $this->getRegionName ($billingAddress->getRegionId(), $billingAddress->getCountryId()),
@@ -143,15 +147,14 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
         ;
 
-        $productSkuAttribute = Mage::getStoreConfig ('mhub/product/sku');
         $itemsPos = $itemsCount = $mageOrderItems->count ();
 
         foreach ($mageOrderItems as $id => $item)
         {
-            $productSku = $item->getData($productSkuAttribute);
+            $productId = $item->getData ($productIdAttribute);
 
             $post ['itens'][] = array(
-                'id'           => $productSku,
+                'id'           => $productId,
                 'quantidade'   => intval ($item->getQtyOrdered()),
                 'valor'        => $item->getBasePrice(),
                 'valorFrete'   => $itemsPos % $itemsCount == 0 ? $mageOrder->getBaseShippingAmount() : 0,
