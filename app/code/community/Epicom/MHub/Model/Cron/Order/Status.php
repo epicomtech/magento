@@ -42,6 +42,7 @@ class Epicom_MHub_Model_Cron_Order_Status extends Epicom_MHub_Model_Cron_Abstrac
                 ->setOrderIncrementId ($order->getIncrementId())
                 ->setOrderExternalId ($order->getExtOrderId())
                 ->setUpdatedAt (date ('c'))
+                ->setOperation (Epicom_MHub_Helper_Data::OPERATION_OUT)
                 ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
                 ->setMessage (new Zend_Db_Expr ('NULL'))
                 ->save ();
@@ -101,11 +102,14 @@ class Epicom_MHub_Model_Cron_Order_Status extends Epicom_MHub_Model_Cron_Abstrac
         $billingAddress  = Mage::getModel('sales/order_address')->load($mageOrder->getBillingAddressId ());
         $shippingAddress = Mage::getModel('sales/order_address')->load($mageOrder->getShippingAddressId ());
 
+		$rawPostcode = $billingAddress->getPostcode();
+		$postCode    = Mage::helper ('mhub')->validatePostcode ($rawPostcode);
+
         $post = array(
             'status'   => !strcmp ($mageOrder->getStatus (), $this->_cancelFilter) ? 'Cancelado' : 'Confirmado',
             'endereco' => array(
                 'bairro'      => $billingAddress->getStreet4(),
-                'cep'         => $billingAddress->getPostcode(),
+                'cep'         => $postCode,
                 'cidade'      => $billingAddress->getCity(),
                 'complemento' => $billingAddress->getStreet3(),
                 'estado'      => $this->getRegionName ($billingAddress->getRegionId(), $billingAddress->getCountryId()),
