@@ -341,6 +341,15 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             }
 
             /**
+             * External ID
+             */
+            $productsSkusMethod = str_replace (array ('{productCode}', '{productSku}'), array ($product->getExternalCode (), $productCode), self::PRODUCTS_SKUS_PATCH_METHOD);
+
+            $productsSkusResult = $this->getHelper ()->api ($productsSkusMethod);
+
+            $mageProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productsSkusResult->id)->save ();
+
+            /**
              * Availability
              */
             $priceFrom = $mageProduct->getSpecialPrice () ? $mageProduct->getPrice () : null;

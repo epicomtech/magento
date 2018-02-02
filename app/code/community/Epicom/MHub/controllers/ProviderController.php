@@ -37,7 +37,7 @@ class Epicom_MHub_ProviderController extends Epicom_MHub_Controller_Action
     {
         $result = Mage::getModel ('mhub/order_api')->create (
             $this->_jsonData ['marketplace'],
-            $this->_jsonData ['codigoEpicom'],
+            $this->_jsonData ['codigoPedidoEpicom'],
             $this->_jsonData ['dataCriacao'],
             $this->_jsonData ['itens'],
             $this->_jsonData ['destinatario'],

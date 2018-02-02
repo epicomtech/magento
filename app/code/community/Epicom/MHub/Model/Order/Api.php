@@ -32,7 +32,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         }
 
         $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
-        $productSkuAttribute  = Mage::getStoreConfig ('mhub/product/sku');
+        // $productSkuAttribute  = Mage::getStoreConfig ('mhub/product/sku');
 
         $quoteId = Mage::getModel ('checkout/cart_api')->create ();
 
@@ -48,12 +48,12 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             {
                 return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Product not exists: %s', $productCode), null /* product_not_exists */);
             }
-
+/*
             if (strcmp ($productSku, $mageProduct->getData ($productSkuAttribute)))
             {
-                return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Invalid Product SKU: %s', $productSku), null /* invalid_product_sku */);
+                return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Invalid Product SKU: %s', $productSku), null / * invalid_product_sku * /);
             }
-
+*/
             if ($productPrice != $mageProduct->getFinalPrice ())
             {
                 return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Invalid Product Price: %s', $productPrice), null /* invalid_product_price */);
