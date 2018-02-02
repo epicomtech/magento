@@ -105,11 +105,13 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
             {
                 $shipmentItemQtys = array ();
 
+                $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
+
                 foreach ($shipmentInfoResult->skus as $_sku)
                 {
                     foreach ($mageOrder->getAllItems () as $_item)
                     {
-                        if (!strcmp ($_item->getData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_CODE), $_sku->codigo))
+                        if (!strcmp ($_item->getData ($productCodeAttribute /* Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_CODE */), $_sku->codigo))
                         {
                             $shipmentItemQtys [$_item->getId ()] = $_sku->quantidade;
                         }
@@ -136,7 +138,7 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
                     ->setNumber ($shipmentInfoResult->tracking)
                     ->setDescription ($shipmentInfoResult->linkRastreioEntrega)
                     ->setTitle ($shipmentInfoResult->nomeTransportadora)
-                    ->setCarrierCode (Epicom_MHub_Model_Carrier_Epicom::CODE)
+                    ->setCarrierCode (Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE)
                 ;
 
                 $mageShipment->addTrack ($mageTrack);
