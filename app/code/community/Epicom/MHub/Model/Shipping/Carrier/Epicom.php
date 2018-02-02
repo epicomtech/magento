@@ -73,7 +73,11 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
         }
         catch (Exception $e)
         {
-            return $result;
+            $error = $this->_getError ($e->getMessage ());
+
+            // $result->append ($error);
+
+            return $error;
         }
 
 		if (is_array ($shipping) && count ($shipping) > 0)
@@ -86,13 +90,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
                     foreach ($item->itens as $_item) $ids [] = $_item->id;
 
-                    $erromsg = $this->getConfigData ('specificerrmsg');
-
-                    $error = Mage::getModel ('shipping/rate_result_error')
-                        ->setCarrier ($this->_code)
-                        ->setCarrierTitle ($this->getConfigData ('title'))
-                        ->setErrorMessage ($errmsg ? $errmsg : sprintf ('%s: %s', $item->status, implode (',', $ids)))
-                    ;
+                    $error = $this->_getError (sprintf ('%s: %s', $item->status, implode (',', $ids)));
 
                     // $result->append ($error);
 
@@ -217,5 +215,18 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
 		return true;
 	}
+
+    public function _getError ($message)
+    {
+        $erromsg = $this->getConfigData ('specificerrmsg');
+
+        $error = Mage::getModel ('shipping/rate_result_error')
+            ->setCarrier ($this->_code)
+            ->setCarrierTitle ($this->getConfigData ('title'))
+            ->setErrorMessage ($errmsg ? $errmsg : $message)
+        ;
+
+        return $error;
+    }
 }
 

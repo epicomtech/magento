@@ -11,7 +11,7 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
 
     public function calculate ($marketplace, $zip, $unique, $items)
     {
-        if (empty ($marketplace) || empty ($zip) || empty ($unique) || empty ($items))
+        if (empty ($marketplace) || empty ($zip) || !isset ($unique) || empty ($items))
         {
             $this->_fault ('invalid_request_param');
         }
@@ -49,7 +49,7 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
 
             $mageQuote->addProduct ($mageProduct, $productQty);
 
-            if (!strcmp ($unique, 'false'))
+            if (!$unique)
             {
                 $this->_shippingAmount = 0;
 
@@ -64,7 +64,7 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
             $products ['qtys']   += $productQty;
         }
 
-        if (!strcmp ($unique, 'true'))
+        if ($unique)
         {
             $result ['itemCalculoCarrinho'] = array(
                 'codigo'     => $products ['codes'],
@@ -96,13 +96,13 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
                     $this->_shippingAmount += $_rate->getPrice ();
 
                     $result [] = array(
-                        'diasParaEntrega'    => 0,
+                        'diasParaEntrega'    => null,
                         'entrega'            => Mage::getStoreConfig ("carriers/{$code}/title"),
                         'tranportadora'      => $_rate->getCode (),
                         'valorTotalFrete'    => $_rate->getPrice (),
                         'valorTotalPedido'   => $quote->getBaseSubtotal (),
                         'valorTotal'         => $quote->getBaseSubtotal () + $_rate->getPrice (),
-                        'valorTotalImpostos' => 0,
+                        'valorTotalImpostos' => null,
                     );
                 }
             }
