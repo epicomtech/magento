@@ -266,6 +266,7 @@
                 <model>mhub/shipping_carrier_epicom</model>
                 <title>Epicom</title>
                 <name>epicom</name>
+                <delivery_time>5</delivery_time>
                 <sallowspecific>0</sallowspecific>
             </epicom>
         </carriers>

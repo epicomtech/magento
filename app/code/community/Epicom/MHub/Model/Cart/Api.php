@@ -31,7 +31,7 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
         $result = array(
             'valorFrete'            => 0,
             'valorTotaldosProdutos' => 0,
-            'itemCalculoCarrinho'   => array ()
+            'items'   => array ()
         );
 
         foreach ($items as $_item)
@@ -49,12 +49,12 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
 
             $mageQuote->addProduct ($mageProduct, $productQty);
 
-            if (!$unique)
+            if (strtolower ($unique) == 'false' || $unique === false)
             {
                 $this->_shippingAmount = 0;
 
-                $result ['itemCalculoCarrinho'][] = array(
-                    'codigo'     => $productCode,
+                $result ['items'][] = array(
+                    'codigo'     => array ($productCode),
                     'quantidade' => $productQty,
                     'fretes'     => $this->_getShippingRates ($mageQuote, true)
                 );
@@ -64,9 +64,9 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
             $products ['qtys']   += $productQty;
         }
 
-        if ($unique)
+        if (strtolower ($unique) == 'true' || $unique === true)
         {
-            $result ['itemCalculoCarrinho'] = array(
+            $result ['items'][] = array(
                 'codigo'     => $products ['codes'],
                 'quantidade' => $products ['qtys'],
                 'fretes'     => $this->_getShippingRates ($mageQuote)
@@ -96,13 +96,13 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
                     $this->_shippingAmount += $_rate->getPrice ();
 
                     $result [] = array(
-                        'diasParaEntrega'    => null,
+                        'diasParaEntrega'    => Mage::getStoreConfig ("carriers/{$code}/delivery_time"),
                         'entrega'            => Mage::getStoreConfig ("carriers/{$code}/title"),
                         'tranportadora'      => $_rate->getCode (),
                         'valorTotalFrete'    => $_rate->getPrice (),
                         'valorTotalPedido'   => $quote->getBaseSubtotal (),
                         'valorTotal'         => $quote->getBaseSubtotal () + $_rate->getPrice (),
-                        'valorTotalImpostos' => null,
+                        'valorTotalImpostos' => 0,
                     );
                 }
             }

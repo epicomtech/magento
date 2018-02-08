@@ -160,4 +160,5 @@
 "Invalid shipment status for ID: %s","Status de Entrega Inválido para ID: %s"
 "Production","Produção"
 "Provider","Fornecedor"
+"Delivery Time","Prazo de Entrega"
 
