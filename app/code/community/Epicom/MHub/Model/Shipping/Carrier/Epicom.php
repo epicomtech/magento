@@ -16,8 +16,6 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 	{
 		if (!$this->getConfigFlag ('active')) return false;
 
-        if (!Mage::helper ('mhub')->isMarketplace ()) return false;
-
 		$result = Mage::getModel ('shipping/rate_result');
 
 		$rawPostcode = $request->getDestPostcode ();
@@ -55,7 +53,11 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
             ;
 
             $result->append ($method);
+
+            return $result;
         }
+
+        if (!Mage::helper ('mhub')->isMarketplace ()) return false;
 
         /**
          * via Magento Cart
