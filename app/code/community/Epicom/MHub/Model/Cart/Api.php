@@ -96,7 +96,7 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
                     $this->_shippingAmount += $_rate->getPrice ();
 
                     $result [] = array(
-                        'diasParaEntrega'    => Mage::getStoreConfig ("carriers/{$code}/delivery_time"),
+                        'diasParaEntrega'    => Mage::getStoreConfig ("carriers/epicom/delivery_time"),
                         'entrega'            => Mage::getStoreConfig ("carriers/{$code}/title"),
                         'tranportadora'      => $_rate->getCode (),
                         'valorTotalFrete'    => $_rate->getPrice (),
