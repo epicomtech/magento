@@ -10,5 +10,13 @@ class Epicom_MHub_Model_Payment_Method_Epicom extends Mage_Payment_Model_Method_
     const CODE = 'epicom';
 
     protected $_code = self::CODE;
+
+    public function isAvailable ($quote = null)
+    {
+        if (Mage::helper ('mhub')->isWebhook ())
+        {
+            return parent::isAvailable ($quote);
+        }
+    }
 }
 

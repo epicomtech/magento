@@ -157,6 +157,16 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
         return !strcmp ($this->getStoreConfig ('mode'), self::API_MODE_MARKETPLACE);
     }
 
+    public function isWebhook ()
+    {
+        $appRequest = Mage::app ()->getRequest ();
+        if (!strcmp ($appRequest->getControllerModule (), 'Epicom_MHub')
+            && in_array ($appRequest->getControllerName (), array ('provider', 'marketplace')))
+        {
+            return true;
+        }
+    }
+
     public function validatePostcode ($rawPostcode)
     {
         $postCode = preg_replace ('[\D]', '', $rawPostcode);

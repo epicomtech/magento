@@ -28,8 +28,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
         $jsonData = null;
 
         $appRequest = Mage::app ()->getRequest ();
-        if (!strcmp ($appRequest->getControllerModule (), 'Epicom_MHub')
-            && !strcmp ($appRequest->getControllerName (), 'provider'))
+        if (Mage::helper ('mhub')->isWebhook ())
         {
             $jsonData = json_decode ($appRequest->getRawBody (), true);
         }
