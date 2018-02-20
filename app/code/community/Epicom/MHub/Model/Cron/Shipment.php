@@ -46,6 +46,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
                 ->setShipmentIncrementId ($shipment->getIncrementId())
                 ->setOrderId ($shipment->getOrderId ())
                 ->setOrderIncrementId ($shipment->getOrderIncrementId ())
+                ->setExternalOrderId ($shipment->getData (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID))
                 ->setOperation (Epicom_MHub_Helper_Data::OPERATION_OUT)
                 ->setEvent (Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_CREATED)
                 ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
@@ -131,6 +132,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
             if (!strcmp ($track->getCarrierCode (), Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE))
             {
                 $post ['tracking'] = $track->getTrackNumber ();
+                $post ['linkRastreioEntrega'] = Mage::helper ('shipping')->getTrackingPopupUrlBySalesModel ($mageOrder);
 
                 break;
             }

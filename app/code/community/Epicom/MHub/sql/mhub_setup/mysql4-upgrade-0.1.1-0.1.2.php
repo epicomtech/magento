@@ -178,6 +178,13 @@ SQLBLOCK;
             'comment'  => 'Order Increment ID',
         ));
     $installer->getConnection ()
+        ->addColumn ($table, 'external_order_id', array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'length'   => 255,
+            'nullable' => false,
+            'comment'  => 'External Order ID',
+        ));
+    $installer->getConnection ()
         ->addColumn ($table, 'shipment_id', array(
             'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
             'length'   => 255,

@@ -113,6 +113,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
             case 401: { $message = 'Authentication Error'; break; }
             case 403: { $message = 'Permission Denied';    break; }
             case 404: { $message = 'Invalid URL';          break; }
+            case 405: { $message = 'Method Not Allowed';   break; }
             case 409: { $message = 'Resource Exists';      break; }
             case 500: { $message = 'Internal Error';       break; }
             case 200: { $message = null; /* Success! */    break; }

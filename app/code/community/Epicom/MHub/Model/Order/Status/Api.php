@@ -9,7 +9,7 @@ class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_
 {
     public function approve ($orderCode, $orderCodeEpicom, $marketplace, $recipient)
     {
-        if (empty ($orderCode) || empty ($orderCodeEpicom) || empty ($marketplace) || empty ($recipient))
+        if (/* empty ($orderCode) || */ empty ($orderCodeEpicom) || empty ($marketplace) || empty ($recipient))
         {
             $this->_fault ('invalid_request_param');
         }
@@ -234,7 +234,7 @@ class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_
 
         if (!$mageOrder || !$mageOrder->getId ())
         {
-            return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order not exists'), null /* order_not_exists */);
+            return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order not exists'), true /* order_not_exists */);
         }
 
         return array ($mhubOrderStatus, $mageOrder);

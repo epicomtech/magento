@@ -47,7 +47,7 @@ class Epicom_MHub_ProviderController extends Epicom_MHub_Controller_Action
         $this->getResponse ()->setBody (json_encode ($result));
     }
 
-    public function aprovadoAction ()
+    public function confirmadoAction ()
     {
         $result = Mage::getModel ('mhub/order_status_api')->approve (
             $this->_jsonData ['codigo'],

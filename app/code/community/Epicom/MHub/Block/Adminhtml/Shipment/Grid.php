@@ -42,6 +42,10 @@ class Epicom_MHub_Block_Adminhtml_Shipment_Grid extends Mage_Adminhtml_Block_Wid
             'header' => Mage::helper('mhub')->__('Order Inc. ID'),
             'index'  => 'order_increment_id',
         ));
+        $this->addColumn('external_order_id', array(
+            'header' => Mage::helper('mhub')->__('Ext. Order ID'),
+            'index'  => 'ext_order_id',
+        ));
         $this->addColumn('shipment_id', array(
             'header' => Mage::helper('mhub')->__('Shipment ID'),
             'index'  => 'shipment_id',
