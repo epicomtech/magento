@@ -44,7 +44,7 @@ class Epicom_MHub_Block_Adminhtml_Shipment_Grid extends Mage_Adminhtml_Block_Wid
         ));
         $this->addColumn('external_order_id', array(
             'header' => Mage::helper('mhub')->__('Ext. Order ID'),
-            'index'  => 'ext_order_id',
+            'index'  => 'external_order_id',
         ));
         $this->addColumn('shipment_id', array(
             'header' => Mage::helper('mhub')->__('Shipment ID'),
@@ -62,10 +62,12 @@ class Epicom_MHub_Block_Adminhtml_Shipment_Grid extends Mage_Adminhtml_Block_Wid
             'header' => Mage::helper('mhub')->__('Ext. Event ID'),
             'index'  => 'external_event_id',
         ));
+/*
         $this->addColumn('external_provider_id', array(
             'header' => Mage::helper('mhub')->__('Ext. Provider ID'),
             'index'  => 'external_provider_id',
         ));
+*/
         $this->addColumn('event', array(
             'header'  => Mage::helper('mhub')->__('Event'),
             'index'   => 'event',

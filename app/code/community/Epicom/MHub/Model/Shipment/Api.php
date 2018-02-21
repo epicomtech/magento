@@ -55,6 +55,11 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
             $this->_fault ('order_not_exists');
         }
 
+        $shipment->setOrderId ($mageOrder->getId ())
+            ->setOrderIncrementId ($mageOrder->getIncrementId ())
+            ->save ()
+        ;
+
         /**
          * Shipments Info
          */
