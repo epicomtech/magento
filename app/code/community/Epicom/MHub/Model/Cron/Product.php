@@ -28,6 +28,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
     {
         parent::_construct ();
 
+        $this->_idAttribute        = Mage::getStoreConfig ('mhub/product/id');
         $this->_codeAttribute      = Mage::getStoreConfig ('mhub/product/code');
         $this->_modelAttribute     = Mage::getStoreConfig ('mhub/product/model');
         $this->_eanAttribute       = Mage::getStoreConfig ('mhub/product/ean');
@@ -57,6 +58,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             $collection = Mage::getModel ('catalog/product')->getCollection ()
                 ->joinField ('category_id', 'catalog/category_product', 'category_id', 'product_id = entity_id', null, 'inner')
                 ->addAttributeToFilter ('category_id', array ('in' => $_id))
+                ->addAttributeToSelect ($this->_idAttribute)
                 ->addAttributeToSelect ($this->_codeAttribute)
             ;
 
@@ -85,6 +87,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
                 $mhubProduct->setProductId ($productId)
                     ->setExternalCode ($productCode ? $productCode : $productId)
+                    ->setExternalSku ($product->getData ($this->_idAttribute))
                     ->setOperation ($productOperation)
                     ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
                     ->setUpdatedAt (date ('c'))
