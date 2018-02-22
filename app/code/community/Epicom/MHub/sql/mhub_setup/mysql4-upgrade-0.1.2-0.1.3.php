@@ -23,12 +23,12 @@ SQLBLOCK;
     $installer->run ($sqlBlock);
 
     $installer->getConnection ()
-        ->addColumn ($table, 'external_id', array(
+        ->addColumn ($table, 'attribute_id', array(
             'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,
             'length'   => 11,
             'unsigned' => true,
             'nullable' => false,
-            'comment'  => 'External ID',
+            'comment'  => 'Attribute ID',
         ));
     $installer->getConnection ()
         ->addColumn ($table, 'option_id', array(

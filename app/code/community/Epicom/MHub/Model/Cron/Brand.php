@@ -15,7 +15,7 @@ class Epicom_MHub_Model_Cron_Brand extends Epicom_MHub_Model_Cron_Abstract
         $attribute     = Mage::getModel ('eav/entity_attribute')->loadByCode ('catalog_product', $attributeCode);
 
         $collection = Mage::getResourceModel ('eav/entity_attribute_option_collection')
-            ->setAttributeFilter ($attribute->getId())
+            ->addFieldToFilter ('main_table.attribute_id', array ('eq' => $attribute->getId ())) // ->setAttributeFilter ($attribute->getId())
             ->setStoreFilter (0)
         ;
 
@@ -34,6 +34,7 @@ class Epicom_MHub_Model_Cron_Brand extends Epicom_MHub_Model_Cron_Abstract
 
             $mhubBrand = Mage::getModel ('mhub/brand')->load ($optionId, 'option_id');
             $mhubBrand->setOptionId ($optionId)
+                ->setAttributeId ($attribute->getId ())
                 ->setName ($optionValue)
                 ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
                 ->setUpdatedAt (date ('c'))

@@ -43,6 +43,12 @@ class Epicom_MHub_Block_Adminhtml_Category_Grid extends Mage_Adminhtml_Block_Wid
         $this->addColumn('category_id', array(
             'header'  => Mage::helper('mhub')->__('Category ID'),
             'index'   => 'category_id',
+            'width'  => '50px',
+            'type'   => 'number',
+        ));
+        $this->addColumn('category', array(
+            'header'  => Mage::helper('mhub')->__('Category'),
+            'index'   => 'category_id',
             'type'    => 'options',
             'options' => $categories,
         ));

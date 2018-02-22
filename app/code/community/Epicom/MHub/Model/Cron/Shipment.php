@@ -28,7 +28,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
             );
 
         $collection->addAttributeToFilter ('sfo.status', array ('eq' => $orderStatus));
-        $collection->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true));
+        $collection->addAttributeToFilter ('sfo.' . Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true));
 
         $select = $collection->getSelect ()
             ->joinLeft(
@@ -47,6 +47,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
                 ->setOrderId ($shipment->getOrderId ())
                 ->setOrderIncrementId ($shipment->getOrderIncrementId ())
                 ->setExternalOrderId ($shipment->getData (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID))
+                ->setExternalShipmentId ($shipment->getData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID))
                 ->setOperation (Epicom_MHub_Helper_Data::OPERATION_OUT)
                 ->setEvent (Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_CREATED)
                 ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
@@ -179,6 +180,11 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
             $result = $this->getHelper ()->api ($shipmentsPostMethod, $post);
 
             $extShipmentId = $result->id;
+
+            $mageShipment->setData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_IS_EPICOM, true)
+                ->setData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID, $extShipmentId)
+                ->save ()
+            ;
         }
         catch (Exception $e)
         {

@@ -59,14 +59,14 @@ class Epicom_MHub_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller
             foreach ($ids as $id)
             {
                 $model = Mage::getModel('mhub/shipment')->load($id);
-
+/*
                 if ($model->getEvent () != Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_CREATED)
                 {
                     Mage::getSingleton('adminhtml/session')->addError(Mage::helper('mhub')->__('Invalid shipment status for ID: %s', $model->getId ()));
 
-                    return $this->_redirect('*/*/');
+                    return $this->_redirect('* / * /');
                 }
-
+*/
                 $mageOrder = Mage::getModel ('sales/order')->load ($model->getOrderId ());
 
                 $orderStatus   = null;

@@ -37,6 +37,9 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const ORDER_ATTRIBUTE_IS_EPICOM    = 'is_epicom';
     const ORDER_ATTRIBUTE_EXT_ORDER_ID = 'ext_order_id';
 
+    const SHIPMENT_ATTRIBUTE_IS_EPICOM       = 'is_epicom';
+    const SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID = 'ext_shipment_id';
+
     const API_ENVIRONMENT_URL_SANDBOX    = 'https://sandboxmhubapi.epicom.com.br/v1/';
     const API_ENVIRONMENT_URL_PRODUCTION = 'https://mhubapi.epicom.com.br/v1/';
 

@@ -34,9 +34,11 @@ class Epicom_MHub_Block_Adminhtml_Brand_Grid extends Mage_Adminhtml_Block_Widget
             'type'   => 'number',
             'index'  => 'entity_id',
         ));
-        $this->addColumn('external_id', array(
-            'header' => Mage::helper('mhub')->__('External ID'),
-            'index'  => 'external_id',
+        $this->addColumn('attribute_id', array(
+            'header' => Mage::helper('mhub')->__('Attribute'),
+            'index'  => 'attribute_id',
+            'type'    => 'options',
+            'options' => Mage::getModel ('mhub/adminhtml_system_config_source_attributes_product')->toArray (),
         ));
         $this->addColumn('option_id', array(
             'header' => Mage::helper('mhub')->__('Option ID'),
@@ -69,7 +71,7 @@ class Epicom_MHub_Block_Adminhtml_Brand_Grid extends Mage_Adminhtml_Block_Widget
             'header'  => Mage::helper('mhub')->__('Action'),
             'width'   => '50px',
             'type'    => 'action',
-            'getter'  => 'getBrandId',
+            'getter'  => 'getAttributeId',
             'filter'   => false,
             'sortable' => false,
             'index'    => 'stores',
@@ -77,10 +79,10 @@ class Epicom_MHub_Block_Adminhtml_Brand_Grid extends Mage_Adminhtml_Block_Widget
                 array(
                     'caption' => Mage::helper('catalog')->__('Edit'),
                     'url'     => array(
-                        'base'   => 'adminhtml/catalog_brand/edit',
-                        'params' => array('store'=>$this->getRequest()->getParam('store'), 'clear' => true)
+                        'base'   => 'adminhtml/catalog_product_attribute/edit',
+                        'params' => array('store'=>$this->getRequest()->getParam('store'))
                     ),
-                    'field'   => 'id'
+                    'field'   => 'attribute_id'
                 )
             ),
         ));

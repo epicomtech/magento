@@ -103,7 +103,7 @@ class Epicom_MHub_Block_Adminhtml_Shipment_Grid extends Mage_Adminhtml_Block_Wid
             'header'  => Mage::helper('mhub')->__('Action'),
             'width'   => '50px',
             'type'    => 'action',
-            'getter'  => 'getShipmentId',
+            'getter'  => 'getOrderId',
             'filter'   => false,
             'sortable' => false,
             'index'    => 'stores',
@@ -111,10 +111,10 @@ class Epicom_MHub_Block_Adminhtml_Shipment_Grid extends Mage_Adminhtml_Block_Wid
                 array(
                     'caption' => Mage::helper('mhub')->__('Edit'),
                     'url'     => array(
-                        'base'   => 'adminhtml/sales_shipment/view',
+                        'base'   => 'adminhtml/sales_order/view',
                         'params' => array('store'=>$this->getRequest()->getParam('store'))
                     ),
-                    'field'   => 'shipment_id'
+                    'field'   => 'order_id'
                 )
             ),
         ));

@@ -46,7 +46,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                 ->setCarrier ($this->_code)
                 ->setCarrierTitle ($this->getConfigData ('title'))
                 ->setMethod ($this->_code . '_provider')
-                ->setMethodTitle ('Provider')
+                ->setMethodTitle (Mage::helper ('mhub')->__('Provider'))
                 ->setPrice ($totalFreight)
                 ->setCost (0)
             ;

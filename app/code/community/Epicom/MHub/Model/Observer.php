@@ -99,6 +99,8 @@ class Epicom_MHub_Model_Observer
 
         if ($block instanceof Epicom_MHub_Block_Adminhtml_Shipment_Grid)
         {
+            $block->getMassactionBlock ()->removeItem('remove_shipments');
+
             $values = Mage::getModel ('mhub/adminhtml_system_config_source_event')->toArray ();
 
             unset ($values [Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_CREATED]);
@@ -117,6 +119,12 @@ class Epicom_MHub_Model_Observer
                         'values' => $values
                     )
                 )
+            ));
+
+            $block->getMassactionBlock()->addItem('remove_shipments', array(
+                'label'   => Mage::helper('mhub')->__('Remove Shipments'),
+                'url'     => Mage::getUrl('admin_mhub/adminhtml_shipment/massRemove'),
+                'confirm' => Mage::helper('mhub')->__('Are you sure?')
             ));
         }
     }

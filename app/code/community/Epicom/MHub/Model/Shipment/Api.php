@@ -147,8 +147,13 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
                 ;
 
                 $mageShipment->addTrack ($mageTrack);
+                $mageShipment->setData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_IS_EPICOM,       true);
+                $mageShipment->setData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID, $shipmentId);
                 $mageShipment->save ();
+
                 $mageTrack->save ();
+
+                $mageShipment->sendEmail (true);
 
                 $shipment->setShipmentId ($mageShipment->getId ());
                 $shipment->setShipmentIncrementId ($mageShipment->getIncrementId ());
@@ -177,9 +182,9 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
             }
             case Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_PARCIAL:
             {
-                $orderStatus   = Mage::getStoreConfig ('mhub/shipment/failed_status');
-                $orderComment  = Mage::getStoreConfig ('mhub/shipment/failed_comment');
-                $orderNotified = Mage::getStoreConfigFlag ('mhub/shipment/failed_notified');
+                $orderStatus   = Mage::getStoreConfig ('mhub/shipment/parcial_status');
+                $orderComment  = Mage::getStoreConfig ('mhub/shipment/parcial_comment');
+                $orderNotified = Mage::getStoreConfigFlag ('mhub/shipment/parcial_notified');
 
                 break;
             }

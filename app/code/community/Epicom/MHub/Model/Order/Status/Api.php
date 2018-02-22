@@ -45,6 +45,8 @@ class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_
             return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order cannot be invoiced: %s', $e->getMessage ()), null /* order_cannot_invoiced */);
         }
 
+        $invoice->sendEmail (true);
+
         $mhubOrderStatus->setOrderIncrementId ($mageOrder->getIncrementId ())
             ->setOrderId ($mageOrder->getId ())
             ->setStatus (Epicom_MHub_Helper_Data::STATUS_OKAY)

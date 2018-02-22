@@ -264,6 +264,9 @@ addMHubOrderTable       ($installer, Epicom_MHub_Helper_Data::ORDER_TABLE,      
 addMHubOrderStatusTable ($installer, Epicom_MHub_Helper_Data::ORDER_STATUS_TABLE, 'Epicom MHub Order Status');
 addMHubShipmentTable    ($installer, Epicom_MHub_Helper_Data::SHIPMENT_TABLE,     'Epicom MHub Shipment');
 
+/**
+ * Order & Quote
+ */
 $entities = array(
     'quote',
     'order',
@@ -280,6 +283,32 @@ foreach ($entities as $_entity)
     $installer->addAttribute ($_entity, Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, $options);
 }
 
+/**
+ * Shipment
+ */
+$entities = array(
+    'shipment'
+);
+
+foreach ($entities as $_entity)
+{
+    $installer->addAttribute ($_entity, Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_IS_EPICOM, $options);
+}
+
+$options = array(
+    'type'     => Varien_Db_Ddl_Table::TYPE_VARCHAR,
+    'visible'  => true,
+    'required' => false
+);
+
+foreach ($entities as $_entity)
+{
+    $installer->addAttribute ($_entity, Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID, $options);
+}
+
+/**
+ * Quote Item & Order Item
+ */
 $entities = array(
     'quote_item',
     'order_item',

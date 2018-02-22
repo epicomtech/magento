@@ -34,5 +34,17 @@ class Epicom_MHub_Model_Adminhtml_System_Config_Source_Attributes
 
         return $result;
     }
+
+    public function toArray ()
+    {
+        $result = null;
+
+        foreach ($this->toOptionArray () as $option)
+        {
+            $result [$option ['value']] = $option ['label'];
+        }
+
+        return $result;
+    }
 }
 
