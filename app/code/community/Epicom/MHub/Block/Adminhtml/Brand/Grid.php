@@ -61,10 +61,14 @@ class Epicom_MHub_Block_Adminhtml_Brand_Grid extends Mage_Adminhtml_Block_Widget
         $this->addColumn('updated_at', array(
             'header' => Mage::helper('mhub')->__('Updated At'),
             'index'  => 'updated_at',
+            'type'   => 'datetime',
+            'width'  => '100px',
         ));
         $this->addColumn('synced_at', array(
             'header' => Mage::helper('mhub')->__('Synced At'),
             'index'  => 'synced_at',
+            'type'   => 'datetime',
+            'width'  => '100px',
         ));
 
         $this->addColumn('action', array(

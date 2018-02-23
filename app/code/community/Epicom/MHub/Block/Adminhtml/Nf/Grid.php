@@ -57,7 +57,8 @@ class Epicom_MHub_Block_Adminhtml_NF_Grid extends Mage_Adminhtml_Block_Widget_Gr
 		$this->addColumn ('issued_at', array(
 			'header' => Mage::helper ('mhub')->__('Issued At'),
 			'index'  => 'issued_at',
-			'type'   => 'date',
+            'type'   => 'date',
+            'width'  => '100px',
 		));
         $this->addColumn('operation', array(
             'header'  => Mage::helper('mhub')->__('Operation'),
@@ -78,12 +79,14 @@ class Epicom_MHub_Block_Adminhtml_NF_Grid extends Mage_Adminhtml_Block_Widget_Gr
 		$this->addColumn ('updated_at', array(
 			'header' => Mage::helper ('mhub')->__('Updated At'),
 			'index'  => 'updated_at',
-			'type'   => 'date',
+            'type'   => 'datetime',
+            'width'  => '100px',
 		));
 		$this->addColumn ('synced_at', array(
 			'header' => Mage::helper ('mhub')->__('Synced At'),
 			'index'  => 'synced_at',
-			'type'   => 'date',
+            'type'   => 'datetime',
+            'width'  => '100px',
 		));
 
         $this->addColumn ('action',

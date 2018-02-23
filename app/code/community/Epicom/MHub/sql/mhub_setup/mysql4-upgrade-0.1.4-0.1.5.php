@@ -86,13 +86,13 @@ SQLBLOCK;
         ));
     $installer->getConnection ()
         ->addColumn ($table, 'updated_at', array(
-            'type'     => Varien_Db_Ddl_Table::TYPE_DATE,
+            'type'     => Varien_Db_Ddl_Table::TYPE_DATETIME,
             'nullable' => true,
             'comment'  => 'Updated At',
         ));
     $installer->getConnection ()
         ->addColumn ($table, 'synced_at', array(
-            'type'     => Varien_Db_Ddl_Table::TYPE_DATE,
+            'type'     => Varien_Db_Ddl_Table::TYPE_DATETIME,
             'nullable' => true,
             'comment'  => 'Synced At',
         ));
