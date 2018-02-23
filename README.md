@@ -66,3 +66,38 @@ E editar os detalhes do produto diretamente no painel da Epicom.
 
 <img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-produtos-detalhes.png" alt="" title="Epicom MHub - Magento - Editando os produtos no painel" />
 
+**8 - Calculando o frete no carrinho**
+
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-produtos-carrinho.png" alt="" title="Epicom MHub - Magento - Calculando o frete no carrinho" />
+
+**9 - Consultando os pedidos**
+
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-pedidos-grid.png" alt="" title="Epicom MHub - Magento - Consultando os pedidos" />
+
+Consultando os pedidos dentro do painel da Epicom
+
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-pedidos-painel.png" alt="" title="Epicom MHub - Magento - Consultando os pedidos no painel" />
+
+Detalhes do pedido no Painel
+
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-pedidos-detalhes.png" alt="" title="Epicom MHub - Magento - Detalhes do pedido no painel" />
+
+Histórico do pedido no painel
+
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-pedidos-historico.png" alt="" title="Epicom MHub - Magento - Histórico do pedido no painel" />
+
+Histórico do pedido no Magento
+
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-pedido-admin.png" alt="" title="Epicom MHub - Magento - Histórico do pedido no Magento" />
+
+**10 - Consultando os status dos pedidos**
+
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-status_pedidos-grid.png" alt="" title="Epicom MHub - Magento - Consultando os status dos pedidos" />
+
+**11 - Consultando os status das entregas**
+
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-entregas-grid.png" alt="" title="Epicom MHub - Magento - Consultando os status das entregas" />
+
+**12 - Gerenciando as notas fiscais**
+
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-notas_fiscais-grid.png" alt="" title="Epicom MHub - Magento - Gerenciando as notas fiscais" />
