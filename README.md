@@ -4,11 +4,15 @@
 
 <h2>Instalação</h2>
 
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/sempre-faca-backup.png" alt="" title="Epicom MHub - Magento - Sempre Faça Backup" />
+
 **Instalar usando o modgit:**
 
     $ cd /path/to/magento
     $ modgit init
     $ modgit add epicomtech_magento https://github.com/epicomtech/magento.git
+
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/pos-instalacao.png" alt="" title="Epicom MHub - Magento - Pós Instalação" />
 
 <h2>Conhecendo o módulo</h2>
 
