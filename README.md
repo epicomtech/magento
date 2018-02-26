@@ -14,6 +14,12 @@
 
 <img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/pos-instalacao.png" alt="" title="Epicom MHub - Magento - Pós Instalação" />
 
+<h2>Antes de Começar</h2>
+
+**Solicitando um token para obter acesso às APIs da Epicom**
+
+Antes de utilizar o módulo, é necessário solicitar uma chave da API via email para: integracao@epicom.com.br
+
 <h2>Conhecendo o módulo</h2>
 
 **1 - Habilitando o módulo MHub**
