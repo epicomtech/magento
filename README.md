@@ -40,7 +40,7 @@ Observações: A comunicação da loja Magento e do serviço MHub da Epicom são
 
 É possível selecionar qual categoria irá para a Epicom, no momento do cadastro, juntamente com todos os seus produtos.
 
-<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-categorias-admin.png" alt="" title="Epicom MHub - Magento - Gerenciando as categorias" />
+<img src="https://s3-us-west-2.amazonaws.com/githubepicom/mhub_magento/epicom-magento-mhub-categorias-lista.png" alt="" title="Epicom MHub - Magento - Gerenciando as categorias" />
 
 **3 - Consultando a fila de categorias**
 
