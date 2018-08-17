@@ -9,12 +9,12 @@ class Epicom_MHub_Adminhtml_AttributegroupController extends Mage_Adminhtml_Cont
 {
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/attributegroups');
+        return Mage::getSingleton('admin/session')->isAllowed('mhub/attributegroup');
     }
 
     protected function _initAction()
     {
-        $this->loadLayout()->_setActiveMenu('epicom/mhub/attributegroups')->_addBreadcrumb(Mage::helper('adminhtml')->__('Attribute Groups Manager'),Mage::helper('adminhtml')->__('Attribute Groups Manager'));
+        $this->loadLayout()->_setActiveMenu('epicom/mhub/attributegroup')->_addBreadcrumb(Mage::helper('adminhtml')->__('Attribute Groups Manager'),Mage::helper('adminhtml')->__('Attribute Groups Manager'));
 
         return $this;
     }

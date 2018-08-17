@@ -9,12 +9,12 @@ class Epicom_MHub_Adminhtml_CategoryController extends Mage_Adminhtml_Controller
 {
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/categories');
+        return Mage::getSingleton('admin/session')->isAllowed('mhub/category');
     }
 
     protected function _initAction()
     {
-        $this->loadLayout()->_setActiveMenu('epicom/mhub/categories')->_addBreadcrumb(Mage::helper('adminhtml')->__('Categories Manager'),Mage::helper('adminhtml')->__('Categories Manager'));
+        $this->loadLayout()->_setActiveMenu('epicom/mhub/category')->_addBreadcrumb(Mage::helper('adminhtml')->__('Categories Manager'),Mage::helper('adminhtml')->__('Categories Manager'));
 
         return $this;
     }

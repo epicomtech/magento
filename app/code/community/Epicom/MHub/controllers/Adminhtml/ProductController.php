@@ -9,12 +9,12 @@ class Epicom_MHub_Adminhtml_ProductController extends Mage_Adminhtml_Controller_
 {
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/products');
+        return Mage::getSingleton('admin/session')->isAllowed('mhub/product');
     }
 
     protected function _initAction()
     {
-        $this->loadLayout()->_setActiveMenu('epicom/mhub/products')->_addBreadcrumb(Mage::helper('adminhtml')->__('Products Manager'),Mage::helper('adminhtml')->__('Products Manager'));
+        $this->loadLayout()->_setActiveMenu('epicom/mhub/product')->_addBreadcrumb(Mage::helper('adminhtml')->__('Products Manager'),Mage::helper('adminhtml')->__('Products Manager'));
 
         return $this;
     }

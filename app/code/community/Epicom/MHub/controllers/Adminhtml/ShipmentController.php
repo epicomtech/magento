@@ -16,7 +16,7 @@ class Epicom_MHub_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller
 
     protected function _initAction()
     {
-        $this->loadLayout()->_setActiveMenu('epicom/mhub/shipments')->_addBreadcrumb(Mage::helper('adminhtml')->__('Shipments Manager'),Mage::helper('adminhtml')->__('Shipments Manager'));
+        $this->loadLayout()->_setActiveMenu('epicom/mhub/shipment')->_addBreadcrumb(Mage::helper('adminhtml')->__('Shipments Manager'),Mage::helper('adminhtml')->__('Shipments Manager'));
 
         return $this;
     }

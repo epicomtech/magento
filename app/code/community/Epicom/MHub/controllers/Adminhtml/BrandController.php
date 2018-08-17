@@ -9,12 +9,12 @@ class Epicom_MHub_Adminhtml_BrandController extends Mage_Adminhtml_Controller_Ac
 {
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/brands');
+        return Mage::getSingleton('admin/session')->isAllowed('mhub/brand');
     }
 
     protected function _initAction()
     {
-        $this->loadLayout()->_setActiveMenu('epicom/mhub/brands')->_addBreadcrumb(Mage::helper('adminhtml')->__('Brands Manager'),Mage::helper('adminhtml')->__('Brands Manager'));
+        $this->loadLayout()->_setActiveMenu('epicom/mhub/brand')->_addBreadcrumb(Mage::helper('adminhtml')->__('Brands Manager'),Mage::helper('adminhtml')->__('Brands Manager'));
 
         return $this;
     }

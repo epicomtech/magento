@@ -14,7 +14,7 @@ class Epicom_MHub_Adminhtml_Order_StatusController extends Mage_Adminhtml_Contro
 
     protected function _initAction()
     {
-        $this->loadLayout()->_setActiveMenu('epicom/mhub/orders_statuses')->_addBreadcrumb(Mage::helper('adminhtml')->__('Orders Statuses Manager'),Mage::helper('adminhtml')->__('Orders Statuses Manager'));
+        $this->loadLayout()->_setActiveMenu('epicom/mhub/orders_status')->_addBreadcrumb(Mage::helper('adminhtml')->__('Orders Statuses Manager'),Mage::helper('adminhtml')->__('Orders Statuses Manager'));
 
         return $this;
     }

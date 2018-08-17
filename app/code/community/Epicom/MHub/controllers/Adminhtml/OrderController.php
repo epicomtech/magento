@@ -14,7 +14,7 @@ class Epicom_MHub_Adminhtml_OrderController extends Mage_Adminhtml_Controller_Ac
 
     protected function _initAction()
     {
-        $this->loadLayout()->_setActiveMenu('epicom/mhub/orders')->_addBreadcrumb(Mage::helper('adminhtml')->__('Orders Manager'),Mage::helper('adminhtml')->__('Orders Manager'));
+        $this->loadLayout()->_setActiveMenu('epicom/mhub/order')->_addBreadcrumb(Mage::helper('adminhtml')->__('Orders Manager'),Mage::helper('adminhtml')->__('Orders Manager'));
 
         return $this;
     }
