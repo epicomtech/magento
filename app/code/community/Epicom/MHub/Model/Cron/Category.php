@@ -226,7 +226,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
                     'Codigo'  => $attributeCode,
                     'Nome'    => $attributeFrontendLabel ? $attributeFrontendLabel : $attributeCode,
                     'Valores' => $values,
-                    'atributoValorLivre' => !$attribute->getSourceModel () ? true : false
+                    'atributoValorLivre' => count ($values) == 0 /* !$attribute->getSourceModel () */ ? true : false
                 );
 
                 $this->getHelper ()->api (self::ATTRIBUTES_METHOD, $post, 'PUT');
