@@ -119,6 +119,8 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
 
                 $mageProduct->setAttributeSetId ($categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId);
 
+                $mageProduct->setCategoryIds (array ($mageCategory->getId ()));
+
                 // child
                 $mageProduct->setName ($productsSkusResult->nome);
                 $mageProduct->setUrl ($productsSkusResult->nome);
