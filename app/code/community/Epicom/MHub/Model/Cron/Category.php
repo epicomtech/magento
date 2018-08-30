@@ -246,7 +246,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
                 $post = array(
                     'AllowVariations' => true,
                     'Codigo'          => $attribute->getAttributeCode(),
-                    'Obrigatorio'     => true,
+                    'Obrigatorio'     => boolval ($attribute->getIsRequired()),
                     'CodigosValores'  => $allowedValues,
                 );
 
