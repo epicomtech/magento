@@ -215,8 +215,22 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
 
                 foreach ($productsSkusResult->imagens as $id => $image)
                 {
+                    $uri = null;
+
+                    foreach (array ($image->zoom, $image->maior, $image->menor) as $_uri)
+                    {
+                        if (!empty ($_uri))
+                        {
+                            $uri = $_uri;
+
+                            break;
+                        }
+                    }
+
+                    if (empty ($uri)) continue;
+
                     $client = new Zend_Http_Client ();
-                    $client->setUri ($image->zoom);
+                    $client->setUri ($uri);
 
                     $response = $client->request ('GET');
 
