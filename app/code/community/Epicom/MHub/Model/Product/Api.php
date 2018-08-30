@@ -82,15 +82,18 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
         switch ($type)
         {
             case Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU:
+            case Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU:
             {
                 break;
             }
-            case Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU:
+            case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU:
             {
+                /*
                 if (!$productNotExists)
                 {
                     return Mage::app ()->getResponse ()->setBody ('Product Already Exists'); // $this->_fault ('product_already_exists');
                 }
+                */
 
                 // default
                 $mageProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
@@ -115,9 +118,7 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 $defaultAttributeSetId  = Mage::getStoreConfig ('mhub/attributes_set/product');
 
                 $mageProduct->setAttributeSetId ($categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId);
-            }
-            case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU:
-            {
+
                 // child
                 $mageProduct->setName ($productsSkusResult->nome);
                 $mageProduct->setUrl ($productsSkusResult->nome);
