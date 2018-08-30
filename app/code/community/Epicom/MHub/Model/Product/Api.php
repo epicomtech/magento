@@ -95,6 +95,8 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 }
                 */
 
+            if ($productNotExists)
+            {
                 // default
                 $mageProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
                 $mageProduct->setTaxClassId (0); // none
@@ -120,6 +122,7 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 $mageProduct->setAttributeSetId ($categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId);
 
                 $mageProduct->setCategoryIds (array ($mageCategory->getId ()));
+            }
 
                 // child
                 $mageProduct->setName ($productsSkusResult->nome);
