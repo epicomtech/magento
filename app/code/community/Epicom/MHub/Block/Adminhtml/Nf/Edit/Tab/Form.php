@@ -38,6 +38,12 @@ class Epicom_MHub_Block_Adminhtml_Nf_Edit_Tab_Form extends Mage_Adminhtml_Block_
 		    'name'     => 'access_key',
 		    'required' => true,
 		));
+		$fieldset->addField ('cfop', 'text', array(
+		    'label'    => Mage::helper ('mhub')->__('CFOP'),
+		    'class'    => 'required-entry validate-number',
+		    'name'     => 'cfop',
+		    'required' => true,
+		));
         $fieldset->addField ('link', 'text', array(
             'label'    => Mage::helper ('mhub')->__('Link'),
             'name'     => 'link',

@@ -92,6 +92,7 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
                     ->setNumber ($shipmentInfoResult->nfNumero)
                     ->setSeries ($shipmentInfoResult->nfSerie)
                     ->setAccessKey ($shipmentInfoResult->nfChaveAcesso)
+                    ->setCfop ($shipmentInfoResult->nfCFOP)
                     ->setLink ($shipmentInfoResult->nfLink)
                     ->setIssuedAt ($shipmentInfoResult->nfDataEmissao)
                     ->setOperation (Epicom_MHub_Helper_Data::OPERATION_IN)
