@@ -322,10 +322,8 @@ $options = array(
 
 foreach ($entities as $_entity)
 {
-/*
     $installer->addAttribute ($_entity, Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID,   $options);
     $installer->addAttribute ($_entity, Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SKU,  $options);
-*/
     $installer->addAttribute ($_entity, Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_CODE, $options);
 }
 
