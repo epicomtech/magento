@@ -9,7 +9,7 @@ class Epicom_MHub_Adminhtml_ProductController extends Mage_Adminhtml_Controller_
 {
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/product');
+        return Mage::getSingleton('admin/session')->isAllowed('epicom/mhub/product');
     }
 
     protected function _initAction()

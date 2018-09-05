@@ -9,7 +9,7 @@ class Epicom_MHub_Adminhtml_AttributegroupController extends Mage_Adminhtml_Cont
 {
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/attributegroup');
+        return Mage::getSingleton('admin/session')->isAllowed('epicom/mhub/attributegroup');
     }
 
     protected function _initAction()

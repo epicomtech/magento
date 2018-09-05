@@ -9,7 +9,7 @@ class Epicom_MHub_Adminhtml_CategoryController extends Mage_Adminhtml_Controller
 {
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/category');
+        return Mage::getSingleton('admin/session')->isAllowed('epicom/mhub/category');
     }
 
     protected function _initAction()

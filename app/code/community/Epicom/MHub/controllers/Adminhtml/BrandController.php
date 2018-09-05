@@ -9,7 +9,7 @@ class Epicom_MHub_Adminhtml_BrandController extends Mage_Adminhtml_Controller_Ac
 {
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/brand');
+        return Mage::getSingleton('admin/session')->isAllowed('epicom/mhub/brand');
     }
 
     protected function _initAction()

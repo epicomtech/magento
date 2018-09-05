@@ -11,7 +11,7 @@ class Epicom_MHub_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller
 
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/shipment');
+        return Mage::getSingleton('admin/session')->isAllowed('epicom/mhub/shipment');
     }
 
     protected function _initAction()

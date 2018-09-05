@@ -9,7 +9,7 @@ class Epicom_MHub_Adminhtml_Order_StatusController extends Mage_Adminhtml_Contro
 {
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/order_status');
+        return Mage::getSingleton('admin/session')->isAllowed('epicom/mhub/order_status');
     }
 
     protected function _initAction()

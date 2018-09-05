@@ -9,7 +9,7 @@ class Epicom_MHub_Adminhtml_OrderController extends Mage_Adminhtml_Controller_Ac
 {
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('mhub/order');
+        return Mage::getSingleton('admin/session')->isAllowed('epicom/mhub/order');
     }
 
     protected function _initAction()
