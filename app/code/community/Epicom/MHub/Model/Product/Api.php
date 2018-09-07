@@ -111,7 +111,6 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 if ($productNotExists)
                 {
                     // default
-                    $mageProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
                     $mageProduct->setTaxClassId (0); // none
                     $mageProduct->setWeight (999999);
                     $mageProduct->setPrice (999999);
@@ -121,6 +120,8 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                         : Mage_Catalog_Model_Product_Visibility::BOTH
                     );
                 }
+
+                $mageProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
 
                 $mageProduct->setAttributeSetId ($productAttributeSetId);
 
@@ -227,7 +228,6 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                     if ($parentNotExists)
                     {
                         // default
-                        $parentProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE);
                         $parentProduct->setTaxClassId (0); // none
                         $parentProduct->setVisibility (Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
                         // $parentProduct->setWeight (999999);
@@ -235,6 +235,8 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                         $parentProduct->setWebsiteIds (array (1)); // Default
                         $parentProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
                     }
+
+                    $parentProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE);
 
                     $parentProduct->setAttributeSetId ($productAttributeSetId);
 
