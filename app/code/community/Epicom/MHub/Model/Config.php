@@ -64,15 +64,22 @@ class Epicom_MHub_Model_Config
         return $optionId;
     }
 
-    public function getAttributeId ($attributeCode, $entityType = 'catalog_product')
+    public function getAttribute ($attributeCode, $field = 'attribute_code')
     {
         $model = Mage::getModel ('eav/entity_attribute')
-            ->setEntityTypeId ($entityType)
+            ->setEntityTypeId (Mage_Catalog_Model_Product::ENTITY)
         ;
 
-        $model->load ($attributeCode, 'attribute_code');
+        $model->load ($attributeCode, $field);
 
-        return $model->getId ();
+        return $model; // ->getId ();
+    }
+
+    public function getAttributeId ($attributeCode, $field = 'attribute_code')
+    {
+        $attribute = $this->getAttribute ($attributeCode, $field);
+
+        return $attribute->getId ();
     }
 
     public function getAttributeOptionIdByValue ($attributeId, $value, $storeId = 0)

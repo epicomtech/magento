@@ -312,6 +312,15 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </product>
+                        <product_associations translate="label">
+                            <label>Product Attributes Set Associations</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>10</sort_order>
+                            <source_model>mhub/adminhtml_system_config_source_attributes_product_configurable</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </product_associations>
                     </fields>
                 </attributes_set>
                 <attributes translate="label" module="mhub">

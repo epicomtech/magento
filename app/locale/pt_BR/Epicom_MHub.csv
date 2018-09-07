@@ -58,8 +58,8 @@
 "Key","Chave"
 "Attribute","Atributo"
 "Attributes","Atributos"
-"Attributes Set","Conjunt de Atributos"
-"Product Attributes Set","Conjunt de Atributos do Produto"
+"Attributes Set","Conjunto de Atributos"
+"Product Attributes Set","Conjunto de Atributos do Produto"
 "Associable","Associável"
 "Category","Categoria"
 "Product","Produto"
@@ -162,4 +162,5 @@
 "Production","Produção"
 "Provider","Fornecedor"
 "Delivery Time","Prazo de Entrega"
+"Product Attributes Set Associations","Associações para Conjunto de Atributos de Produtos"
 

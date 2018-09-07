@@ -19,6 +19,22 @@ class Epicom_MHub_Model_Adminhtml_System_Config_Source_Attributes
         return $collection;
     }
 
+    public function getAttributeSetCollection ()
+    {
+        $collection = Mage::getResourceModel ('eav/entity_attribute_set_collection')
+            ->setEntityTypeFilter ($this->getEntityTypeId ())
+        ;
+
+        return $collection;
+    }
+
+    public function getEntityTypeId ()
+    {
+        $item = Mage::getModel ($this->_entityType);
+
+        return $item->getResource ()->getTypeId ();
+    }
+
     public function toOptionArray ()
     {
         $result = null;

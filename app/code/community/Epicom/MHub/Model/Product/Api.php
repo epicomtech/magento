@@ -88,23 +88,6 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
             }
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU:
             {
-                /*
-                if (!$productNotExists)
-                {
-                    return Mage::app ()->getResponse ()->setBody ('Product Already Exists'); // $this->_fault ('product_already_exists');
-                }
-                */
-
-            if ($productNotExists)
-            {
-                // default
-                $mageProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
-                $mageProduct->setTaxClassId (0); // none
-                $mageProduct->setVisibility (Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
-                $mageProduct->setWeight (999999);
-                $mageProduct->setPrice (999999);
-                $mageProduct->setWebsiteIds (array (1)); // Default
-
                 // attributeset by category id
                 $categoryId = $productsSkusResult->codigoCategoria;
 
@@ -118,13 +101,32 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
 
                 $categoryAttributeSetId = $mageCategory->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET);
                 $defaultAttributeSetId  = Mage::getStoreConfig ('mhub/attributes_set/product');
+                $productAttributeSetId  = $categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId;
 
-                $mageProduct->setAttributeSetId ($categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId);
+                $productHasVariations = is_array ($productsSkusResult->grupos) && count ($productsSkusResult->grupos) > 0;
+
+                /**
+                 * SKU
+                 */
+                if ($productNotExists)
+                {
+                    // default
+                    $mageProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
+                    $mageProduct->setTaxClassId (0); // none
+                    $mageProduct->setWeight (999999);
+                    $mageProduct->setPrice (999999);
+                    $mageProduct->setWebsiteIds (array (1)); // Default
+                    $mageProduct->setVisibility ($productHasVariations
+                        ? Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE
+                        : Mage_Catalog_Model_Product_Visibility::BOTH
+                    );
+                }
+
+                $mageProduct->setAttributeSetId ($productAttributeSetId);
 
                 $mageProduct->setCategoryIds (array ($mageCategory->getId ()));
-            }
 
-                // child
+                // sku
                 $mageProduct->setName ($productsSkusResult->nome);
                 $mageProduct->setUrl ($productsSkusResult->nome);
                 $mageProduct->setStatus ($productsSkusResult->ativo
@@ -132,11 +134,17 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                     : Mage_Catalog_Model_Product_Status::STATUS_DISABLED
                 );
 
+                $mageProduct->setShortDescription ($productsSkusResult->nome);
+
                 $productWeight = intval ($productsSkusResult->dimensoes->peso);
                 $mageProduct->setWeight ($productWeight > 0 ? $productWeight : 999999);
 
+                // parent
+                $mageProduct->setDescription ($productsInfoResult->descricao);
+
                 // custom
                 $productCodeAttribute         = Mage::getStoreConfig ('mhub/product/code');
+                $productModelAttribute        = Mage::getStoreConfig ('mhub/product/model');
                 $productEanAttribute          = Mage::getStoreConfig ('mhub/product/ean');
                 $productUrlAttribute          = Mage::getStoreConfig ('mhub/product/url');
                 // $productOutOfLineAttribute    = Mage::getStoreConfig ('mhub/product/out_of_line');
@@ -146,6 +154,7 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 $productLengthAttribute       = Mage::getStoreConfig ('mhub/product/length');
 
                 $mageProduct->setData ($productCodeAttribute, $productsSkusResult->codigo);
+                $mageProduct->setData ($productModelAttribute, $productsSkusResult->modelo);
                 $mageProduct->setData ($productEanAttribute, $productsSkusResult->ean);
                 $mageProduct->setData ($productUrlAttribute, $productsSkusResult->url);
                 // $mageProduct->setData ($productOutOfLineAttribute, $productsSkusResult->foraDeLinha);
@@ -154,68 +163,253 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 $mageProduct->setData ($productWidthAttribute, $productsSkusResult->dimensoes->largura);
                 $mageProduct->setData ($productLengthAttribute, $productsSkusResult->dimensoes->comprimento);
 
-                // parent
-                $mageProduct->setDescription ($productsInfoResult->descricao);
-                $mageProduct->setMetaKeyword ($productsInfoResult->palavrasChave);
-
-                // brand
-                $productBrandValue = $productsInfoResult->marca;
-                if (!empty ($productBrandValue))
+                // groups
+                if ($productHasVariations)
                 {
-                    $productBrandAttribute   = Mage::getStoreConfig ('mhub/product/brand');
-                    $productBrandAttributeId = $this->getConfig ()->getAttributeId ($productBrandAttribute);
-
-                    $productBrandAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productBrandAttributeId, array(
-                        'order' => '0',
-                        'label' => array (
-                            array ('store_code' => 'admin', 'value' => $productBrandValue)
-                        ),
-                    ));
-
-                    $mageProduct->setData ($productBrandAttribute, $productBrandAttributeOptionId);
-                }
-
-                // manufacturer
-                $productManufacturerValue = $productsInfoResult->codigoFornecedor;
-                if (!empty ($productManufacturerValue))
-                {
-                    $productManufacturerAttribute   = Mage::getStoreConfig ('mhub/product/manufacturer');
-                    $productManufacturerAttributeId = $this->getConfig ()->getAttributeId ($productManufacturerAttribute);
-
-                    $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($productManufacturerAttributeId, array(
-                        'order' => '0',
-                        'label' => array (
-                            array ('store_code' => 'admin', 'value' => $productManufacturerValue)
-                        ),
-                    ));
-
-                    $mageProduct->setData ($productManufacturerAttribute, $productManufacturerOptionId);
-                }
-
-                // attributes
-                $attributesResult = null;
-
-                foreach ($productsInfoResult->grupos as $group)
-                {
-                    $attributesResult .= $group->nome . str_repeat (PHP_EOL, 2);
-
-                    foreach ($group->atributos as $attribute)
+                    foreach ($productsSkusResult->grupos as $id => $group)
                     {
-                        $attributesResult .= $attribute->nome . ' ' . $attribute->valor . PHP_EOL;
+                        foreach ($group->atributos as $attribute)
+                        {
+                            $productAttribute      = $this->getConfig ()->getAttribute ($attribute->nome, 'frontend_label');
+                            $productAttributeValue = $attribute->valor;
+
+                            $productAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productAttribute->getId (), array(
+                                'order' => '0',
+                                'label' => array (
+                                    array ('store_code' => 'admin', 'value' => $productAttributeValue)
+                                ),
+                            ));
+
+                            $mageProduct->setData ($productAttribute->getAttributeCode (), $productAttributeOptionId);
+                        }
                     }
                 }
 
-                $productSummaryAttribute      = Mage::getStoreConfig ('mhub/product/summary');
-                $mageProduct->setData ($productSummaryAttribute, $attributesResult);
-
                 $mageProduct->save ();
 
-                // images
+                // stock
+                $stockItem = Mage::getModel ('cataloginventory/stock_item')
+                    ->assignProduct ($mageProduct)
+                    ->setProduct ($mageProduct)
+                    ->setStockId (Mage_CatalogInventory_Model_Stock::DEFAULT_STOCK_ID)
+                    ->setUseConfigManageStock (true)
+                    ->setManageStock (true)
+                    ->setIsInStock (false)
+                    ->setStockStatusChangedAuto (true)
+                    ->setQty (0)
+                    ->save ()
+                ;
+
+                $productIds = array ($mageProduct->getId ());
+
+                $productNotExists = false;
+
+                /**
+                 * Load Parent
+                 */
+                $parentNotExists = false;
+
+                if ($productHasVariations)
+                {
+                    $parentProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
+                    if (!$parentProduct || !$parentProduct->getId ())
+                    {
+                        $parentNotExists = true;
+                    }
+
+                    if ($parentNotExists)
+                    {
+                        $parentProduct = Mage::getModel ('catalog/product');
+                    }
+
+                    $parentProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
+
+                    if ($parentNotExists)
+                    {
+                        // default
+                        $parentProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE);
+                        $parentProduct->setTaxClassId (0); // none
+                        $parentProduct->setVisibility (Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
+                        // $parentProduct->setWeight (999999);
+                        // $parentProduct->setPrice (999999);
+                        $parentProduct->setWebsiteIds (array (1)); // Default
+                        $parentProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
+                    }
+
+                    $parentProduct->setAttributeSetId ($productAttributeSetId);
+
+                    $parentProduct->setCategoryIds (array ($mageCategory->getId ()));
+
+                    // product
+                    $parentProduct->setName ($productsInfoResult->nome);
+                    $parentProduct->setUrl ($productsInfoResult->nome);
+                    $parentProduct->setShortDescription ($productsInfoResult->nome);
+
+                    // parent
+                    $parentProduct->setDescription ($productsInfoResult->descricao);
+                    $parentProduct->setMetaKeyword ($productsInfoResult->palavrasChave);
+
+                    // custom
+                    $parentProduct->setData ($productCodeAttribute, $productsInfoResult->codigo);
+                    $parentProduct->setData ($productOfferTitleAttribute, $productsSkusResult->nomeReduzido);
+
+                    // brand
+                    $productBrandValue = $productsInfoResult->marca;
+                    if (!empty ($productBrandValue))
+                    {
+                        $productBrandAttribute   = Mage::getStoreConfig ('mhub/product/brand');
+                        $productBrandAttributeId = $this->getConfig ()->getAttributeId ($productBrandAttribute);
+
+                        $productBrandAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productBrandAttributeId, array(
+                            'order' => '0',
+                            'label' => array (
+                                array ('store_code' => 'admin', 'value' => $productBrandValue)
+                            ),
+                        ));
+
+                        $parentProduct->setData ($productBrandAttribute, $productBrandAttributeOptionId);
+                    }
+
+                    // manufacturer
+                    $productManufacturerValue = $productsInfoResult->codigoFornecedor;
+                    if (!empty ($productManufacturerValue))
+                    {
+                        $productManufacturerAttribute   = Mage::getStoreConfig ('mhub/product/manufacturer');
+                        $productManufacturerAttributeId = $this->getConfig ()->getAttributeId ($productManufacturerAttribute);
+
+                        $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($productManufacturerAttributeId, array(
+                            'order' => '0',
+                            'label' => array (
+                                array ('store_code' => 'admin', 'value' => $productManufacturerValue)
+                            ),
+                        ));
+
+                        $parentProduct->setData ($productManufacturerAttribute, $productManufacturerOptionId);
+                    }
+
+                    // attributes
+                    $attributesResult = null;
+
+                    foreach ($productsInfoResult->grupos as $group)
+                    {
+                        $attributesResult .= $group->nome . str_repeat (PHP_EOL, 2);
+
+                        foreach ($group->atributos as $attribute)
+                        {
+                            $attributesResult .= $attribute->nome . ' ' . $attribute->valor . PHP_EOL;
+                        }
+                    }
+
+                    $productSummaryAttribute      = Mage::getStoreConfig ('mhub/product/summary');
+                    $parentProduct->setData ($productSummaryAttribute, $attributesResult);
+
+                    $parentProduct->save ();
+
+                    // stock
+                    $stockItem = Mage::getModel ('cataloginventory/stock_item')
+                        ->assignProduct ($parentProduct)
+                        ->setProduct ($parentProduct)
+                        ->setStockId (Mage_CatalogInventory_Model_Stock::DEFAULT_STOCK_ID)
+                        ->setUseConfigManageStock (true)
+                        ->setManageStock (true)
+                        ->setIsInStock (true)
+                        ->setStockStatusChangedAuto (true)
+                        ->setQty (0)
+                        ->save ()
+                    ;
+
+                    // product association
+                    $assocItem = Mage::getModel ('mhub/product_association')->load ($productsSkusResult->codigo, 'sku');
+                    if (empty ($assocItem) || !$assocItem->getId ())
+                    {
+                        $assocItem = Mage::getModel ('mhub/product_association');
+                        $assocItem->setSku ($productsSkusResult->codigo);
+                    }
+
+                    $assocItem->setParentSku ($productsInfoResult->codigo)
+                        ->setIsModified (1)
+                        ->save ()
+                    ;
+
+                    /*
+                     * Configurable attributes
+                     */
+                    $resource = Mage::getSingleton ('core/resource');
+                    $write = $resource->getConnection ('core_write');
+                    $table = $resource->getTableName ('catalog_product_super_attribute');
+                    $write->delete ($table, "product_id = {$parentProduct->getId ()}"); // remove previous super_attributes
+
+                    $parentProduct->setCanSaveCustomOptions (true);
+                    $parentProduct->setCanSaveConfigurableAttributes (true);
+
+                    $productAttributeSets = null;
+
+                    $configurableAttributeSets = explode (',', Mage::getStoreConfig ('mhub/attributes_set/product_associations'));
+                    foreach ($configurableAttributeSets as $value)
+                    {
+                        list ($attributeSetId, $attributeId) = explode (':', $value);
+
+                        $attribute = Mage::getModel ('eav/entity_attribute')->load ($attributeId);
+
+                        $productAttributeSets [] = array ('attribute_id' => $attributeId, 'attribute_code' => $attribute->getAttributeCode (), 'attribute_set_id' => $attributeSetId);
+                    }
+
+                    $configurableAttributesData = null;
+
+                    foreach ($productAttributeSets as $value)
+                    {
+                        if ($parentProduct->getAttributeSetId () == $value ['attribute_set_id'])
+                        {
+                            $configurableAttributesData [] = array ('attribute_id' => $value ['attribute_id'], 'attribute_code' => $value ['attribute_code']);
+                        }
+                    }
+
+                    $parentProduct->setConfigurableAttributesData ($configurableAttributesData);
+
+                    /*
+                     * Simple products
+                     */
+                    $configurableProductsData = null;
+
+                    $collection = Mage::getModel ('mhub/product_association')->getCollection ()
+                        ->addFieldToFilter ('parent_sku', array ('eq' => $productsInfoResult->codigo))
+                    ;
+
+                    foreach ($collection as $item)
+                    {
+                        $simpleProduct = Mage::getModel ('catalog/product')->loadByAttribute ('sku', $item->getSku ());
+                        if ($simpleProduct && intval ($simpleProduct->getId ()) > 0)
+                        {
+                            foreach ($productAttributeSets as $value)
+                            {
+                                if ($simpleProduct->getAttributeSetId () == $value ['attribute_set_id'])
+                                {
+                                    $configurableProductsData [$simpleProduct->getId ()][] = array ('attribute_id' => $value ['attribute_id']);
+                                }
+                            }
+                        }
+                    }
+
+                    $parentProduct->setConfigurableProductsData ($configurableProductsData);
+
+                    $parentProduct->save ();
+
+                    $productIds [] = $parentProduct->getId ();
+
+                    $parentNotExists = true;
+                }
+
+                /**
+                 * Images
+                 */
                 $mediaApi = Mage::getModel ('catalog/product_attribute_media_api');
 
-                foreach ($mediaApi->items ($mageProduct->getId ()) as $item)
+                foreach ($productIds as $id)
                 {
-                    $mediaApi->remove ($mageProduct->getId (), $item ['file']);
+                    foreach ($mediaApi->items ($id) as $item)
+                    {
+                        $mediaApi->remove ($id, $item ['file']);
+                    }
                 }
 
                 foreach ($productsSkusResult->imagens as $id => $image)
@@ -248,7 +442,10 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
 
                         try
                         {
-                            $mediaApi->create ($mageProduct->getId (), $_image);
+                            foreach ($productIds as $_id)
+                            {
+                                $mediaApi->create ($_id, $_image);
+                            }
                         }
                         catch (Exception $e)
                         {
@@ -256,8 +453,6 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                         }
                     }
                 }
-
-                $productNotExists = false;
             }
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_PRICE:
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_STOCK:
@@ -303,6 +498,16 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                     ->setQty ($setQty)
                     ->save ()
                 ;
+
+                // parent
+                $parentProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
+                if ($parentProduct && intval ($parentProduct->getId ()) > 0)
+                {
+                    $parentProduct->setPrice ($mageProduct->getPrice ())
+                        ->setSpecialPrice ($mageProduct->getSpecialPrice ())
+                        ->save ();
+                    ;
+                }
             }
         }
 
