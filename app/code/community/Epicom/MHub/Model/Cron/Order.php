@@ -145,6 +145,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         $mageOrderItems = Mage::getResourceModel ('sales/order_item_collection')
             ->setOrderFilter ($mageOrder)
             ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
+            ->filterByTypes (array (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
         ;
 
         $itemsAmount = floatval ($mageOrder->getBaseShippingAmount ());
