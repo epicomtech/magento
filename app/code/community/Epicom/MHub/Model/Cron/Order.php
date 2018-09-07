@@ -156,10 +156,18 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         {
             $productId = $item->getData ($productIdAttribute);
 
+            $itemBasePrice = $item->getBasePrice ();
+
+            $parentItem = Mage::getModel ('sales/order_item')->load ($item->getParentItemId ());
+            if ($parentItem && intval ($parentItem->getId ()) > 0)
+            {
+                $itemBasePrice = $parentItem->getBasePrice ();
+            }
+
             $post ['itens'][] = array(
                 'id'           => $productId,
                 'quantidade'   => intval ($item->getQtyOrdered()),
-                'valor'        => $item->getBasePrice(),
+                'valor'        => $itemBasePrice,
                 'valorFrete'   => $itemsPos % $itemsCount == 0 ? $mageOrder->getBaseShippingAmount() : 0,
                 'formaEntrega' => $itemsPos % $itemsCount == 0 ? $mageOrder->getShippingDescription() : 0,
                 'prazoEntrega' => null,
