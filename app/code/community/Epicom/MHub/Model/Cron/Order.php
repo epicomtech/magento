@@ -118,7 +118,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         $post = array(
             'codigoPedido' => $mageOrder->getIncrementId(),
             'dataPedido'   => date ('c', strtotime ($mageOrder->getCreatedAt())),
-            'valorTotal'   => $mageOrder->getBaseGrandTotal(),
+            'valorTotal'   => null, // $mageOrder->getBaseGrandTotal(),
             'itens'        => array(),
             'destinatario' => array(
                 'cpfCnpj'           => preg_replace ('[\D]', "", $mageOrder->getCustomerTaxvat ()),
@@ -147,6 +147,8 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
         ;
 
+        $itemsAmount = floatval ($mageOrder->getBaseShippingAmount ());
+
         $itemsPos = $itemsCount = $mageOrderItems->count ();
 
         foreach ($mageOrderItems as $id => $item)
@@ -162,8 +164,12 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
                 'prazoEntrega' => null,
             );
 
+            $itemsAmount += floatval ($item->getBasePrice ());
+
             -- $itemsPos;
         }
+
+        $post ['valorTotal'] = $itemsAmount;
 
         $extOrderId = true;
 
