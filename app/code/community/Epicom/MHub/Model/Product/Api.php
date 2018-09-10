@@ -120,7 +120,7 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 $mageProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
                 $mageProduct->setVisibility ($productHasVariations
                     ? Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE
-                    : Mage_Catalog_Model_Product_Visibility::BOTH
+                    : Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH
                 );
 
                 $mageProduct->setAttributeSetId ($productAttributeSetId);
