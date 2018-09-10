@@ -160,9 +160,9 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                 $mageProduct->setData ($productUrlAttribute, $productsSkusResult->url);
                 // $mageProduct->setData ($productOutOfLineAttribute, $productsSkusResult->foraDeLinha);
                 $mageProduct->setData ($productOfferTitleAttribute, $productsSkusResult->nomeReduzido);
-                $mageProduct->setData ($productHeightAttribute, $productsSkusResult->dimensoes->altura);
-                $mageProduct->setData ($productWidthAttribute, $productsSkusResult->dimensoes->largura);
-                $mageProduct->setData ($productLengthAttribute, $productsSkusResult->dimensoes->comprimento);
+                $mageProduct->setData ($productHeightAttribute, $productHeight = $productsSkusResult->dimensoes->altura);
+                $mageProduct->setData ($productWidthAttribute,  $productWidth  = $productsSkusResult->dimensoes->largura);
+                $mageProduct->setData ($productLengthAttribute, $productLength = $productsSkusResult->dimensoes->comprimento);
 
                 // groups
                 if ($productHasVariations)
@@ -230,7 +230,7 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                         // default
                         $parentProduct->setTaxClassId (0); // none
                         $parentProduct->setVisibility (Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
-                        // $parentProduct->setWeight (999999);
+                        $parentProduct->setWeight (999999);
                         $parentProduct->setPrice (999999);
                         $parentProduct->setWebsiteIds (array (1)); // Default
                         $parentProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
@@ -254,6 +254,12 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
                     // custom
                     $parentProduct->setData ($productCodeAttribute, $productsInfoResult->codigo);
                     $parentProduct->setData ($productOfferTitleAttribute, $productsSkusResult->nomeReduzido);
+
+                    $parentProduct->setWeight ($productWeight > 0 ? $productWeight : 999999);
+
+                    $parentProduct->setData ($productHeightAttribute, $productHeight);
+                    $parentProduct->setData ($productWidthAttribute,  $productWidth);
+                    $parentProduct->setData ($productLengthAttribute, $productLength);
 
                     // brand
                     $productBrandValue = $productsInfoResult->marca;
