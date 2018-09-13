@@ -5,7 +5,7 @@
  * @author      Eneias Ramos de Melo <eneias@gamuza.com.br>
  */
 
-class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
+class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstract
 {
     const PRODUCTS_INFO_METHOD         = 'produtos/{productId}';
     const PRODUCTS_SKUS_METHOD         = 'produtos/{productId}/skus/{productSku}';
@@ -13,36 +13,48 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
 
     const PRODUCTS_TRACKING_METHOD     = 'ofertas';
 
-    public function manage ($type, $send_date, $parameters)
+    private function readMHubProductsCollection ()
     {
-        if (empty ($type) || empty ($send_date) || empty ($parameters))
-        {
-            $this->_fault ('invalid_request_param');
-        }
-
-        /**
-         * Transaction
-         */
-        $productId  = strval ($parameters ['idProduto']);
-        $productSku = strval ($parameters ['idSku']);
-
-        if (empty ($productId) || empty ($productSku))
-        {
-            $this->_fault ('invalid_request_param');
-        }
-
-        $product = Mage::getModel ('mhub/product')
-            ->setOperation (Epicom_MHub_Helper_Data::OPERATION_IN)
-            ->setMethod ($type)
-            ->setSendDate ($send_date)
-            ->setParameters (json_encode ($parameters))
-            ->setExternalId ($productId)
-            ->setExternalSku ($productSku)
-            ->setUpdatedAt (date ('c'))
-            ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
-            ->setMessage (new Zend_Db_Expr ('NULL'))
-            ->save ()
+        $collection = Mage::getModel ('mhub/product')->getCollection ();
+        $select = $collection->getSelect ();
+        $select->where ('synced_at < updated_at OR synced_at IS NULL')
+            ->where (sprintf ("operation = '%s' AND method = '%s' AND status != '%s'",
+                Epicom_MHub_Helper_Data::OPERATION_IN, Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU, Epicom_MHub_Helper_Data::STATUS_OKAY
+            ))
+            ->group ('external_sku')
+            ->order ('updated_at DESC')
         ;
+
+        return $collection;
+    }
+
+    private function updateProducts ($collection)
+    {
+        foreach ($collection as $product)
+        {
+            $result = null;
+
+            try
+            {
+                $result = $this->updateMHubProduct ($product);
+            }
+            catch (Exception $e)
+            {
+                $this->logMHubProduct ($product, $e->getMessage ());
+
+                self::logException ($e);
+            }
+
+            if (!empty ($result)) $this->cleanupMHubProduct ($product, $result);
+        }
+
+        return true;
+    }
+
+    private function updateMHubProduct (Epicom_MHub_Model_Product $product)
+    {
+        $productId  = $product->getExternalId ();
+        $productSku = $product->getExternalSku ();
 
         /**
          * Product Info
@@ -88,8 +100,6 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
             }
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU:
             {
-                return true; // cron will process this
-
                 // attributeset by category id
                 $categoryId = $productsSkusResult->codigoCategoria;
 
@@ -521,13 +531,6 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
             }
         }
 
-        // transaction
-        $product->setProductId ($mageProduct->getId ())
-            ->setSyncedAt (date ('c'))
-            ->setStatus (Epicom_MHub_Helper_Data::STATUS_OKAY)
-            ->setMessage (new Zend_Db_Expr ('NULL'))
-            ->save ();
-
         /**
          * Webhook
          */
@@ -542,12 +545,65 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
 
         $helper->api (self::PRODUCTS_TRACKING_METHOD, $post, 'PUT');
 
+        return $mageProduct->getId ();
+    }
+
+    private function cleanupMHubProduct (Epicom_MHub_Model_Product $product, $mageProductId)
+    {
+/*
+        $product->setSyncedAt (date ('c'))
+            ->setStatus (Epicom_MHub_Helper_Data::STATUS_OKAY)
+            ->setMessage (new Zend_Db_Expr ('NULL'))
+            ->save ()
+        ;
+*/
+        $resource = Mage::getSingleton ('core/resource');
+        $write    = $resource->getConnection ('core_write');
+        $table    = $resource->getTableName ('mhub/product');
+
+        $write->query (sprintf ("UPDATE %s SET synced_at = '%s', status = '%s', message = NULL, product_id = '%s' WHERE external_sku = '%s'",
+            $table, date ('c'), Epicom_MHub_Helper_Data::STATUS_OKAY, $mageProductId, $product->getExternalSku ()
+        ));
+
         return true;
+    }
+
+    private function logMHubProduct (Epicom_MHub_Model_Product $product, $message = null)
+    {
+/*
+        $product->setStatus (Epicom_MHub_Helper_Data::STATUS_ERROR)->setMessage ($message)->save ();
+*/
+        $resource = Mage::getSingleton ('core/resource');
+        $write    = $resource->getConnection ('core_write');
+        $table    = $resource->getTableName ('mhub/product');
+
+        $write->query (sprintf ("UPDATE %s SET status = '%s', message = '%s' WHERE external_sku = '%s'",
+            $table, Epicom_MHub_Helper_Data::STATUS_ERROR, $message, $product->getExternalSku ()
+        ));
     }
 
     protected function getConfig ()
     {
         return Mage::getModel ('mhub/config');
+    }
+
+    public function run ()
+    {
+        if (!$this->getStoreConfig ('active') || !$this->getHelper ()->isMarketplace ())
+        {
+            return false;
+        }
+/*
+        $result = $this->readMHubProductsMagento ();
+        if (!$result) return false;
+*/
+        $collection = $this->readMHubProductsCollection ();
+        $length = $collection->count ();
+        if (!$length) return false;
+
+        $this->updateProducts ($collection);
+
+        return true;
     }
 }
 

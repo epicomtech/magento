@@ -248,6 +248,10 @@
                 <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runProduct</model></run>
             </epicom_mhub_product>
+            <epicom_mhub_product_input>
+                <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
+                <run><model>mhub/cron::runProductInput</model></run>
+            </epicom_mhub_product_input>
             <epicom_mhub_order>
                 <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runOrder</model></run>

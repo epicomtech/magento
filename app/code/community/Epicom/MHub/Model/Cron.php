@@ -22,6 +22,11 @@ class Epicom_MHub_Model_Cron
         Mage::getModel ('mhub/cron_product')->run ();
     }
 
+    public function runProductInput ()
+    {
+        Mage::getModel ('mhub/cron_product_input')->run ();
+    }
+
     public function runOrder ()
     {
         Mage::getModel ('mhub/cron_order')->run ();
