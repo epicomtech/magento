@@ -15,11 +15,17 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
     private function readMHubProductsCollection ()
     {
-        $collection = Mage::getModel ('mhub/product')->getCollection ();
+        $collection = Mage::getModel ('mhub/product')->getCollection ()
+            ->addFieldToFilter ('method', array ('in' => array (
+                Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU,
+                Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU,
+                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU
+            )))
+        ;
         $select = $collection->getSelect ();
         $select->where ('synced_at < updated_at OR synced_at IS NULL')
-            ->where (sprintf ("operation = '%s' AND method = '%s' AND status != '%s'",
-                Epicom_MHub_Helper_Data::OPERATION_IN, Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU, Epicom_MHub_Helper_Data::STATUS_OKAY
+            ->where (sprintf ("operation = '%s' AND status != '%s'",
+                Epicom_MHub_Helper_Data::OPERATION_IN, Epicom_MHub_Helper_Data::STATUS_OKAY
             ))
             ->group ('external_sku')
             ->order ('updated_at DESC')
