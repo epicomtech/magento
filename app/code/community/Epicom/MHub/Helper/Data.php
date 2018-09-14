@@ -21,7 +21,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const CATEGORY_ATTRIBUTE_ISACTIVE     = 'mhub_category_isactive';
     const CATEGORY_ATTRIBUTE_SENDPRODUCTS = 'mhub_category_sendproducts';
     const PRODUCT_ATTRIBUTE_ID            = 'mhub_product_id';
-    // const PRODUCT_ATTRIBUTE_SKU           = 'mhub_product_sku';
+    const PRODUCT_ATTRIBUTE_SKU           = 'mhub_product_sku';
     const PRODUCT_ATTRIBUTE_CODE          = 'mhub_product_code';
     const PRODUCT_ATTRIBUTE_BRAND         = 'mhub_product_brand';
     const PRODUCT_ATTRIBUTE_EAN           = 'mhub_product_ean';
@@ -33,7 +33,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const PRODUCT_ATTRIBUTE_OFFER_TITLE   = 'mhub_product_offer_title';
     const PRODUCT_ATTRIBUTE_MANUFACTURER  = 'mhub_product_manufacturer';
     const PRODUCT_ATTRIBUTE_MODEL         = 'mhub_product_model';
-    // const PRODUCT_ATTRIBUTE_OUT_OF_LINE   = 'mhub_product_out_of_line';
+    const PRODUCT_ATTRIBUTE_OUT_OF_LINE   = 'mhub_product_out_of_line';
 
     const ORDER_ATTRIBUTE_IS_EPICOM    = 'is_epicom';
     const ORDER_ATTRIBUTE_EXT_ORDER_ID = 'ext_order_id';

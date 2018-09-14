@@ -124,7 +124,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'group'            => Mage::helper ('mhub')->__('Epicom'),
     'used_in_product_listing' => true,
 ));
-/*
+
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_CODE,  array(
     'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product Code'),
@@ -140,7 +140,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-*/
+
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_BRAND,  array(
     'type'             => 'int',
     'label'            => Mage::helper ('mhub')->__('Product Brand'),
@@ -172,7 +172,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => true,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-/*
+
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SKU,  array(
     'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product SKU'),
@@ -188,7 +188,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-*/
+
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SUMMARY,  array(
     'type'             => 'text',
     'label'            => Mage::helper ('mhub')->__('Product Summary'),
@@ -221,7 +221,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-/*
+
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_OUT_OF_LINE,  array(
     'type'             => 'int',
     'label'            => Mage::helper ('mhub')->__('Product Out Of Line'),
@@ -238,7 +238,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-*/
+
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER,  array(
     'type'             => 'int',
     'label'            => Mage::helper ('mhub')->__('Product Manufacturer'),
