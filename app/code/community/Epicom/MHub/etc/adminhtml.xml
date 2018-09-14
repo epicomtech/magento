@@ -60,6 +60,11 @@
                             <sort_order>70</sort_order>
                             <action>admin_mhub/adminhtml_nf</action>
                         </nf>
+                       <provider translate="title" module="mhub">
+                            <title>Manage Providers</title>
+                            <sort_order>80</sort_order>
+                            <action>admin_mhub/adminhtml_provider</action>
+                        </provider>
                     </children>
                 </mhub>
             </children>
@@ -112,6 +117,10 @@
                                         <title>Manage NFs</title>
                                         <sort_order>70</sort_order>
                                     </nf>
+                                    <provider translate="title" module="mhub">
+                                        <title>Manage Providers</title>
+                                        <sort_order>80</sort_order>
+                                    </provider>
                                 </children>
                             </mhub>
                         </children>

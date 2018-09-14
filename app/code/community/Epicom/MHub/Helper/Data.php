@@ -15,6 +15,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const ORDER_STATUS_TABLE    = 'epicom_mhub_order_status';
     const SHIPMENT_TABLE        = 'epicom_mhub_shipment';
     const NF_TABLE              = 'epicom_mhub_nf';
+    const PROVIDER_TABLE        = 'epicom_mhub_provider';
 
     const CATEGORY_ATTRIBUTE_SET          = 'mhub_category_attributeset';
     const CATEGORY_ATTRIBUTE_ISACTIVE     = 'mhub_category_isactive';

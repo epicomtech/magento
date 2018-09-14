@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Epicom_MHub>
-            <version>0.1.7</version>
+            <version>0.1.8</version>
         </Epicom_MHub>
     </modules>
     <global>
@@ -49,6 +49,9 @@
                     <product>
                         <table>epicom_mhub_product</table>
                     </product>
+                    <provider>
+                        <table>epicom_mhub_provider</table>
+                    </provider>
                     <product_association>
                         <table>epicom_mhub_product_association</table>
                     </product_association>
@@ -252,6 +255,10 @@
                 <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runProductInput</model></run>
             </epicom_mhub_product_input>
+            <epicom_mhub_provider>
+                <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
+                <run><model>mhub/cron::runProvider</model></run>
+            </epicom_mhub_provider>
             <epicom_mhub_order>
                 <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runOrder</model></run>
