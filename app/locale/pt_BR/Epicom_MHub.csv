@@ -163,4 +163,5 @@
 "Provider","Fornecedor"
 "Delivery Time","Prazo de Entrega"
 "Product Attributes Set Associations","Associações para Conjunto de Atributos de Produtos"
+"Attribute not found: %s value: %s","Atributo nao encontrado: %s valor: %s"
 

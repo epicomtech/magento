@@ -186,6 +186,11 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                             $productAttribute      = $this->getConfig ()->getAttribute ($attribute->nome, 'frontend_label');
                             $productAttributeValue = $attribute->valor;
 
+                            if (!$productAttribute || !$productAttribute->getId ())
+                            {
+                                throw new Exception (Mage::helper ('mhub')->__('Attribute not found: %s value: %s', $attribute->nome, $attribute->valor));
+                            }
+
                             $productAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productAttribute->getId (), array(
                                 'order' => '0',
                                 'label' => array (
@@ -280,6 +285,11 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         $productBrandAttribute   = Mage::getStoreConfig ('mhub/product/brand');
                         $productBrandAttributeId = $this->getConfig ()->getAttributeId ($productBrandAttribute);
 
+                        if (!$productAttribute || !$productAttribute->getId ())
+                        {
+                            throw new Exception (Mage::helper ('mhub')->__('Attribute not found: %s value: %s', $attribute->nome, $attribute->valor));
+                        }
+
                         $productBrandAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productBrandAttributeId, array(
                             'order' => '0',
                             'label' => array (
@@ -296,6 +306,11 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     {
                         $productManufacturerAttribute   = Mage::getStoreConfig ('mhub/product/manufacturer');
                         $productManufacturerAttributeId = $this->getConfig ()->getAttributeId ($productManufacturerAttribute);
+
+                        if (!$productAttribute || !$productAttribute->getId ())
+                        {
+                            throw new Exception (Mage::helper ('mhub')->__('Attribute not found: %s value: %s', $attribute->nome, $attribute->valor));
+                        }
 
                         $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($productManufacturerAttributeId, array(
                             'order' => '0',
@@ -527,7 +542,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 {
                     $parentProduct->setPrice ($mageProduct->getPrice ())
                         ->setSpecialPrice ($mageProduct->getSpecialPrice ())
-                        ->save ();
+                        ->save ()
                     ;
                 }
             }
