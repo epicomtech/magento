@@ -305,6 +305,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         ));
 
                         $parentProduct->setData ($productManufacturerAttribute, $productManufacturerOptionId);
+
+                        $parentProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER, $productManufacturerValue);
                     }
 
                     // attributes

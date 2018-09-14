@@ -30,7 +30,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const PRODUCT_ATTRIBUTE_LENGTH        = 'mhub_product_length';
     const PRODUCT_ATTRIBUTE_SUMMARY       = 'mhub_product_summary';
     const PRODUCT_ATTRIBUTE_OFFER_TITLE   = 'mhub_product_offer_title';
-    // const PRODUCT_ATTRIBUTE_MANUFACTURER  = 'mhub_product_manufacturer';
+    const PRODUCT_ATTRIBUTE_MANUFACTURER  = 'mhub_product_manufacturer';
     const PRODUCT_ATTRIBUTE_MODEL         = 'mhub_product_model';
     // const PRODUCT_ATTRIBUTE_OUT_OF_LINE   = 'mhub_product_out_of_line';
 

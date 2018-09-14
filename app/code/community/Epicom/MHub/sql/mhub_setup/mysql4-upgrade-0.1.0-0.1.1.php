@@ -238,13 +238,13 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-
+*/
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER,  array(
     'type'             => 'int',
     'label'            => Mage::helper ('mhub')->__('Product Manufacturer'),
     'input'            => 'select',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-    'visible'          => true,
+    'visible'          => false,
     'required'         => false,
     'user_defined'     => true,
     'searchable'       => false,
@@ -254,7 +254,7 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'unique'           => false,
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
-*/
+
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MODEL,  array(
     'type'             => 'int',
     'label'            => Mage::helper ('mhub')->__('Product Model'),
