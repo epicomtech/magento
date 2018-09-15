@@ -164,4 +164,13 @@
 "Delivery Time","Prazo de Entrega"
 "Product Attributes Set Associations","Associações para Conjunto de Atributos de Produtos"
 "Attribute not found: %s value: %s","Atributo nao encontrado: %s valor: %s"
+"Manage Providers","Gerenciar Fornecedores"
+"Providers Manager","Gerenciador de Fornecedores"
+"Use Categories","Usar Categorias"
+"Add New Provider","Adicionar Novo Fornecedor"
+"Remove Providers","Remover Fornecedores"
+"Provider Information","Informação do Fornecedor"
+"Save Provider","Salvar Fornecedor"
+"Delete Provider","Excluir Fornecedor"
+"Edit Provider '%s'","Editar Fornecedor '%s'"
 

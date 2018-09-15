@@ -16,7 +16,7 @@ class Epicom_MHub_Block_Adminhtml_Provider_Edit_Tab_Form extends Mage_Adminhtml_
 
 		$fieldset->addField ('external_id', 'text', array(
 	        'label'    => Mage::helper ('mhub')->__('External ID'),
-	        'class'    => 'required-entry validate-number',
+	        'class'    => 'required-entry validate-digits',
 	        'name'     => 'external_id',
 	        'required' => true,
 		));
@@ -28,7 +28,7 @@ class Epicom_MHub_Block_Adminhtml_Provider_Edit_Tab_Form extends Mage_Adminhtml_
 		));
 		$fieldset->addField ('name', 'text', array(
 	        'label'    => Mage::helper ('mhub')->__('Name'),
-	        'class'    => 'required-entry validate-alphanum',
+	        'class'    => 'required-entry validate-alphanum-with-spaces',
 	        'name'     => 'name',
 	        'required' => true,
 		));

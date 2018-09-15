@@ -25,9 +25,11 @@ class Epicom_MHub_Model_Cron_Provider extends Epicom_MHub_Model_Cron_Abstract
                 $provider = Mage::getModel ('mhub/provider')->load ($item->id, 'external_id');
 
                 $provider->setExternalId ($item->id)
-                    ->setCode ($item->code)
+                    ->setCode ($item->codigo)
                     ->setName ($item->nome)
                     ->setUseCategories ($item->usaCategorias)
+                    ->setUpdatedAt (date ('c'))
+                    ->save ()
                 ;
             }
         }
