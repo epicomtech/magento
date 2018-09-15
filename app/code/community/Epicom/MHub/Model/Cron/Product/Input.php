@@ -275,8 +275,13 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $parentProduct->setData ($productCodeAttribute, $productsInfoResult->codigo);
                     $parentProduct->setData ($productOfferTitleAttribute, $productsSkusResult->nomeReduzido);
 
+                    if ($productWeight > 0 && $productWeight < $parentProduct->getWeight ())
+                    {
+                        $parentProduct->setWeight ($productWeight);
+                    }
+/*
                     $parentProduct->setWeight ($productWeight > 0 ? $productWeight : 999999);
-
+*/
                     $parentProduct->setData ($productHeightAttribute, $productHeight);
                     $parentProduct->setData ($productWidthAttribute,  $productWidth);
                     $parentProduct->setData ($productLengthAttribute, $productLength);
@@ -545,10 +550,13 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $parentProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
                 if ($parentProduct && intval ($parentProduct->getId ()) > 0)
                 {
-                    $parentProduct->setPrice ($mageProduct->getPrice ())
-                        ->setSpecialPrice ($mageProduct->getSpecialPrice ())
-                        ->save ()
-                    ;
+                    if ($mageProduct->getPrice () < $parent->getPrice ())
+                    {
+                        $parentProduct->setPrice ($mageProduct->getPrice ())
+                            ->setSpecialPrice ($mageProduct->getSpecialPrice ())
+                            ->save ()
+                        ;
+                    }
                 }
             }
         }
