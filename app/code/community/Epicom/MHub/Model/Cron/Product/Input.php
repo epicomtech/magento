@@ -100,9 +100,6 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         switch ($product->getMethod ())
         {
             case Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU:
-            {
-                break;
-            }
             case Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU:
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU:
             {
