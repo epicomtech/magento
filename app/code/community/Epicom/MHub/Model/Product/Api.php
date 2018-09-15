@@ -84,7 +84,7 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
             case Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU:
             case Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU:
             {
-                break;
+                return true; // cron will process this
             }
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU:
             {
