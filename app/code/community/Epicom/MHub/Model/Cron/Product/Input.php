@@ -142,6 +142,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                 $mageProduct->setCategoryIds (array ($mageCategory->getId ()));
 
+                $mageProduct->setSku ($productSku);
+
                 // sku
                 $mageProduct->setName ($productsSkusResult->nome);
                 $mageProduct->setUrl ($productsSkusResult->nome);
@@ -261,6 +263,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $parentProduct->setAttributeSetId ($productAttributeSetId);
 
                     $parentProduct->setCategoryIds (array ($mageCategory->getId ()));
+
+                    $parentProduct->setSku ($productId);
 
                     // product
                     $parentProduct->setName ($productsInfoResult->nome);
