@@ -118,7 +118,9 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $defaultAttributeSetId  = Mage::getStoreConfig ('mhub/attributes_set/product');
                 $productAttributeSetId  = $categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId;
 
-                $productHasVariations = is_array ($productsSkusResult->grupos) && count ($productsSkusResult->grupos) > 0;
+                $productHasVariations = is_array ($productsSkusResult->grupos) && count ($productsSkusResult->grupos) > 0
+                    && is_array ($productsSkusResult->grupos->atributos) && count ($productsSkusResult->grupos->atributos) > 0
+                ;
 
                 /**
                  * SKU
@@ -448,6 +450,14 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $productIds [] = $parentProduct->getId ();
 
                     $parentNotExists = true;
+                }
+                else
+                {
+                    $parentProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
+                    if ($parentProduct && intval ($parentProduct->getId ()) > 0)
+                    {
+                        $parentProduct->delete ();
+                    }
                 }
 
                 /**
