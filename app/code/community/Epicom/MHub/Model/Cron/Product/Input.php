@@ -370,14 +370,14 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     ;
 
                     // product association
-                    $assocItem = Mage::getModel ('mhub/product_association')->load ($productsSkusResult->codigo, 'sku');
+                    $assocItem = Mage::getModel ('mhub/product_association')->load ($productSku, 'sku');
                     if (empty ($assocItem) || !$assocItem->getId ())
                     {
                         $assocItem = Mage::getModel ('mhub/product_association');
-                        $assocItem->setSku ($productsSkusResult->codigo);
+                        $assocItem->setSku ($productSku);
                     }
 
-                    $assocItem->setParentSku ($productsInfoResult->codigo)
+                    $assocItem->setParentSku ($productId)
                         ->setIsModified (1)
                         ->save ()
                     ;
@@ -425,12 +425,12 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $configurableProductsData = null;
 
                     $collection = Mage::getModel ('mhub/product_association')->getCollection ()
-                        ->addFieldToFilter ('parent_sku', array ('eq' => $productsInfoResult->codigo))
+                        ->addFieldToFilter ('parent_sku', array ('eq' => $productId))
                     ;
 
                     foreach ($collection as $item)
                     {
-                        $simpleProduct = Mage::getModel ('catalog/product')->loadByAttribute ('sku', $item->getSku ());
+                        $simpleProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $item->getSku ());
                         if ($simpleProduct && intval ($simpleProduct->getId ()) > 0)
                         {
                             foreach ($productAttributeSets as $value)
