@@ -119,7 +119,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $productAttributeSetId  = $categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId;
 
                 $productHasVariations = is_array ($productsSkusResult->grupos) && count ($productsSkusResult->grupos) > 0
-                    && is_array ($productsSkusResult->grupos->atributos) && count ($productsSkusResult->grupos->atributos) > 0
+                    && is_array ($productsSkusResult->grupos [0]->atributos) && count ($productsSkusResult->grupos [0]->atributos) > 0
                 ;
 
                 /**
