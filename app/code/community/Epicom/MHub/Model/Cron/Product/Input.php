@@ -132,6 +132,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $mageProduct->setWeight (999999);
                     $mageProduct->setPrice (999999);
                     $mageProduct->setWebsiteIds (array (1)); // Default
+                    $mageProduct->setCategoryIds (array ($mageCategory->getId ()));
                 }
 
                 $mageProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
@@ -141,8 +142,6 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 );
 
                 $mageProduct->setAttributeSetId ($productAttributeSetId);
-
-                $mageProduct->setCategoryIds (array ($mageCategory->getId ()));
 
                 $mageProduct->setSku ($productSku);
 
@@ -258,13 +257,12 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         $parentProduct->setPrice (999999);
                         $parentProduct->setWebsiteIds (array (1)); // Default
                         $parentProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
+                        $parentProduct->setCategoryIds (array ($mageCategory->getId ()));
                     }
 
                     $parentProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE);
 
                     $parentProduct->setAttributeSetId ($productAttributeSetId);
-
-                    $parentProduct->setCategoryIds (array ($mageCategory->getId ()));
 
                     $parentProduct->setSku ($productId);
 
