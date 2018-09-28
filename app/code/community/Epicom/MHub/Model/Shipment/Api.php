@@ -119,6 +119,11 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
                     {
                         if (!strcmp ($_item->getData ($productIdAttribute /* Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID */), $_sku->id))
                         {
+                            if ($_item->getParentItemId ())
+                            {
+                                $_item = Mage::getModel ('sales/order_item')->load ($_item->getParentItemId ());
+                            }
+
                             $shipmentItemQtys [$_item->getId ()] = $_sku->quantidade;
                         }
                     }
