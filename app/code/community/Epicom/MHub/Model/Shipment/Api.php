@@ -111,13 +111,13 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
             {
                 $shipmentItemQtys = array ();
 
-                $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
+                $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
 
                 foreach ($shipmentInfoResult->skus as $_sku)
                 {
                     foreach ($mageOrder->getAllItems () as $_item)
                     {
-                        if (!strcmp ($_item->getData ($productCodeAttribute /* Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_CODE */), $_sku->codigo))
+                        if (!strcmp ($_item->getData ($productIdAttribute /* Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID */), $_sku->id))
                         {
                             $shipmentItemQtys [$_item->getId ()] = $_sku->quantidade;
                         }
