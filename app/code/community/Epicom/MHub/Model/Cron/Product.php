@@ -285,7 +285,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                     'altura'      => $mageProduct->getData ($this->_heightAttribute),
                     'largura'     => $mageProduct->getData ($this->_widthAttribute),
                     'comprimento' => $mageProduct->getData ($this->_lengthAttribute),
-                    'peso'        => $mageProduct->getWeight ()
+                    'peso'        => intval ($mageProduct->getWeight ())
                 ),
                 'imagens' => array (),
                 'grupos'  => array (),
