@@ -11,7 +11,7 @@ class Epicom_MHub_Block_Catalog_Category_Helper_Form_AttributeSets extends Epico
     {
         $html = parent::getAfterElementHtml ();
 
-        if (Mage::helper ('mhub')->isMarketplace ()) return $html;
+        /* if (Mage::helper ('mhub')->isMarketplace ()) */ return $html;
 
 $afterHtml = <<< AFTER_HTML
 <script>
