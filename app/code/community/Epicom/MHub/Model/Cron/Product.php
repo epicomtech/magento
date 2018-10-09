@@ -227,6 +227,18 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             }
         }
 
+        /**
+         * External ID
+         */
+        $productsInfoMethod = str_replace ('{productId}', $product->getExternalCode (), self::PRODUCTS_PATCH_METHOD);
+
+        $productsInfoResult = $this->getHelper ()->api ($productsInfoMethod);
+
+        $mageProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productsInfoResult->id)->save ();
+
+        /**
+         * Children
+         */
         $childrenIds = array ($productId);
 
         if (!strcmp ($mageProduct->getTypeId (), Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE))
