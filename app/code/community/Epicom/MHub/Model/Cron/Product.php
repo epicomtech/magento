@@ -199,6 +199,10 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                     $value = strval ($mageProduct->getResource ()->getAttribute ($code)->getFrontend ()->getOption ($mageProduct->getData ($code)));
                     if (!empty ($value))
                     {
+                        $attribute = Mage::getModel ('catalog/entity_attribute')->loadByCode (Mage_Catalog_Model_Product::ENTITY, $code);
+
+                        $code = $attribute->getFrontendLabel ();
+
                         $result ['atributos'][] = array ('nome' => $code, 'valor' => $value);
                     }
                 }
@@ -315,6 +319,10 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                         $value = strval ($mageProduct->getResource ()->getAttribute ($code)->getFrontend ()->getOption ($mageProduct->getData ($code)));
                         if (!empty ($value))
                         {
+                            $attribute = Mage::getModel ('catalog/entity_attribute')->loadByCode (Mage_Catalog_Model_Product::ENTITY, $code);
+
+                            $code = $attribute->getFrontendLabel ();
+
                             $result ['atributos'][] = array ('nome' => $code, 'valor' => $value);
                         }
                     }
