@@ -58,6 +58,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             $collection = Mage::getModel ('catalog/product')->getCollection ()
                 ->joinField ('category_id', 'catalog/category_product', 'category_id', 'product_id = entity_id', null, 'inner')
                 ->addAttributeToFilter ('category_id', array ('in' => $_id))
+                ->addAttributeToFilter ('type_id', array ('in' => array (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE, Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE)))
                 ->addAttributeToSelect ($this->_idAttribute)
                 ->addAttributeToSelect ($this->_codeAttribute)
             ;
