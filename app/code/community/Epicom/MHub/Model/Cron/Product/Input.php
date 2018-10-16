@@ -118,9 +118,9 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $defaultAttributeSetId  = Mage::getStoreConfig ('mhub/attributes_set/product');
                 $productAttributeSetId  = $categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId;
 
-                $productHasVariations = is_array ($productsSkusResult->grupos) && count ($productsSkusResult->grupos) > 0
-                    && is_array ($productsSkusResult->grupos [0]->atributos) && count ($productsSkusResult->grupos [0]->atributos) > 0
-                ;
+                $productHasVariations = (is_array ($productsInfoResult->grupos) && count ($productsInfoResult->grupos) > 0
+                    && is_array ($productsInfoResult->grupos [0]->atributos) && count ($productsInfoResult->grupos [0]->atributos) > 0
+                ) == false;
 
                 /**
                  * SKU
