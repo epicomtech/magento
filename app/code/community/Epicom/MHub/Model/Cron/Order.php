@@ -173,7 +173,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
                 'prazoEntrega' => null,
             );
 
-            $itemsAmount += floatval ($itemBasePrice);
+            $itemsAmount += floatval ($itemBasePrice) * intval ($item->getQtyOrdered ());
 
             -- $itemsPos;
         }
