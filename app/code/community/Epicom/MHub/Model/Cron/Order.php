@@ -178,7 +178,11 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             -- $itemsPos;
         }
 
-        $post ['valorTotal'] = $itemsAmount;
+        $baseDiscountAmount = abs ($mageOrder->getBaseDiscountAmount ());
+
+        $post ['valorDesconto'] = $baseDiscountAmount;
+
+        $post ['valorTotal'] = $itemsAmount - $baseDiscountAmount;
 
         $extOrderId = true;
 

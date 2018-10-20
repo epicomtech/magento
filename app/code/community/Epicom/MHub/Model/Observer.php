@@ -59,12 +59,12 @@ class Epicom_MHub_Model_Observer
             ->addFieldToFilter ($productIdAttribute,    array ('notnull' => true))
             ->addFieldToFilter ('base_discount_amount', array ('gt' => 0))
         ;
-
+/*
         if ($orderItems->count () > 0)
         {
             Mage::throwException (Mage::helper ('rule')->__('Invalid discount amount.'));
         }
-
+*/
         if ($order->getQuote ()->getIsEpicom ())
         {
             Mage::getModel ('mhub/cron_order')->setOrderId ($order->getId ())->run (); // RESERVE
