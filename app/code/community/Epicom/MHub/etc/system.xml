@@ -446,7 +446,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </out_of_line>
--->
                         <manufacturer translate="label" module="mhub">
                             <label>Product Manufacturer</label>
                             <frontend_type>select</frontend_type>
@@ -456,6 +455,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </manufacturer>
+-->
                         <model translate="label" module="mhub">
                             <label>Product Model</label>
                             <frontend_type>select</frontend_type>

@@ -47,6 +47,11 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             }
             catch (Exception $e)
             {
+                if (!strcmp ($product->getMethod (), Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU))
+                {
+                    $this->disableMHubProduct ($product, $e->getCode ());
+                }
+
                 $this->logMHubProduct ($product, $e->getMessage ());
 
                 self::logException ($e);
@@ -317,6 +322,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $productManufacturerValue = $productsInfoResult->codigoFornecedor;
                     if (!empty ($productManufacturerValue))
                     {
+                        /*
                         $productManufacturerAttribute   = Mage::getStoreConfig ('mhub/product/manufacturer');
                         $productManufacturerAttributeId = $this->getConfig ()->getAttributeId ($productManufacturerAttribute);
 
@@ -333,7 +339,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         ));
 
                         $parentProduct->setData ($productManufacturerAttribute, $productManufacturerOptionId);
-
+                        */
                         $parentProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER, $productManufacturerValue);
                     }
 
@@ -604,8 +610,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         $write    = $resource->getConnection ('core_write');
         $table    = $resource->getTableName ('mhub/product');
 
-        $write->query (sprintf ("UPDATE %s SET synced_at = '%s', status = '%s', message = NULL, product_id = '%s' WHERE external_sku = '%s'",
-            $table, date ('c'), Epicom_MHub_Helper_Data::STATUS_OKAY, $mageProductId, $product->getExternalSku ()
+        $write->query (sprintf ("UPDATE %s SET synced_at = '%s', status = '%s', message = NULL, product_id = '%s' WHERE external_sku = '%s' AND method = '%s'",
+            $table, date ('c'), Epicom_MHub_Helper_Data::STATUS_OKAY, $mageProductId, $product->getExternalSku (), $product->getMethod ()
         ));
 
         return true;
@@ -620,9 +626,21 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         $write    = $resource->getConnection ('core_write');
         $table    = $resource->getTableName ('mhub/product');
 
-        $write->query (sprintf ("UPDATE %s SET status = '%s', message = '%s' WHERE external_sku = '%s'",
-            $table, Epicom_MHub_Helper_Data::STATUS_ERROR, $message, $product->getExternalSku ()
+        $write->query (sprintf ("UPDATE %s SET status = '%s', message = '%s' WHERE external_sku = '%s' AND method = '%s'",
+            $table, Epicom_MHub_Helper_Data::STATUS_ERROR, $message, $product->getExternalSku (), $product->getMethod ()
         ));
+    }
+
+    private function disableMHubProduct (Epicom_MHub_Model_Product $product, $code = null)
+    {
+        if (!empty ($product->getExternalSku ()) && $code == 404)
+        {
+            $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $product->getExternalSku ());
+            if ($mageProduct && intval ($mageProduct->getId ()) > 0)
+            {
+                $mageProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_DISABLED)->save ();
+            }
+        }
     }
 
     protected function getConfig ()

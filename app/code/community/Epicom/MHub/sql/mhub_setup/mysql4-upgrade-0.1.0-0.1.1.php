@@ -240,9 +240,9 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
 ));
 
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER,  array(
-    'type'             => 'int',
+    'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product Manufacturer'),
-    'input'            => 'select',
+    'input'            => 'text',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
     'visible'          => false,
     'required'         => false,
