@@ -28,6 +28,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 Epicom_MHub_Helper_Data::OPERATION_IN, Epicom_MHub_Helper_Data::STATUS_OKAY
             ))
             ->group ('external_sku')
+            ->group ('method')
             ->order ('updated_at DESC')
         ;
 
