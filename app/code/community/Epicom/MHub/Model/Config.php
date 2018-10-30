@@ -146,7 +146,7 @@ class Epicom_MHub_Model_Config
         $collection = Mage::getModel ('catalog/product')->getCollection ()
             ->addAttributeToFilter ('type_id',   Mage_Catalog_Model_Product_Type::TYPE_SIMPLE)
             ->addAttributeToFilter ('entity_id', array ('in' => array_keys ($result)))
-            ->AddAttributeToSelect ($productIdAttribute, array ('notnull' => true))
+            ->AddAttributeToFilter ($productIdAttribute, array ('notnull' => true))
         ;
 
         if (!$collection->count ()) return false;
