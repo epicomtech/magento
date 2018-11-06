@@ -126,7 +126,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                 $productHasVariations = (is_array ($productsInfoResult->grupos) && count ($productsInfoResult->grupos) > 0
                     && is_array ($productsInfoResult->grupos [0]->atributos) && count ($productsInfoResult->grupos [0]->atributos) > 0
-                ) == false;
+                ) != false;
 
                 /**
                  * SKU
