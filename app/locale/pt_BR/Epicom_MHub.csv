@@ -176,4 +176,5 @@
 "Custom attribute not found: %s value: %s","Atributo customizado nao encontrado: %s valor: %s"
 "Brand attribute not found: %s value: %s","Atributo de marca nao encontrado: %s valor: %s"
 "Manufacturer attribute not found: %s value: %s","Atributo de fabricante nao encontrado: %s valor: %s"
+"Unique Shipping","Entrega Única"
 
