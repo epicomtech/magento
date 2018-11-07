@@ -82,6 +82,8 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
             return $error;
         }
 
+        Mage::dispatchEvent ('epicom_mhub_carrier_collect_rates', array ('result' => $shipping));
+
 		if (is_array ($shipping) && count ($shipping) > 0)
 		{
             foreach ($shipping as $item)
