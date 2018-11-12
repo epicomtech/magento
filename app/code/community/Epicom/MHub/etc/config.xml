@@ -305,7 +305,7 @@
                 <url><![CDATA[https://sandboxmhubapi.epicom.com.br/v1/]]></url>
                 <mode>marketplace</mode>
                 <ssl>1</ssl>
-                <timeout>30</timeout>
+                <timeout>60</timeout>
             </settings>
             <product>
                 <id>mhub_product_id</id>

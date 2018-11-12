@@ -84,6 +84,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
 
         $curl = curl_init ();
 
+        curl_setopt ($curl, CURLOPT_CONNECTTIMEOUT, 0); // indefinitely
         curl_setopt ($curl, CURLOPT_TIMEOUT, $timeout);
         curl_setopt ($curl, CURLOPT_URL, $url . $mode . '/' . $method);
         curl_setopt ($curl, CURLOPT_USERPWD, "{$key}:{$token}");
