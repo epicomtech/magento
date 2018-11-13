@@ -123,10 +123,13 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $categoryAttributeSetId = $mageCategory->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET);
                 $defaultAttributeSetId  = Mage::getStoreConfig ('mhub/attributes_set/product');
                 $productAttributeSetId  = $categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId;
-
+                /*
                 $productHasVariations = (is_array ($productsInfoResult->grupos) && count ($productsInfoResult->grupos) > 0
                     && is_array ($productsInfoResult->grupos [0]->atributos) && count ($productsInfoResult->grupos [0]->atributos) > 0
                 ) != false;
+                */
+
+                $productHasVariations = $this->_productHasVariations ($productsSkusResult);
 
                 /**
                  * SKU
@@ -639,6 +642,20 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             if ($mageProduct && intval ($mageProduct->getId ()) > 0)
             {
                 $mageProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_DISABLED)->save ();
+            }
+        }
+    }
+
+    private function _productHasVariations ($productsSkusResult)
+    {
+        if (is_array ($productsSkusResult->grupos) && count ($productsSkusResult->grupos) > 0)
+        {
+            foreach ($productsSkusResult->grupos as $group)
+            {
+                if (!strcmp ($group->nome, Epicom_MHub_Helper_Data::PRODUCT_FIXED_GROUP_NAME))
+                {
+                    return true;
+                }
             }
         }
     }
