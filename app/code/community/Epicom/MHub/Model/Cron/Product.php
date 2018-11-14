@@ -131,7 +131,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 self::logException ($e);
             }
 
-            if (!empty ($result)) $this->cleanupMHubProduct ($product);
+            if (!empty ($result)) $this->cleanupMHubProduct ($product, $result);
         }
 
         return true;
@@ -444,11 +444,16 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             }
         }
 
-        return true;
+        return $productsInfoResult->id;
     }
 
-    private function cleanupMHubProduct (Epicom_MHub_Model_Product $product)
+    private function cleanupMHubProduct (Epicom_MHub_Model_Product $product, $externalSku)
     {
+        if ($externalSku !== null && $externalSku !== true)
+        {
+            $product->setExternalSku ($externalSku);
+        }
+
         $product->setSyncedAt (date ('c'))
             ->setStatus (Epicom_MHub_Helper_Data::STATUS_OKAY)
             ->setMessage (new Zend_Db_Expr ('NULL'))
