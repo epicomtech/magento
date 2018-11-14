@@ -246,11 +246,15 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
          */
         $childrenIds = array ($productId);
 
+        $childrenVariations = null;
+
         if (!strcmp ($mageProduct->getTypeId (), Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE))
         {
             $result = Mage::getModel ('catalog/product_type_configurable')->getChildrenIds ($productId);
 
             if (!empty ($result [0]) && count ($childrenIds [0]) > 0) $childrenIds = $result [0];
+
+            $childrenVariations = $mageProduct->getTypeInstance ()->getConfigurableAttributesAsArray ($mageProduct);
         }
 
         /**
@@ -272,6 +276,16 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             ->joinTable (array ('stock' => 'cataloginventory/stock_item'),
                 'product_id = entity_id', array ('qty', 'is_in_stock'), null, 'left')
         ;
+
+        if (is_array ($childrenVariations) && count ($childrenVariations) > 0)
+        {
+            foreach ($childrenVariations as $variation)
+            {
+                $code = $variation ['attribute_code'];
+
+                $collection->addAttributeToSelect ($code);
+            }
+        }
 
         if (count ($mhubAttributeGroups) > 0)
         {
@@ -306,6 +320,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 ),
                 'imagens' => array (),
                 'grupos'  => array (),
+                'variacoes' => array (),
             );
 
             if (count ($mhubAttributeGroups) > 0)
@@ -328,6 +343,21 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                     }
 
                     $post ['grupos'][] = $result;
+                }
+            }
+
+            if (is_array ($childrenVariations) && count ($childrenVariations) > 0)
+            {
+                foreach ($childrenVariations as $variation)
+                {
+                    $code = $variation ['attribute_code'];
+                    $name = $variation ['frontend_label'];
+
+                    $value = strval ($mageProduct->getResource ()->getAttribute ($code)->getFrontend ()->getOption ($mageProduct->getData ($code)));
+                    if (!empty ($value))
+                    {
+                        $post ['variacoes'][] = array ('nome' => $name, 'valor' => $value);
+                    }
                 }
             }
 
