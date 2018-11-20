@@ -65,6 +65,11 @@
                             <sort_order>80</sort_order>
                             <action>admin_mhub/adminhtml_provider</action>
                         </provider>
+                       <shipping_rate translate="title" module="mhub">
+                            <title>Manage Shipping Rates</title>
+                            <sort_order>90</sort_order>
+                            <action>admin_mhub/adminhtml_shipping_rate</action>
+                        </shipping_rate>
                     </children>
                 </mhub>
             </children>
@@ -121,6 +126,10 @@
                                         <title>Manage Providers</title>
                                         <sort_order>80</sort_order>
                                     </provider>
+                                    <shipping_rate translate="title" module="mhub">
+                                        <title>Manage Shipping Rates</title>
+                                        <sort_order>90</sort_order>
+                                    </shipping_rate>
                                 </children>
                             </mhub>
                         </children>

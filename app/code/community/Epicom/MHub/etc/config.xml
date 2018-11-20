@@ -327,6 +327,9 @@
                 <width>mhub_product_width</width>
                 <length>mhub_product_length</length>
             </product>
+            <cart>
+                <cache_lifetime>3600</cache_lifetime>
+            </cart>
             <order>
                 <reserve_filter>pending</reserve_filter>
                 <confirm_filter>processing</confirm_filter>

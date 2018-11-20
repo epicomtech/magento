@@ -86,11 +86,13 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
 
         $curl = curl_init ();
 
+        $uniqid = md5 (uniqid (rand (), true));
+
         curl_setopt ($curl, CURLOPT_CONNECTTIMEOUT, 0); // indefinitely
         curl_setopt ($curl, CURLOPT_TIMEOUT, $timeout);
         curl_setopt ($curl, CURLOPT_URL, $url . $mode . '/' . $method);
         curl_setopt ($curl, CURLOPT_USERPWD, "{$key}:{$token}");
-        curl_setopt ($curl, CURLOPT_HTTPHEADER, array ('Content-Type: application/json'));
+        curl_setopt ($curl, CURLOPT_HTTPHEADER, array ('Content-Type: application/json', "X-Trace-Id: {$uniqid}"));
         curl_setopt ($curl, CURLOPT_RETURNTRANSFER, 1);
         // SSL off?
         curl_setopt ($curl, CURLOPT_SSL_VERIFYPEER, $ssl);
@@ -124,6 +126,13 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
             case 409: { $message = 'Resource Exists';      break; }
             case 500: { $message = 'Internal Error';       break; }
             case 200: { $message = null; /* Success! */    break; }
+        }
+
+        if ($this->getStoreConfig ('debug'))
+        {
+            $text = implode (' : ' , array ($request, $method, json_encode ($post), $message, $result));
+
+            Mage::log ($text, null, self::LOG);
         }
 
         if (!empty ($message))

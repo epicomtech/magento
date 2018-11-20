@@ -448,6 +448,14 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                                     $configurableProductsData [$simpleProduct->getId ()][] = array ('attribute_id' => $value ['attribute_id']);
                                 }
                             }
+
+                            // lowest price
+                            if ($simpleProduct->getPrice () < $parentProduct->getPrice ())
+                            {
+                                $parentProduct->setPrice ($simpleProduct->getPrice ())
+                                    ->setSpecialPrice ($simpleProduct->getSpecialPrice ())
+                                ;
+                            }
                         }
                     }
 

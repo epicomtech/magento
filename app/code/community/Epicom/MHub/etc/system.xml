@@ -264,6 +264,15 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </token>
+                        <debug translate="label" module="mhub">
+                            <label>Debug</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>61</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </debug>
                         <auth_enabled translate="label" module="mhub">
                             <label>Authentication Enabled</label>
                             <frontend_type>select</frontend_type>
@@ -511,11 +520,29 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
+                        <cache_enabled translate="label" module="mhub">
+                            <label>Cache Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cache_enabled>
+                        <cache_lifetime translate="label" module="mhub">
+                            <label>Cache Lifetime (Seconds)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><cache_enabled>1</cache_enabled></depends>
+                        </cache_lifetime>
                         <unique_shipping translate="label" module="mhub">
                             <label>Unique Shipping</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>0</sort_order>
+                            <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

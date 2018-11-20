@@ -9,6 +9,8 @@ class Epicom_MHub_Model_Config
 {
     const CART_CALCULATE_METHOD = 'calculocarrinho';
 
+    const COLLECTIONS_CACHE_TAG = 'collections';
+
     public function addAttributeOptionValue ($attributeId, $data)
     {
         $label   = !empty ($data ['label']) ? $data ['label'] : array ();
@@ -164,9 +166,29 @@ class Epicom_MHub_Model_Config
             );
         }
 
+        $id = md5 (json_encode ($post));
+
+        $cache = Mage::getStoreConfig ('mhub/cart/cache_enabled');
+
+        if ($cache)
+        {
+            $result = Mage::app ()->loadCache ($id);
+            if (!empty ($result))
+            {
+                return unserialize ($result);
+            }
+        }
+
         $cartCalculateMethod = self::CART_CALCULATE_METHOD . ($unique ? '?entregaUnica=true' : null);
 
         $result = Mage::helper ('mhub')->api ($cartCalculateMethod, $post);
+
+        if ($cache)
+        {
+            $lifetime = Mage::getStoreConfig ('mhub/cart/cache_lifetime');
+
+            Mage::app ()->saveCache (serialize ($result), $id, array (self::COLLECTIONS_CACHE_TAG, $lifetime));
+        }
 
         return $result;
     }
