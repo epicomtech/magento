@@ -113,11 +113,12 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                         $formatedTime = Mage::helper ('mhub')->formatShippingTime ($time);
 
                         $_carrier  = preg_replace ('[\W]', "", $carrier);
+                        $_modality = preg_replace ('[\W]', "", $modality);
 
 			            $method = Mage::getModel ('shipping/rate_result_method')
 		                    ->setCarrier ($this->_code)
 			                ->setCarrierTitle ($this->getConfigData ('title'))
-			                ->setMethod ($this->_code . '_' . $_carrier . '_' . $item->id)
+			                ->setMethod (implode ('_', array ($item->id, $_carrier, $_modality)))
 			                ->setMethodTitle ($modality . ' - ' . $formatedTime)
 			                ->setPrice ($price)
 			                ->setCost (0)

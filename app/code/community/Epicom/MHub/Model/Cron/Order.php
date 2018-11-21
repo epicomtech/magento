@@ -109,6 +109,9 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             $mageOrder = $loaded;
         }
 
+        /**
+         * Order Info
+         */
         $billingAddress  = Mage::getModel('sales/order_address')->load($mageOrder->getBillingAddressId ());
         $shippingAddress = Mage::getModel('sales/order_address')->load($mageOrder->getShippingAddressId ());
 
@@ -140,6 +143,17 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             ),
         );
 
+        /**
+         * 0: magento_carrier
+         * 1: epicom_item_id
+         * 2: epicom_carrier
+         * 3: epicom_modality
+         */
+        $shippingMethod = explode ('_', $mageOrder->getShippingMethod ());
+
+        /**
+         * Order Items
+         */
         $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
 
         $mageOrderItems = Mage::getResourceModel ('sales/order_item_collection')
@@ -164,12 +178,20 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
                 $itemBasePrice = $parentItem->getBasePrice ();
             }
 
+            // 1: epicom_item_id
+            $shippingAmount      = $productId == $shippingMethod [1] ? $mageOrder->getBaseShippingAmount () : 0;
+            $shippingDescription = $productId == $shippingMethod [1] ? $mageOrder->getShippingDescription () : null;
+
             $post ['itens'][] = array(
                 'id'           => $productId,
                 'quantidade'   => intval ($item->getQtyOrdered()),
                 'valor'        => $itemBasePrice,
+                /*
                 'valorFrete'   => $itemsPos % $itemsCount == 0 ? $mageOrder->getBaseShippingAmount() : 0,
                 'formaEntrega' => $itemsPos % $itemsCount == 0 ? $mageOrder->getShippingDescription() : 0,
+                */
+                'valorFrete'   => $shippingAmount,
+                'formaEntrega' => $shippingDescription,
                 'prazoEntrega' => null,
             );
 

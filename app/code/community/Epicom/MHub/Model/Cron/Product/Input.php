@@ -76,11 +76,21 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         $productsInfoMethod = str_replace ('{productId}', $productId, self::PRODUCTS_INFO_METHOD);
         $productsInfoResult = $helper->api ($productsInfoMethod);
 
+        if (empty ($productsInfoResult))
+        {
+            throw new Exception (Mage::helper ('mhub')->__('Empty Product Info!'));
+        }
+
         /**
          * SKU Info
          */
         $productsSkusMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_SKUS_METHOD);
         $productsSkusResult = $helper->api ($productsSkusMethod);
+
+        if (empty ($productsSkusResult))
+        {
+            throw new Exception (Mage::helper ('mhub')->__('Empty SKU Info!'));
+        }
 
         /**
          * Load
@@ -543,6 +553,11 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $productsAvailabilityMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_AVAILABILITY_METHOD);
                 $productsAvailabilityResult = $helper->api ($productsAvailabilityMethod);
 
+                if (empty ($productsAvailabilityResult))
+                {
+                    throw new Exception (Mage::helper ('mhub')->__('Empty SKU Availability!'));
+                }
+
                 // price
                 $productPriceFrom = $productsAvailabilityResult->precoDe;
                 $productPriceTo = $productsAvailabilityResult->preco;
@@ -603,7 +618,14 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             'pendencias' => null
         );
 
-        $helper->api (self::PRODUCTS_TRACKING_METHOD, $post, 'PUT');
+        try
+        {
+            $helper->api (self::PRODUCTS_TRACKING_METHOD, $post, 'PUT');
+        }
+        catch (Exception $e)
+        {
+            throw new Exception (Mage::helper ('mhub')->__('Invalid Product Tracking!'));
+        }
 
         return $mageProduct->getId ();
     }
