@@ -168,7 +168,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         $post = array(
             'codigo'          => $product->getExternalCode (),
             'nome'            => $mageProduct->getName (),
-            'nomeReduzido'    => $mageProduct->getData ($this->_offerTitleAttribute), // $mageProduct->getShortDescription (),
+            'nomeReduzido'    => substr ($mageProduct->getData ($this->_offerTitleAttribute), 0, 60), // $mageProduct->getShortDescription (),
             'descricao'       => $mageProduct->getDescription (),
             'codigoCategoria' => $mageCategoryId,
             'codigoMarca'     => $mageProduct->getData ($brandAttribute),
@@ -312,7 +312,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
             $post = array(
                 'nome'            => $mageProduct->getName (),
-                'nomeReduzido'    => $mageProduct->getData ($this->_offerTitleAttribute), // $mageProduct->getShortDescription (),
+                'nomeReduzido'    => substr ($mageProduct->getData ($this->_offerTitleAttribute), 0, 60), // $mageProduct->getShortDescription (),
                 'url'             => $mageProduct->getUrlModel ()->getUrl ($mageProduct),
                 'codigo'          => $productCode,
                 'modelo'          => $mageProduct->getData ($this->_modelAttribute),
