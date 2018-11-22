@@ -13,8 +13,12 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
     const PRODUCTS_TRACKING_METHOD     = 'ofertas';
 
+    const DEFAULT_QUEUE_LIMIT = 60;
+
     private function readMHubProductsCollection ()
     {
+        $limit = intval (Mage::getStoreConfig ('mhub/queue/product'));
+
         $collection = Mage::getModel ('mhub/product')->getCollection ()
             ->addFieldToFilter ('method', array ('in' => array (
                 Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU,
@@ -30,6 +34,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             ->group ('external_sku')
             ->group ('method')
             ->order ('updated_at DESC')
+            ->limit ($limit ? $limit : self::DEFAULT_QUEUE_LIMIT)
         ;
 
         return $collection;

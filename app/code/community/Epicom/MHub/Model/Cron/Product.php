@@ -15,6 +15,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
     const PRODUCTS_SKUS_AVAILABLE_POST_METHOD  = 'produtos/{productCode}/skus/{productSku}/disponibilidades';
     const PRODUCTS_SKUS_AVAILABLE_PATCH_METHOD = 'produtos/{productCode}/skus/{productSku}/disponibilidades/{marketplaceCode}';
 
+    const DEFAULT_QUEUE_LIMIT = 60;
+
     protected $_codeAttribute      = null;
     protected $_modelAttribute     = null;
     protected $_eanAttribute       = null;
@@ -101,12 +103,15 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
     private function readMHubProductsCollection ()
     {
+        $limit = intval (Mage::getStoreConfig ('mhub/queue/product'));
+
         $collection = Mage::getModel ('mhub/product')->getCollection ();
         $select = $collection->getSelect ();
         $select->where ('synced_at < updated_at OR synced_at IS NULL')
                ->where (sprintf ("operation = '%s'", Epicom_MHub_Helper_Data::OPERATION_OUT))
                ->group ('product_id')
                ->order ('updated_at DESC')
+               ->limit ($limit ? $limit : self::DEFAULT_QUEUE_LIMIT)
         ;
 
         return $collection;
@@ -303,6 +308,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             $productCode = $mageProduct->getData ($this->_codeAttribute);
             if (empty ($productCode)) $productCode = $mageProduct->getId ();
 
+            $productQty = intval ($mageProduct->getQty ());
+
             $post = array(
                 'nome'            => $mageProduct->getName (),
                 'nomeReduzido'    => $mageProduct->getData ($this->_offerTitleAttribute), // $mageProduct->getShortDescription (),
@@ -311,7 +318,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 'modelo'          => $mageProduct->getData ($this->_modelAttribute),
                 'ean'             => $mageProduct->getData ($this->_eanAttribute),
                 'foraDeLinha'     => false, // boolval ($mageProduct->getData ($this->_outOfLineAttribute)),
-                'estoque'         => intval ($mageProduct->getQty ()),
+                'estoque'         => $productQty > 0 ? $productQty : 0,
                 'dimensoes' => array(
                     'altura'      => $mageProduct->getData ($this->_heightAttribute),
                     'largura'     => $mageProduct->getData ($this->_widthAttribute),

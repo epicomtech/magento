@@ -307,6 +307,9 @@
                 <ssl>1</ssl>
                 <timeout>60</timeout>
             </settings>
+            <queue>
+                <product>60</product>
+            </queue>
             <product>
                 <id>mhub_product_id</id>
                 <code>sku</code><!-- mhub_product_code -->

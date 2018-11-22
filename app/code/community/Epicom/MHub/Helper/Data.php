@@ -65,6 +65,14 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const API_SHIPMENT_EVENT_PARCIAL   = 'parcialmente_entregue';
     const API_SHIPMENT_EVENT_CANCELED  = 'cancelada';
 
+    const QUEUE_LIMIT_30  = 30;
+    const QUEUE_LIMIT_60  = 60;
+    const QUEUE_LIMIT_90  = 90;
+    const QUEUE_LIMIT_120 = 120;
+    const QUEUE_LIMIT_150 = 150;
+    const QUEUE_LIMIT_180 = 180;
+    const QUEUE_LIMIT_210 = 210;
+
     const OPERATION_IN   = 'in';
     const OPERATION_OUT  = 'out';
     const OPERATION_BOTH = 'both';
