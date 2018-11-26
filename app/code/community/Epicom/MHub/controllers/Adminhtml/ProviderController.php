@@ -169,6 +169,20 @@ class Epicom_MHub_Adminhtml_ProviderController extends Mage_Adminhtml_Controller
 		$this->_redirect ('*/*/');
 	}
 
+    /**
+     * Export customer grid to CSV format
+     */
+    public function exportCsvAction()
+    {
+        $fileName   = 'providers.csv';
+        $content    = $this->getLayout()
+            ->createBlock('mhub/adminhtml_provider_grid')
+            ->getCsvFile()
+        ;
+
+        $this->_prepareDownloadResponse ($fileName, $content);
+    }
+
 	public function massRemoveAction ()
 	{
 		try

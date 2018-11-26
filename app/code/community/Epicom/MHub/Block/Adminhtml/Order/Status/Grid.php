@@ -95,6 +95,8 @@ class Epicom_MHub_Block_Adminhtml_Order_Status_Grid extends Mage_Adminhtml_Block
             ),
         ));
 
+        $this->addExportType ('*/*/exportCsv', Mage::helper ('mhub')->__('CSV'));
+
         return parent::_prepareColumns();
     }
 

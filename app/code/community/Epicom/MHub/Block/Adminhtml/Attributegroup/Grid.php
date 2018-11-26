@@ -77,6 +77,8 @@ class Epicom_MHub_Block_Adminhtml_Attributegroup_Grid extends Mage_Adminhtml_Blo
             ),
         ));
 
+        $this->addExportType ('*/*/exportCsv', Mage::helper ('mhub')->__('CSV'));
+
         return parent::_prepareColumns ();
     }
 

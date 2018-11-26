@@ -169,6 +169,20 @@ class Epicom_MHub_Adminhtml_NfController extends Mage_Adminhtml_Controller_Actio
 		$this->_redirect ('*/*/');
 	}
 
+    /**
+     * Export customer grid to CSV format
+     */
+    public function exportCsvAction()
+    {
+        $fileName   = 'nfs.csv';
+        $content    = $this->getLayout()
+            ->createBlock('mhub/adminhtml_nf_grid')
+            ->getCsvFile()
+        ;
+
+        $this->_prepareDownloadResponse ($fileName, $content);
+    }
+
 	public function massRemoveAction ()
 	{
 		try

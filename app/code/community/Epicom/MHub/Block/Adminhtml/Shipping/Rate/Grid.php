@@ -132,6 +132,8 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
             ),
         ));
 */
+        $this->addExportType ('*/*/exportCsv', Mage::helper ('mhub')->__('CSV'));
+
         return parent::_prepareColumns();
     }
 

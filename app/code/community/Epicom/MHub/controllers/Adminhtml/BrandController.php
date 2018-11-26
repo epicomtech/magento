@@ -28,6 +28,20 @@ class Epicom_MHub_Adminhtml_BrandController extends Mage_Adminhtml_Controller_Ac
         $this->renderLayout();
     }
 
+    /**
+     * Export customer grid to CSV format
+     */
+    public function exportCsvAction()
+    {
+        $fileName   = 'brands.csv';
+        $content    = $this->getLayout()
+            ->createBlock('mhub/adminhtml_brand_grid')
+            ->getCsvFile()
+        ;
+
+        $this->_prepareDownloadResponse ($fileName, $content);
+    }
+
     public function massRemoveAction()
     {
         try

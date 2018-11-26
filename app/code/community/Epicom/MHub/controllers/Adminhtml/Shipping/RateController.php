@@ -33,5 +33,19 @@ class Epicom_MHub_Adminhtml_Shipping_RateController extends Mage_Adminhtml_Contr
 
         $this->renderLayout();
     }
+
+    /**
+     * Export customer grid to CSV format
+     */
+    public function exportCsvAction()
+    {
+        $fileName   = 'shippingrates.csv';
+        $content    = $this->getLayout()
+            ->createBlock('mhub/adminhtml_shipping_rate_grid')
+            ->getCsvFile()
+        ;
+
+        $this->_prepareDownloadResponse ($fileName, $content);
+    }
 }
 

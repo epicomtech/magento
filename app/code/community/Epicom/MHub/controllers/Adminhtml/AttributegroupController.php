@@ -129,6 +129,20 @@ class Epicom_MHub_Adminhtml_AttributegroupController extends Mage_Adminhtml_Cont
         $this->_redirect ('*/*/index');
     }
 
+    /**
+     * Export customer grid to CSV format
+     */
+    public function exportCsvAction()
+    {
+        $fileName   = 'attributegroups.csv';
+        $content    = $this->getLayout()
+            ->createBlock('mhub/adminhtml_attributegroup_grid')
+            ->getCsvFile()
+        ;
+
+        $this->_prepareDownloadResponse ($fileName, $content);
+    }
+
     public function massRemoveAction()
     {
         try

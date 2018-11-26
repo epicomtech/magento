@@ -28,6 +28,20 @@ class Epicom_MHub_Adminhtml_CategoryController extends Mage_Adminhtml_Controller
         $this->renderLayout();
     }
 
+    /**
+     * Export customer grid to CSV format
+     */
+    public function exportCsvAction()
+    {
+        $fileName   = 'categories.csv';
+        $content    = $this->getLayout()
+            ->createBlock('mhub/adminhtml_category_grid')
+            ->getCsvFile()
+        ;
+
+        $this->_prepareDownloadResponse ($fileName, $content);
+    }
+
     public function massRemoveAction()
     {
         try

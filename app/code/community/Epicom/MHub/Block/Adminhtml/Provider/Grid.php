@@ -85,6 +85,8 @@ class Epicom_MHub_Block_Adminhtml_Provider_Grid extends Mage_Adminhtml_Block_Wid
                 ),
         ));
 
+        $this->addExportType ('*/*/exportCsv', Mage::helper ('mhub')->__('CSV'));
+
 		return parent::_prepareColumns ();
 	}
 
