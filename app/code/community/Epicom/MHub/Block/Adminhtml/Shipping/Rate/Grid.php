@@ -104,12 +104,14 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
             'index'  => 'created_at',
             'type'   => 'datetime',
             'width'  => '100px',
+            'filter_index' => 'main_table.created_at',
         ));
         $this->addColumn('updated_at', array(
             'header' => Mage::helper('mhub')->__('Updated At'),
             'index'  => 'updated_at',
             'type'   => 'datetime',
             'width'  => '100px',
+            'filter_index' => 'main_table.updated_at',
         ));
 /*
         $this->addColumn('action', array(
