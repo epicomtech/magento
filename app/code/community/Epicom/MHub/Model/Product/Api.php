@@ -468,6 +468,8 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_STOCK:
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_AVAILABILITY:
             {
+                return true; // cron will process this
+
                 if ($productNotExists)
                 {
                     $this->_fault ('product_not_exists');
