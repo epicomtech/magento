@@ -12,7 +12,7 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
         parent::__construct();
 
         $this->setId('shippingRatesGrid');
-        $this->setDefaultSort('rate_id');
+        $this->setDefaultSort('updated_at');
         $this->setDefaultDir('DESC');
         $this->setSaveParametersInSession(true);
     }
