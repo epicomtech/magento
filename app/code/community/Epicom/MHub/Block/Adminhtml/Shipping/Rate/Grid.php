@@ -45,7 +45,7 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
 
         $collection->getSelect()
             ->group('rate_id')
-            ->columns('CONCAT(sku) AS skus')
+            ->columns(array('CONCAT(sku) AS skus', 'CONCAT(qty) AS qtys'))
         ;
 
         $this->setCollection($collection);
@@ -72,6 +72,11 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
             'header' => Mage::helper('mhub')->__('SKUs'),
             'index'  => 'skus',
             'filter_index' => 'sfqi.sku',
+        ));
+        $this->addColumn('qtys', array(
+            'header' => Mage::helper('mhub')->__('Qtys'),
+            'index'  => 'qtys',
+            'filter_index' => 'sfqi.qty',
         ));
         $this->addColumn('email', array(
             'header' => Mage::helper('mhub')->__('E-mail'),
