@@ -19,17 +19,34 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
 
     protected function _prepareCollection()
     {
-        $collection = Mage::getModel('sales/quote_address_rate')->getCollection()
+        $collection = Mage::getResourceModel('mhub/sales_quote_address_rate_collection')
             ->addFieldToFilter('carrier', array('eq' => Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE))
         ;
 
         $collection->getSelect()->join(
             array('sfqa'=> 'sales_flat_quote_address'),
             'sfqa.address_id = main_table.address_id',
-            array('sfqa.*')
+            array(
+                'sfqa.email', 'sfqa.postcode',
+            )
         );
 
-        $collection->addFieldToFilter ('address_type', array ('eq' => 'shipping'));
+        $collection->getSelect()->join(
+            array('sfq' => 'sales_flat_quote'),
+            'sfq.entity_id = sfqa.quote_id',
+            array()
+        );
+
+        $collection->getSelect()->joinLeft(
+            array('sfqi' => 'sales_flat_quote_item'),
+            'sfqi.quote_id = sfq.entity_id',
+            array()
+        );
+
+        $collection->getSelect()
+            ->group('rate_id')
+            ->columns('CONCAT(sku) AS skus')
+        ;
 
         $this->setCollection($collection);
 
@@ -51,6 +68,11 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
             'index'  => 'address_id',
         ));
         */
+        $this->addColumn('skus', array(
+            'header' => Mage::helper('mhub')->__('SKUs'),
+            'index'  => 'skus',
+            'filter_index' => 'sfqi.sku',
+        ));
         $this->addColumn('email', array(
             'header' => Mage::helper('mhub')->__('E-mail'),
             'index'  => 'email',
@@ -94,6 +116,7 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
         $this->addColumn('price', array(
             'header'  => Mage::helper('mhub')->__('Price'),
             'index'   => 'price',
+            'filter_index' => 'main_table.price',
         ));
         $this->addColumn('error_message', array(
             'header' => Mage::helper('mhub')->__('Error Message'),
