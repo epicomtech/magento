@@ -7,8 +7,12 @@
 
 class Epicom_MHub_Model_Cron_Abstract
 {
+    protected $_debug = false;
+
     public function __construct ()
     {
+        $this->_debug = $this->getStoreConfig ('debug');
+
         Mage::app ()->getTranslator ()->init (Mage_Core_Model_App_Area::AREA_ADMINHTML, true);
 
         if (!$this->isCli ()) $this->message ('<pre>');
@@ -77,12 +81,12 @@ class Epicom_MHub_Model_Cron_Abstract
 
     protected function logException (Exception $e)
     {
-        Mage::log ("\n" . $e->__toString (), Zend_Log::ERR, Epicom_MHub_Helper_Data::LOG);
+        Mage::log ("\n" . $e->__toString (), Zend_Log::ERR, Epicom_MHub_Helper_Data::LOG, $this->_debug);
     }
 
     protected function message ($text)
     {
-        Mage::log ($text, null, Epicom_MHub_Helper_Data::LOG);
+        Mage::log ($text, null, Epicom_MHub_Helper_Data::LOG, $this->_debug);
     }
 }
 

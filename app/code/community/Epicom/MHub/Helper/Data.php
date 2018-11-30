@@ -140,7 +140,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
         {
             $text = implode (' : ' , array ($request, $method, json_encode ($post), $message, $result, $uniqid));
 
-            Mage::log ($text, null, self::LOG);
+            Mage::log ($text, null, self::LOG, true);
         }
 
         if (!empty ($message))

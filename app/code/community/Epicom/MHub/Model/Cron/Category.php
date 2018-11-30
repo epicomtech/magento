@@ -13,6 +13,8 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 
     const ATTRIBUTES_METHOD = 'atributos';
 
+    const DEFAULT_QUEUE_LIMIT = 60;
+
     private function readMHubCategoriesMagento ()
     {
         $collection = Mage::getModel ('catalog/category')->getCollection ()
@@ -73,11 +75,14 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 
     private function readMHubCategoriesCollection ()
     {
+        $limit = intval (Mage::getStoreConfig ('mhub/queue/category'));
+
         $collection = Mage::getModel ('mhub/category')->getCollection ();
         $select = $collection->getSelect ();
         $select->where ('synced_at < updated_at OR synced_at IS NULL')
                // ->group ('category_id')
                // ->order ('updated_at DESC')
+            ->limit ($limit ? $limit : self::DEFAULT_QUEUE_LIMIT)
         ;
 
         return $collection;
