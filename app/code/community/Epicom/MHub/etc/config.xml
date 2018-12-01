@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Epicom_MHub>
-            <version>0.1.8</version>
+            <version>0.1.9</version>
         </Epicom_MHub>
     </modules>
     <global>
@@ -67,6 +67,9 @@
                     <nf>
                         <table>epicom_mhub_nf</table>
                     </nf>
+                    <quote>
+                        <table>epicom_mhub_quote</table>
+                    </quote>
                 </entities>
             </mhub_mysql4>
         </models>

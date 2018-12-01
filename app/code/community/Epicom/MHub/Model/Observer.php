@@ -86,6 +86,12 @@ class Epicom_MHub_Model_Observer
         {
             $order->setData (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, true)->save ();
         }
+
+        $resource = Mage::getSingleton ('core/resource');
+        $write    = $resource->getConnection ('core_write');
+        $table    = $resource->getTableName ('epicom_mhub_quote');
+
+        $write->delete ($table, "store_id = {$order->getStoreId ()} AND quote_id = {$order->getQuoteId ()}");
     }
 
     /**

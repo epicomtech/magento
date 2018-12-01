@@ -152,6 +152,30 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         $shippingMethod = explode ('_', $mageOrder->getShippingMethod ());
 
         /**
+         * Quote Collection
+         */
+        $direction = Mage::getStoreConfigFlag ('mhub/cart/best_price') ? 'ASC' : 'DESC';
+
+        $mhubQuoteCollection = Mage::getModel ('mhub/quote')->getCollection ()
+            ->addFieldToFilter ('store_id', array ('eq' => $mageOrder->getStoreId ()))
+            ->addFieldToFilter ('quote_id', array ('eq' => $mageOrder->getQuoteId ()))
+        ;
+
+        $mhubQuoteCollection->getSelect ()->order (sprintf ("price %s", $direction));
+
+        /**
+         * Quote Items
+         */
+        $mhubQuoteItems = Mage::getModel ('mhub/quote')->getCollection ();
+
+        $mhubQuoteItems->getSelect ()->reset (Zend_Db_Select::FROM)
+            ->from ($mhubQuoteCollection->getSelect ())
+            ->group ('sku')
+            ->reset (Zend_Db_Select::COLUMNS)
+            ->columns ('t.*')
+        ;
+
+        /**
          * Order Items
          */
         $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
@@ -178,9 +202,16 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
                 $itemBasePrice = $parentItem->getBasePrice ();
             }
 
+            /*
             // 1: epicom_item_id
             $shippingAmount      = $productId == $shippingMethod [1] ? $mageOrder->getBaseShippingAmount () : 0;
             $shippingDescription = $productId == $shippingMethod [1] ? $mageOrder->getShippingDescription () : null;
+            */
+
+            $itemQuote = $mhubQuoteItems->getItemByColumnValue ('sku', $productId);
+
+            $shippingAmount      = $itemQuote->getPrice ();
+            $shippingDescription = $itemQuote->getTitle ();
 
             $post ['itens'][] = array(
                 'id'           => $productId,

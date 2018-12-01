@@ -120,6 +120,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 			                ->setCarrierTitle ($this->getConfigData ('title'))
 			                ->setMethod (implode ('_', array ($item->id, $_carrier, $_modality)))
 			                ->setMethodTitle ($modality . ' - ' . $formatedTime)
+                            ->setSku ($item->id)
 			                ->setPrice ($price)
 			                ->setCost (0)
                         ;
@@ -129,6 +130,8 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                 }
             }
 		}
+
+        $this->_updateQuotes ($request, $result);
 
 		return $result;
 	}
@@ -225,7 +228,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
     public function _getError ($message)
     {
-        $erromsg = $this->getConfigData ('specificerrmsg');
+        $errmsg = $this->getConfigData ('specificerrmsg');
 
         $error = Mage::getModel ('shipping/rate_result_error')
             ->setCarrier ($this->_code)
@@ -234,6 +237,31 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
         ;
 
         return $error;
+    }
+
+    private function _updateQuotes (Mage_Shipping_Model_Rate_Request $request, Mage_Shipping_Model_Rate_Result $result)
+    {
+        $resource = Mage::getSingleton ('core/resource');
+        $write    = $resource->getConnection ('core_write');
+        $table    = $resource->getTableName ('epicom_mhub_quote');
+
+        $session  = Mage::getSingleton ('checkout/session');
+        $quote    = $session->getQuote ();
+
+        $write->delete ($table, "store_id = {$request->getStoreId ()} AND quote_id = {$quote->getId ()}");
+
+        foreach ($result->getAllRates () as $rate)
+        {
+            $write->insert ($table, array(
+                'store_id'   => $request->getStoreId (),
+                'quote_id'   => $quote->getId (),
+                'sku'        => $rate->getSku (),
+                'method'     => $rate->getMethod (),
+                'title'      => $rate->getMethodTitle (),
+                'price'      => $rate->getPrice (),
+                'created_at' => date ('c'),
+            ));
+        }
     }
 }
 
