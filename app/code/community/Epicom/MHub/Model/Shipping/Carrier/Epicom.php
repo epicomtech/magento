@@ -247,12 +247,15 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
         $session  = Mage::getSingleton ('checkout/session');
         $quote    = $session->getQuote ();
+        $session  = Mage::getSingleton ('customer/session');
+        $customer = $session->getCustomer ();
 
         $write->delete ($table, "store_id = {$request->getStoreId ()} AND quote_id = {$quote->getId ()}");
 
         foreach ($result->getAllRates () as $rate)
         {
             $write->insert ($table, array(
+                'customer_id' => intval ($customer->getId ()),
                 'store_id'   => $request->getStoreId (),
                 'quote_id'   => $quote->getId (),
                 'sku'        => $rate->getSku (),

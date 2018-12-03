@@ -178,7 +178,7 @@
 "Brand attribute not found: %s value: %s","Atributo de marca nao encontrado: %s valor: %s"
 "Manufacturer attribute not found: %s value: %s","Atributo de fabricante nao encontrado: %s valor: %s"
 "Unique Shipping","Entrega Única"
-"Manage Shipping Rates","Gerenciar Cotações de Frete"
+"Manage Shipping Rates","Gerenciar Taxas de Envio"
 "Shipping Rates Manager","Gerenciador de Cotações de Frete"
 "Postcode","CEP"
 "Method Title","Título do Método"
@@ -195,4 +195,6 @@
 "210 items","210 itens"
 "Qtys","Qtdes"
 "Best Price","Melhor Preço"
+"Manage Quotes","Gerenciar Cotações"
+"Quotes Manager","Gerenciador de Cotações"
 
