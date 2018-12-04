@@ -116,6 +116,18 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         $mageProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productSku);
 
         /**
+         * Forced Mode?
+         */
+        if ($productNotExists && in_array ($product->getMethod (), array (
+            Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_PRICE,
+            Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_STOCK,
+            Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_AVAILABILITY
+        )))
+        {
+            $product->setMethod (Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU);
+        }
+
+        /**
          * Parse
          */
         switch ($product->getMethod ())
