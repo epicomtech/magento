@@ -93,22 +93,24 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                     $errorMessage   = Mage::helper ('mhub')->__(Mage::getStoreConfig ('mhub/cart/error_message'));
                     $productMessage = Mage::helper ('mhub')->__(Mage::getStoreConfig ('mhub/cart/product_message'));
 
-                    $quoteItem = $request->getAllItems ()->getItemByColumnValue (array(
-                        'sku' => $item->id
-                    ));
+                    foreach ($request->getAllItems () as $quoteItem)
+                    {
+                        if (!strcmp ($quoteItem->getSku (), $item->id))
+                        {
+                            $quoteItem->addErrorInfo(
+                                'cataloginventory',
+                                Mage_CatalogInventory_Helper_Data::ERROR_QTY,
+                                $productMessage ? $productMessage : $item->status
+                            );
 
-                    $quoteItem->addErrorInfo(
-                        'cataloginventory',
-                        Mage_CatalogInventory_Helper_Data::ERROR_QTY,
-                        $productMessage ? $productMessage : $item->status
-                    );
-
-                    $quoteItem->getQuote()->addErrorInfo(
-                        'stock',
-                        'cataloginventory',
-                        Mage_CatalogInventory_Helper_Data::ERROR_QTY,
-                        $errorMessage
-                    );
+                            $quoteItem->getQuote()->addErrorInfo(
+                                'stock',
+                                'cataloginventory',
+                                Mage_CatalogInventory_Helper_Data::ERROR_QTY,
+                                $errorMessage
+                            );
+                        }
+                    }
 
                     $ids = array ();
 
