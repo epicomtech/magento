@@ -186,7 +186,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             ->filterByTypes (array (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
         ;
 
-        $itemsAmount = floatval ($mageOrder->getBaseShippingAmount ());
+        $itemsAmount = 0; // floatval ($mageOrder->getBaseShippingAmount ());
 
         $itemsPos = $itemsCount = $mageOrderItems->count ();
 
@@ -212,6 +212,8 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
             $shippingAmount      = $itemQuote->getPrice ();
             $shippingDescription = $itemQuote->getTitle ();
+
+            $itemsAmount += floatval ($shippingAmount);
 
             $post ['itens'][] = array(
                 'id'           => $productId,
