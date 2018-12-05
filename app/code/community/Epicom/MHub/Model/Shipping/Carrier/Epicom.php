@@ -90,12 +90,20 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
             {
                 if (strcmp ($item->status, 'ok'))
                 {
+                    $uniqueShipping = Mage::getStoreConfigFlag ('mhub/cart/unique_shipping');
+
                     $errorMessage   = Mage::helper ('mhub')->__(Mage::getStoreConfig ('mhub/cart/error_message'));
                     $productMessage = Mage::helper ('mhub')->__(Mage::getStoreConfig ('mhub/cart/product_message'));
 
+                    $shippingItems   = $uniqueShipping ? $item->itens : array ($item);
+
+                    $ids = array ();
+
+                    foreach ($shippingItems as $_item) $ids [] = $_item->id;
+
                     foreach ($request->getAllItems () as $quoteItem)
                     {
-                        if (!strcmp ($quoteItem->getSku (), $item->id))
+                        if (in_array ($quoteItem->getSku (), $ids))
                         {
                             $quoteItem->addErrorInfo(
                                 'cataloginventory',
@@ -111,10 +119,6 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                             );
                         }
                     }
-
-                    $ids = array ();
-
-                    foreach ($item->itens as $_item) $ids [] = $_item->id;
 
                     $error = $this->_getError (sprintf ('%s: %s', $item->status, implode (',', $ids)));
 
