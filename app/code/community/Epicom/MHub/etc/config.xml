@@ -335,7 +335,11 @@
                 <length>mhub_product_length</length>
             </product>
             <cart>
+                <cache_enabled>1</cache_enabled>
                 <cache_lifetime>3600</cache_lifetime>
+                <best_price>1</best_price>
+                <error_message><![CDATA[Some products are currently unavailable for purchase.]]></error_message>
+                <product_message><![CDATA[This product is currently unavailable for purchase.]]></product_message>
             </cart>
             <order>
                 <reserve_filter>pending</reserve_filter>

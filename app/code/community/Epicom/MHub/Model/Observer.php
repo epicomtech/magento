@@ -91,7 +91,10 @@ class Epicom_MHub_Model_Observer
         $write    = $resource->getConnection ('core_write');
         $table    = $resource->getTableName ('epicom_mhub_quote');
 
+        if (Mage::getStoreConfigFlag ('mhub/cart/remove_quotes'))
+        {
         $write->delete ($table, "store_id = {$order->getStoreId ()} AND quote_id = {$order->getQuoteId ()}");
+        }
     }
 
     /**

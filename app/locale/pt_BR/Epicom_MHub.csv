@@ -183,6 +183,7 @@
 "Postcode","CEP"
 "Method Title","Título do Método"
 "Error Message","Mensagem de Erro"
+"Product Message","Mensagem do Produto"
 "Cache Enabled","Cache Ativo"
 "Cache Lifetime (Seconds)","Tempo de Vida do Cache (Segundos)"
 "Queue","Fila"
@@ -197,4 +198,7 @@
 "Best Price","Melhor Preço"
 "Manage Quotes","Gerenciar Cotações"
 "Quotes Manager","Gerenciador de Cotações"
+"Some products are currently unavailable for purchase.","Alguns produtos estão atualmente indisponíveis para compra."
+"This product is currently unavailable for purchase.","Este produto está atualmente indisponível para compra."
+"Remove Quotes","Remover Cotações"
 
