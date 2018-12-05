@@ -425,7 +425,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $table = $resource->getTableName ('catalog_product_super_attribute');
                     $write->delete ($table, "product_id = {$parentProduct->getId ()}"); // remove previous super_attributes
                     $table = $resource->getTableName ('catalog_product_super_link');
-                    $write->delete ($table, "product_id = {$parentProduct->getId ()}"); // remove previous super_links
+                    $write->delete ($table, "parent_id =  {$parentProduct->getId ()}"); // remove previous super_links
 
                     $parentProduct->setCanSaveCustomOptions (true);
                     $parentProduct->setCanSaveConfigurableAttributes (true);
