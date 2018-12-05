@@ -93,7 +93,7 @@ class Epicom_MHub_Model_Observer
 
         if (Mage::getStoreConfigFlag ('mhub/cart/remove_quotes'))
         {
-        $write->delete ($table, "store_id = {$order->getStoreId ()} AND quote_id = {$order->getQuoteId ()}");
+            $write->delete ($table, "store_id = {$order->getStoreId ()} AND customer_id = {$order->getCustomerId ()}");
         }
     }
 
