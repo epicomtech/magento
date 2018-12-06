@@ -442,6 +442,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         $productAttributeSets [] = array ('attribute_id' => $attributeId, 'attribute_code' => $attribute->getAttributeCode (), 'attribute_set_id' => $attributeSetId);
                     }
 
+                    $configurableAttributesIds  = null;
                     $configurableAttributesData = null;
 
                     foreach ($productAttributeSets as $value)
@@ -449,8 +450,12 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         if ($parentProduct->getAttributeSetId () == $value ['attribute_set_id'])
                         {
                             $configurableAttributesData [] = array ('attribute_id' => $value ['attribute_id'], 'attribute_code' => $value ['attribute_code']);
+
+                            $configurableAttributesIds [] = $value ['attribute_id'];
                         }
                     }
+
+                    $parentProduct->getTypeInstance ()->setUsedProductAttributeIds ($configurableAttributesIds);
 
                     $parentProduct->setConfigurableAttributesData ($configurableAttributesData);
 
