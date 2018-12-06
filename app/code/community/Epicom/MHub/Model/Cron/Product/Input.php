@@ -482,7 +482,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                             }
 
                             // lowest price
-                            if ($simpleProduct->getPrice () < $parentProduct->getPrice () && $simpleProduct->isSalable ())
+                            if ($simpleProduct->getPrice () < $parentProduct->getPrice () /* && $simpleProduct->isSalable () */)
                             {
                                 $parentProduct->setPrice ($simpleProduct->getPrice ())
                                     ->setSpecialPrice ($simpleProduct->getSpecialPrice ())
@@ -617,7 +617,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $parentProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
                 if ($parentProduct && intval ($parentProduct->getId ()) > 0)
                 {
-                    if ($mageProduct->getPrice () < $parentProduct->getPrice () && $mageProduct->isSalable ())
+                    if ($mageProduct->getPrice () < $parentProduct->getPrice () /* && $mageProduct->isSalable () */)
                     {
                         $parentProduct->setPrice ($mageProduct->getPrice ())
                             ->setSpecialPrice ($mageProduct->getSpecialPrice ())
