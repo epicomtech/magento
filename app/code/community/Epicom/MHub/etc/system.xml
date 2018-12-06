@@ -15,6 +15,9 @@
         </epicom>
     </tabs>
     <sections>
+        <shipping>
+            <tab>epicom</tab>
+        </shipping>
         <carriers>
             <tab>epicom</tab>
             <groups>
