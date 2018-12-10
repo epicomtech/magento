@@ -63,5 +63,10 @@
             <block type="mhub/adminhtml_shipping_rate" name="shipping_rate" />
         </reference>
     </admin_mhub_adminhtml_shipping_rate_index>
+    <admin_mhub_adminhtml_product_association_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_product_association" name="product_association" />
+        </reference>
+    </admin_mhub_adminhtml_product_association_index>
 </layout>
 

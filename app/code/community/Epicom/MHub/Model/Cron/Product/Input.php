@@ -422,13 +422,20 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                      */
                     $resource = Mage::getSingleton ('core/resource');
                     $write = $resource->getConnection ('core_write');
+
                     $table = $resource->getTableName ('catalog_product_super_attribute');
                     $write->delete ($table, "product_id = {$parentProduct->getId ()}"); // remove previous super_attributes
+
                     $table = $resource->getTableName ('catalog_product_super_link');
                     $write->delete ($table, "parent_id =  {$parentProduct->getId ()}"); // remove previous super_links
 
+                    $table = $resource->getTableName ('catalog_product_relation');
+                    $write->delete ($table, "parent_id = {$parentProduct->getId ()}"); // remove previous relations
+
                     $parentProduct->setCanSaveCustomOptions (true);
                     $parentProduct->setCanSaveConfigurableAttributes (true);
+
+                    $parentProduct = Mage::getModel ('catalog/product')->load ($parentProduct->getId ()); // reload
 
                     $productAttributeSets = null;
 
@@ -439,23 +446,33 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                         $attribute = Mage::getModel ('eav/entity_attribute')->load ($attributeId);
 
-                        $productAttributeSets [] = array ('attribute_id' => $attributeId, 'attribute_code' => $attribute->getAttributeCode (), 'attribute_set_id' => $attributeSetId);
+                        $productAttributeSets [] = array (
+                            'attribute_id'     => $attributeId,
+                            'attribute_code'   => $attribute->getAttributeCode (),
+                            'frontend_label'   => $attribute->getFrontendLabel (),
+                            'attribute_set_id' => $attributeSetId
+                        );
                     }
 
-                    $configurableAttributesIds  = null;
+                    // $configurableAttributesIds  = null;
                     $configurableAttributesData = null;
 
                     foreach ($productAttributeSets as $value)
                     {
+                        if (!$this->_productHasAttribute ($productsSkusResult, $value ['frontend_label']))
+                        {
+                            continue;
+                        }
+
                         if ($parentProduct->getAttributeSetId () == $value ['attribute_set_id'])
                         {
                             $configurableAttributesData [] = array ('attribute_id' => $value ['attribute_id'], 'attribute_code' => $value ['attribute_code']);
 
-                            $configurableAttributesIds [] = $value ['attribute_id'];
+                            // $configurableAttributesIds [] = $value ['attribute_id'];
                         }
                     }
 
-                    $parentProduct->getTypeInstance ()->setUsedProductAttributeIds ($configurableAttributesIds);
+                    // $parentProduct->getTypeInstance ()->setUsedProductAttributeIds ($configurableAttributesIds);
 
                     $parentProduct->setConfigurableAttributesData ($configurableAttributesData);
 
@@ -475,6 +492,11 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         {
                             foreach ($productAttributeSets as $value)
                             {
+                                if (!$this->_productHasAttribute ($productsSkusResult, $value ['frontend_label']))
+                                {
+                                    continue;
+                                }
+
                                 if ($simpleProduct->getAttributeSetId () == $value ['attribute_set_id'])
                                 {
                                     $configurableProductsData [$simpleProduct->getId ()][] = array ('attribute_id' => $value ['attribute_id']);
@@ -694,6 +716,26 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             if ($mageProduct && intval ($mageProduct->getId ()) > 0)
             {
                 $mageProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_DISABLED)->save ();
+            }
+        }
+    }
+
+    private function _productHasAttribute ($productsSkusResult, $frontendLabel)
+    {
+        if (is_array ($productsSkusResult->grupos) && count ($productsSkusResult->grupos) > 0)
+        {
+            foreach ($productsSkusResult->grupos as $group)
+            {
+                if (is_array ($group->atributos) && count ($group->atributos) > 0)
+                {
+                    foreach ($group->atributos as $attribute)
+                    {
+                        if (!strcmp (strtolower ($attribute->nome), strtolower ($frontendLabel)))
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
         }
     }

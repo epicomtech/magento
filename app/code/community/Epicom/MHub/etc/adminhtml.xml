@@ -75,6 +75,11 @@
                             <sort_order>100</sort_order>
                             <action>admin_mhub/adminhtml_shipping_rate</action>
                         </shipping_rate>
+                       <product_association translate="title" module="mhub">
+                            <title>Manage Product Associations</title>
+                            <sort_order>110</sort_order>
+                            <action>admin_mhub/adminhtml_product_association</action>
+                        </product_association>
                     </children>
                 </mhub>
             </children>
@@ -139,6 +144,10 @@
                                         <title>Manage Shipping Rates</title>
                                         <sort_order>100</sort_order>
                                     </shipping_rate>
+                                    <product_association translate="title" module="mhub">
+                                        <title>Manage Product Assotiactions</title>
+                                        <sort_order>110</sort_order>
+                                    </product_association>
                                 </children>
                             </mhub>
                         </children>
