@@ -172,6 +172,22 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
             }
             case Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_DELIVERED:
             {
+                foreach ($shipmentInfoResult->skus as $_sku)
+                {
+                    foreach ($mageOrder->getAllItems () as $_item)
+                    {
+                        if (!strcmp ($_item->getData ($productIdAttribute /* Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID */), $_sku->id))
+                        {
+                            if ($_item->getParentItemId ())
+                            {
+                                $_item = Mage::getModel ('sales/order_item')->load ($_item->getParentItemId ());
+                            }
+
+                            $_item->setQtyDelivered ($_sku->quantidade)->save ();
+                        }
+                    }
+                }
+
                 $orderStatus   = Mage::getStoreConfig ('mhub/shipment/delivered_status');
                 $orderComment  = Mage::getStoreConfig ('mhub/shipment/delivered_comment');
                 $orderNotified = Mage::getStoreConfigFlag ('mhub/shipment/delivered_notified');

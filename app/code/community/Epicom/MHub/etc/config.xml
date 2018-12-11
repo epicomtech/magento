@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Epicom_MHub>
-            <version>0.1.9</version>
+            <version>0.1.10</version>
         </Epicom_MHub>
     </modules>
     <global>
@@ -270,6 +270,10 @@
                 <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runOrderStatus</model></run>
             </epicom_mhub_order_status>
+            <epicom_mhub_order_complete>
+                <schedule><cron_expr>*/10 * * * *</cron_expr></schedule>
+                <run><model>mhub/cron::runOrderComplete</model></run>
+            </epicom_mhub_order_complete>
             <epicom_mhub_shipment>
                 <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runShipment</model></run>
@@ -367,6 +371,10 @@
                 <canceled_comment>Entrega cancelada.</canceled_comment>
                 <canceled_notified>1</canceled_notified>
             </shipment>
+            <complete>
+                <delivered_comment>O pedido foi entregue com sucesso.</delivered_comment>
+                <delivered_notified>1</delivered_notified>
+            </complete>
         </mhub>
     </default>
 </config>

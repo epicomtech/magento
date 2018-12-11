@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS {$table}
     PRIMARY KEY (entity_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 COMMENT='{$description}';
 SQLBLOCK;
-*/
-    $installer->run ($sqlBlock);
 
+    $installer->run ($sqlBlock);
+*/
     $installer->getConnection ()
         ->addColumn ($table, 'cfop', array(
             'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,

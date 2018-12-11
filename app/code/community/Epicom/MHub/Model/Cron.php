@@ -42,6 +42,11 @@ class Epicom_MHub_Model_Cron
         Mage::getModel ('mhub/cron_order_status')->run ();
     }
 
+    public function runOrderComplete ()
+    {
+        Mage::getModel ('mhub/cron_order_complete')->run ();
+    }
+
     public function runShipment ()
     {
         Mage::getModel ('mhub/cron_shipment')->run ();
@@ -58,6 +63,8 @@ class Epicom_MHub_Model_Cron
         $this->runOrder ();
 
         $this->runOrderStatus ();
+
+        $this->runOrderComplete ();
 
         $this->runShipment ();
     }
