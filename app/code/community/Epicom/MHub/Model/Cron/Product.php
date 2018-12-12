@@ -244,7 +244,9 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
         $productsInfoResult = $this->getHelper ()->api ($productsInfoMethod);
 
+        /*
         $mageProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productsInfoResult->id)->save ();
+        */
 
         /**
          * Children
@@ -408,7 +410,9 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
             $productsSkusResult = $this->getHelper ()->api ($productsSkusMethod);
 
+            /*
             $mageProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productsSkusResult->id)->save ();
+            */
 
             /**
              * Availability
