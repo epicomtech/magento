@@ -65,7 +65,9 @@ class Epicom_MHub_Model_Observer
             Mage::throwException (Mage::helper ('rule')->__('Invalid discount amount.'));
         }
 */
-        if ($order->getQuote ()->getIsEpicom ())
+        $storeId = intval (Mage::getStoreConfig ('mhub/quote/store_view'));
+
+        if ($order->getQuote ()->getIsEpicom () && intval ($order->getQuote ()->getStoreId ()) != $storeId)
         {
             Mage::getModel ('mhub/cron_order')->setOrderId ($order->getId ())->run (); // RESERVE
         }

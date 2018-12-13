@@ -345,6 +345,9 @@
                 <error_message><![CDATA[Some products are currently unavailable for purchase.]]></error_message>
                 <product_message><![CDATA[This product is currently unavailable for purchase.]]></product_message>
             </cart>
+            <quote>
+                <store_view>0</store_view>
+            </quote>
             <order>
                 <reserve_filter>pending</reserve_filter>
                 <confirm_filter>processing</confirm_filter>
