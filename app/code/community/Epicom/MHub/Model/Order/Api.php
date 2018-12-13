@@ -34,7 +34,9 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
         // $productSkuAttribute  = Mage::getStoreConfig ('mhub/product/sku');
 
-        $quoteId = Mage::getModel ('checkout/cart_api')->create ();
+        $storeId = intval (Mage::getStoreConfig ('mhub/quote/store_view'));
+
+        $quoteId = Mage::getModel ('checkout/cart_api')->create ($storeId);
 
         foreach ($items as $_item)
         {
@@ -68,13 +70,16 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 
             try
             {
-                Mage::getModel ('checkout/cart_product_api')->add ($quoteId, array(
+                Mage::getModel ('checkout/cart_product_api')->add (
+                    $quoteId,
                     array(
-                        'product_id' => $mageProduct->getId (),
-                        'sku'        => $productSku,
-                        'qty'        => $productQty
-                    )
-                ));
+                        array(
+                            'product_id' => $mageProduct->getId (),
+                            'qty'        => $productQty
+                        )
+                    ),
+                    $storeId
+                );
             }
             catch (Exception $e)
             {
@@ -88,31 +93,36 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         $customerName   = explode (chr (32), $recipient ['nomeDestinatario']);
         $customerEmail  = $recipient ['emailDestinatario'];
         $customerTaxvat = $recipient ['cpfCnpjDestinatario'];
-
+/*
         $mageCustomer = Mage::getModel ('customer/customer')
             ->setWebsiteId ($defaultStore->getWebsiteId ())
             ->loadByEmail ($customerEmail)
         ;
-
-        if (!$mageCustomer || !$mageCustomer->getId ())
+*/
+        // if (!$mageCustomer || !$mageCustomer->getId ())
         {
             $mageCustomer = Mage::getModel ('customer/customer')
                 ->setEmail ($customerEmail)
                 ->setFirstname ($customerName [0])
                 ->setLastname  ($customerName [1])
                 ->setTaxvat ($customerTaxvat)
-                ->save ()
+                // ->save ()
             ;
         }
 
+        $mageCustomer->setMode (Mage_Checkout_Model_Api_Resource_Customer::MODE_GUEST);
+/*
         $customerId = $mageCustomer->getId ();
 
         Mage::getModel ('checkout/cart_customer_api')->set ($quoteId, array(
             'mode'        => Mage_Checkout_Model_Api_Resource_Customer::MODE_CUSTOMER,
             'customer_id' => $customerId,
         ));
+*/
+        Mage::getModel ('checkout/cart_customer_api')->set ($quoteId, $mageCustomer->getData (), $storeId);
 
-        $customerAddressId = Mage::getModel ('customer/address_api')->create ($customerId, array(
+        // $customerAddressId = Mage::getModel ('customer/address_api')->create ($customerId, array(
+        $customerAddress = Mage::getModel ('customer/address')->setData (array (
             'firstname'  => $customerName [0],
             'lastname'   => $customerName [1],
             'company'    => $shipping ['referenciaEntrega'],
@@ -137,23 +147,29 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 
         foreach ($customerAddressModes as $mode)
         {
+            /*
             Mage::getModel ('checkout/cart_customer_api')->setAddresses ($quoteId, array(
                 array(
                     'mode'       => $mode,
             		'address_id' => $customerAddressId
                 )
             ));
+            */
+
+            $customerAddress->setMode ($mode);
+
+            Mage::getModel ('checkout/cart_customer_api')->setAddresses ($quoteId, array ($customerAddress->getData ()), $storeId);
         }
 
-        Mage::getModel ('checkout/cart_shipping_api')->setShippingMethod ($quoteId,
-            str_repeat (Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE . '_', 2) . 'provider'
+        Mage::getModel ('checkout/cart_shipping_api')->setShippingMethod (
+            $quoteId, str_repeat (Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE . '_', 2) . 'provider', $storeId
         );
 
-        Mage::getModel ('checkout/cart_payment_api')->setPaymentMethod ($quoteId, array(
-            'method' => Epicom_MHub_Model_Payment_Method_Epicom::CODE
-        ));
+        Mage::getModel ('checkout/cart_payment_api')->setPaymentMethod (
+            $quoteId, array ('method' => Epicom_MHub_Model_Payment_Method_Epicom::CODE), $storeId
+        );
 
-        $incrementId = Mage::getModel ('checkout/cart_api')->createOrder ($quoteId);
+        $incrementId = Mage::getModel ('checkout/cart_api')->createOrder ($quoteId, $storeId);
 
         $mageOrder = Mage::getModel ('sales/order')->loadByIncrementId ($incrementId)
             ->setCreatedAt ($createdAt)
