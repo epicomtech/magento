@@ -347,6 +347,7 @@
             </cart>
             <quote>
                 <store_view>0</store_view>
+                <customer_mode>guest</customer_mode>
             </quote>
             <order>
                 <reserve_filter>pending</reserve_filter>

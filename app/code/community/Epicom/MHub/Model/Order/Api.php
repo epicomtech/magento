@@ -7,6 +7,8 @@
 
 class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstract
 {
+    const CUSTOMER_MODE_REGISTER = Mage_Checkout_Model_Api_Resource_Customer::MODE_REGISTER;
+
     public function create ($marketplace, $orderCode, $createdAt, $items, $recipient, $shipping)
     {
         if (empty ($marketplace) || empty ($orderCode) || empty ($createdAt)
@@ -88,18 +90,20 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         }
 
         $defaultStoreId = Mage::app ()->getWebsite ()->getDefaultGroup ()->getDefaultStoreId ();
-        $defaultStore   = Mage::getModel ('core/store')->load ($defaultStoreId);
+        $defaultStore   = Mage::getModel ('core/store')->load ($storeId ? $storeId : $defaultStoreId);
+
+        $customerMode   = Mage::getStoreConfig ('mhub/quote/customer_mode');
 
         $customerName   = explode (chr (32), $recipient ['nomeDestinatario']);
         $customerEmail  = $recipient ['emailDestinatario'];
         $customerTaxvat = $recipient ['cpfCnpjDestinatario'];
-/*
+
         $mageCustomer = Mage::getModel ('customer/customer')
             ->setWebsiteId ($defaultStore->getWebsiteId ())
             ->loadByEmail ($customerEmail)
         ;
-*/
-        // if (!$mageCustomer || !$mageCustomer->getId ())
+
+        if (!$mageCustomer || !$mageCustomer->getId ())
         {
             $mageCustomer = Mage::getModel ('customer/customer')
                 ->setEmail ($customerEmail)
@@ -110,7 +114,16 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             ;
         }
 
-        $mageCustomer->setMode (Mage_Checkout_Model_Api_Resource_Customer::MODE_GUEST);
+        $mageCustomer->setMode ($customerMode);
+
+        if (!strcmp ($mageCustomer->getMode (), self::CUSTOMER_MODE_REGISTER))
+        {
+            $customerPassword = $mageCustomer->generatePassword ();
+
+            $mageCustomer->setPassword ($customerPassword)
+                ->setPasswordConfirmation ($customerPassword)
+            ;
+        }
 /*
         $customerId = $mageCustomer->getId ();
 
@@ -169,7 +182,14 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             $quoteId, array ('method' => Epicom_MHub_Model_Payment_Method_Epicom::CODE), $storeId
         );
 
-        $incrementId = Mage::getModel ('checkout/cart_api')->createOrder ($quoteId, $storeId);
+        try
+        {
+            $incrementId = Mage::getModel ('checkout/cart_api')->createOrder ($quoteId, $storeId);
+        }
+        catch (Exception $e)
+        {
+            return $this->_error ($mhubOrder, $e->getMessage (), null /* others */);
+        }
 
         $mageOrder = Mage::getModel ('sales/order')->loadByIncrementId ($incrementId)
             ->setCreatedAt ($createdAt)
