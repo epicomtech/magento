@@ -191,7 +191,15 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                 $mageProduct->setShortDescription ($productsSkusResult->nome);
 
+                // weight
                 $productWeight = intval ($productsSkusResult->dimensoes->peso);
+
+                $productWeightMode = Mage::getStoreConfig ('mhub/product/weight_mode');
+                if (!strcmp ($productWeightMode, Epicom_MHub_Helper_Data::PRODUCT_WEIGHT_KILO) && $productWeight > 0)
+                {
+                    $productWeight = floatval ($productWeight / 1000);
+                }
+
                 $mageProduct->setWeight ($productWeight > 0 ? $productWeight : 999999);
 
                 // parent

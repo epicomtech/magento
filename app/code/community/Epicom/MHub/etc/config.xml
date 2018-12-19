@@ -319,6 +319,7 @@
                 <product>60</product>
             </queue>
             <product>
+                <weight_mode>gram</weight_mode>
                 <id>mhub_product_id</id>
                 <code>sku</code><!-- mhub_product_code -->
                 <brand>mhub_product_brand</brand>

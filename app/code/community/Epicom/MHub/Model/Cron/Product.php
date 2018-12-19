@@ -312,6 +312,14 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
             $productQty = intval ($mageProduct->getQty ());
 
+            $productWeight = floatval ($mageProduct->getWeight ());
+
+            $productWeightMode = Mage::getStoreConfig ('mhub/product/weight_mode');
+            if (!strcmp ($productWeightMode, Epicom_MHub_Helper_Data::PRODUCT_WEIGHT_KILO) && $productWeight > 0)
+            {
+                $productWeight = intval ($productWeight * 1000);
+            }
+
             $post = array(
                 'nome'            => $mageProduct->getName (),
                 'nomeReduzido'    => substr ($mageProduct->getData ($this->_offerTitleAttribute), 0, 60), // $mageProduct->getShortDescription (),
@@ -325,7 +333,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                     'altura'      => $mageProduct->getData ($this->_heightAttribute),
                     'largura'     => $mageProduct->getData ($this->_widthAttribute),
                     'comprimento' => $mageProduct->getData ($this->_lengthAttribute),
-                    'peso'        => intval ($mageProduct->getWeight ())
+                    'peso'        => $productWeight, // intval ($mageProduct->getWeight ())
                 ),
                 'imagens' => array (),
                 'grupos'  => array (),
