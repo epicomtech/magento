@@ -142,6 +142,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                         $_modality = preg_replace ('[\W]', "", $modality);
 
 			            $method = Mage::getModel ('shipping/rate_result_method')
+                            ->setPostcode ($postCode)
 		                    ->setCarrier ($this->_code)
 			                ->setCarrierTitle ($this->getConfigData ('title'))
 			                ->setMethod (implode ('_', array ($item->id, $_carrier, $_modality)))
@@ -285,6 +286,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                 'customer_id' => intval ($customer->getId ()),
                 'store_id'   => $request->getStoreId (),
                 'quote_id'   => $quote->getId (),
+                'postcode'   => $rate->getPostcode (),
                 'sku'        => $rate->getSku (),
                 'method'     => $rate->getMethod (),
                 'title'      => $rate->getMethodTitle (),

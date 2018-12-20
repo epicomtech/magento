@@ -61,6 +61,10 @@ class Epicom_MHub_Block_Adminhtml_Quote_Grid extends Mage_Adminhtml_Block_Widget
 		    'index'   => 'quote_id',
             'type'    => 'number',
 		));
+		$this->addColumn ('postcode', array(
+		    'header' => Mage::helper ('mhub')->__('Postcode'),
+		    'index'  => 'postcode',
+		));
 		$this->addColumn ('sku', array(
 		    'header' => Mage::helper ('mhub')->__('SKU'),
 		    'index'  => 'sku',
@@ -78,6 +82,11 @@ class Epicom_MHub_Block_Adminhtml_Quote_Grid extends Mage_Adminhtml_Block_Widget
 		    'index'  => 'price',
             'type'   => 'price',
             'currency_code' => $store->getBaseCurrency()->getCode(),
+		));
+		$this->addColumn ('days', array(
+		    'header' => Mage::helper ('mhub')->__('Days'),
+		    'index'  => 'days',
+            'type'   => 'number',
 		));
 		$this->addColumn ('created_at', array(
 			'header' => Mage::helper ('mhub')->__('Created At'),
