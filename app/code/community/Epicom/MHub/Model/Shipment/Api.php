@@ -172,6 +172,8 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
             }
             case Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_DELIVERED:
             {
+                $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
+
                 foreach ($shipmentInfoResult->skus as $_sku)
                 {
                     foreach ($mageOrder->getAllItems () as $_item)
