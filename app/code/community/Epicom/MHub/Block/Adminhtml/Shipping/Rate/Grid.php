@@ -34,7 +34,9 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
         $collection->getSelect()->join(
             array('sfq' => 'sales_flat_quote'),
             'sfq.entity_id = sfqa.quote_id',
-            array()
+            array(
+                'store_id', 'customer_email',
+	        )
         );
 
         $collection->getSelect()->joinLeft(
@@ -45,7 +47,7 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
 
         $collection->getSelect()
             ->group('rate_id')
-            ->columns(array('CONCAT(sku) AS skus', 'CONCAT(qty) AS qtys'))
+            ->columns(array("GROUP_CONCAT(sku SEPARATOR ' ') AS skus", "GROUP_CONCAT(qty SEPARATOR ' ') AS qtys"))
         ;
 
         $this->setCollection($collection);
@@ -62,12 +64,24 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
             'type'   => 'number',
             'index'  => 'rate_id',
         ));
-        /*
         $this->addColumn('address_id', array(
             'header' => Mage::helper('mhub')->__('Address ID'),
+            'align'  => 'right',
+            'width'  => '50px',
+            'type'   => 'number',
             'index'  => 'address_id',
         ));
-        */
+        $this->addColumn ('store_id', array(
+            'header' => Mage::helper ('mhub')->__('Store'),
+            'index'  => 'store_id',
+            'type'   => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
+            'filter_index' => 'sfq.store_id',
+        ));
+        $this->addColumn('customer_email', array(
+            'header' => Mage::helper('mhub')->__('Customer E-mail'),
+            'index'  => 'customer_email',
+        ));
         $this->addColumn('skus', array(
             'header' => Mage::helper('mhub')->__('SKUs'),
             'index'  => 'skus',
@@ -77,10 +91,6 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
             'header' => Mage::helper('mhub')->__('Qtys'),
             'index'  => 'qtys',
             'filter_index' => 'sfqi.qty',
-        ));
-        $this->addColumn('email', array(
-            'header' => Mage::helper('mhub')->__('E-mail'),
-            'index'  => 'email',
         ));
         /*
         $this->addColumn('firstname', array(

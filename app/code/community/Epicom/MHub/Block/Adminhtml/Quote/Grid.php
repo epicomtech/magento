@@ -52,7 +52,7 @@ class Epicom_MHub_Block_Adminhtml_Quote_Grid extends Mage_Adminhtml_Block_Widget
             'filter_index' => 'main_table.store_id',
 		));
 		$this->addColumn ('customer_email', array(
-		    'header'  => Mage::helper ('mhub')->__('Customer Email'),
+		    'header'  => Mage::helper ('mhub')->__('Customer E-mail'),
 		    'index'   => 'customer_email',
             'filter_index' => 'customer.email',
 		));
