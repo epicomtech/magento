@@ -28,7 +28,12 @@ class Epicom_MHub_Model_Cron_Order_Complete extends Epicom_MHub_Model_Cron_Abstr
 
             $itemsCollection = Mage::getModel ('sales/order_item')->getCollection ()
                 ->setOrderFilter ($order)
+                ->filterByTypes (array (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
+                ->filterByParent (null)
+                ->addFieldToFilter ('qty_delivered', array ('gt' => 0))
             ;
+
+            if (!$itemsCollection->count ()) continue;
 
             foreach ($itemsCollection as $item)
             {
