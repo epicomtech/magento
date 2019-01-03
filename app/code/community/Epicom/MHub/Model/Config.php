@@ -133,17 +133,37 @@ class Epicom_MHub_Model_Config
 
     public function getShippingPrices ($postCode, $unique = false)
     {
-        $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
+        $productWeightMode  = Mage::getStoreConfig ('mhub/product/weight_mode');
 
         $result = array ();
+
+        $itemsWeight = 0;
 
         $items  = Mage::getSingleton ('checkout/session')->getQuote ()->getAllItems ();
         foreach ($items as $_item)
         {
             $result [$_item->getProductId ()] = $_item->getQty ();
+
+            /**
+             * Minimum Weight
+             */
+            $_itemWeight = $_item->getWeight ();
+
+            if (!strcmp ($productWeightMode, Epicom_MHub_Helper_Data::PRODUCT_WEIGHT_KILO) && $_itemWeight > 0)
+            {
+                $_itemWeight = intval ($_itemWeight * 1000);
+            }
+
+            $itemsWeight += $_itemWeight;
         }
 
         if (empty ($result)) return false;
+
+        $minimumWeight = intval (Mage::getStoreConfig ('mhub/cart/minimum_weight'));
+
+        if ($itemsWeight < $minimumWeight) return false;
+
+        $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
 
         $collection = Mage::getModel ('catalog/product')->getCollection ()
             ->addAttributeToFilter ('type_id',   Mage_Catalog_Model_Product_Type::TYPE_SIMPLE)

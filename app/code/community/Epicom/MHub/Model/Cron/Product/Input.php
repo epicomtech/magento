@@ -699,6 +699,10 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             $table, date ('c'), Epicom_MHub_Helper_Data::STATUS_OKAY, $mageProductId, $product->getExternalSku (), $product->getMethod ()
         ));
 
+        $write->query (sprintf ("DELETE FROM %s WHERE entity_id <> %s AND external_sku = '%s' AND method = '%s'",
+            $table, $product->getId (), $product->getExternalSku (), $product->getMethod ()
+        ));
+
         return true;
     }
 

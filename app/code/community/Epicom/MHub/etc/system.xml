@@ -606,10 +606,18 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </remove_quotes>
+                        <minimum_weight translate="label" module="mhub">
+                            <label>Minimum Weight (grams)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </minimum_weight>
                         <error_message translate="label" module="mhub">
                             <label>Error Message</label>
                             <frontend_type>textarea</frontend_type>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -617,7 +625,7 @@
                         <product_message translate="label" module="mhub">
                             <label>Product Message</label>
                             <frontend_type>textarea</frontend_type>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
