@@ -109,6 +109,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         $select = $collection->getSelect ();
         $select->where ('synced_at < updated_at OR synced_at IS NULL')
                ->where (sprintf ("operation = '%s'", Epicom_MHub_Helper_Data::OPERATION_OUT))
+               ->where ('external_code IS NOT NULL')
                ->group ('product_id')
                ->order ('updated_at DESC')
                ->limit ($limit ? $limit : self::DEFAULT_QUEUE_LIMIT)
