@@ -103,9 +103,9 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
 
         curl_setopt ($curl, CURLOPT_CONNECTTIMEOUT, 0); // indefinitely
         curl_setopt ($curl, CURLOPT_TIMEOUT, $timeout);
-        curl_setopt ($curl, CURLOPT_URL, $url . $mode . '/' . $method);
+        curl_setopt ($curl, CURLOPT_URL, $url . $mode . '/' . $method . '?ts=' . time ());
         curl_setopt ($curl, CURLOPT_USERPWD, "{$key}:{$token}");
-        curl_setopt ($curl, CURLOPT_HTTPHEADER, array ('Content-Type: application/json', "X-Trace-Id: {$uniqid}"));
+        curl_setopt ($curl, CURLOPT_HTTPHEADER, array ('Content-Type: application/json', "X-Trace-Id: {$uniqid}", "Cache-Control: no-cache"));
         curl_setopt ($curl, CURLOPT_RETURNTRANSFER, 1);
         // SSL off?
         curl_setopt ($curl, CURLOPT_SSL_VERIFYPEER, $ssl);
