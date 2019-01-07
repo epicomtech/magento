@@ -308,7 +308,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
         foreach ($collection as $mageProduct)
         {
-            $productCode = $mageProduct->getData ($this->_codeAttribute);
+            $productCode = preg_replace ('/[^A-Za-z0-9_\-\/\.]+/', "", $mageProduct->getData ($this->_codeAttribute));
             if (empty ($productCode)) $productCode = $mageProduct->getId ();
 
             $productQty = intval ($mageProduct->getQty ());
