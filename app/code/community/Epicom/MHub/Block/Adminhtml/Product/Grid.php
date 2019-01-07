@@ -42,12 +42,10 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
             'header' => Mage::helper('mhub')->__('External ID'),
             'index'  => 'external_id',
         ));
-/*
         $this->addColumn('external_code', array(
             'header' => Mage::helper('mhub')->__('External Code'),
             'index'  => 'external_code',
         ));
-*/
         $this->addColumn('external_sku', array(
             'header' => Mage::helper('mhub')->__('External SKU'),
             'index'  => 'external_sku',
