@@ -347,6 +347,9 @@
                 <error_message><![CDATA[Some products are currently unavailable for purchase.]]></error_message>
                 <product_message><![CDATA[This product is currently unavailable for purchase.]]></product_message>
             </cart>
+            <checkout>
+                <error_message><![CDATA[An error occurred saving the order.]]></error_message>
+            </checkout>
             <quote>
                 <store_view>0</store_view>
                 <customer_mode>guest</customer_mode>

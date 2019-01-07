@@ -632,6 +632,24 @@
                         </product_message>
                     </fields>
                 </cart>
+                <checkout translate="label" module="mhub">
+                    <label>Checkout</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>45</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <error_message translate="label" module="mhub">
+                            <label>Error Message</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </error_message>
+                    </fields>
+                </checkout>
                 <quote translate="label" module="mhub">
                     <label>Quote</label>
                     <frontend_type>text</frontend_type>

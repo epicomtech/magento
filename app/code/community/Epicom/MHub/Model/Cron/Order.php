@@ -11,6 +11,8 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
     protected $_orderId = null;
 
+    protected $_errorMessage = 'An error occurred saving the order.';
+
     private function readMHubOrdersMagento ()
     {
         $orderStatus = Mage::getStoreConfig ('mhub/order/reserve_filter');
@@ -84,7 +86,13 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
                 if ($this->_orderId)
                 {
+                    $errorMessage = Mage::getStoreConfig ('mhub/checkout/error_message');
+
+                    throw new Exception (__($errorMessage ? $errorMessage : $this->_errorMessage));
+
+                    /*
                     throw new Exception (__('Order saving error: %s', $order->getOrderIncrementId ()));
+                    */
                 }
             }
 
