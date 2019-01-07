@@ -19,7 +19,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
         if ($this->_orderId)
         {
-            $collection->addAttributeToFilter ('entity_id', array ('eq' => $this->_orderId));
+            $collection->addAttributeToFilter ('main_table.entity_id', array ('eq' => $this->_orderId));
         }
         else
         {
@@ -175,6 +175,11 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             ->columns ('t.*')
         ;
 
+        if (!$mhubQuoteItems->count ())
+        {
+            Mage::throwException (Mage::helper ('mhub')->__('Internal Error! No quote item was found.'));
+        }
+
         /**
          * Order Items
          */
@@ -185,6 +190,11 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
             ->filterByTypes (array (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
         ;
+
+        if (!$mageOrderItems->count ())
+        {
+            Mage::throwException (Mage::helper ('mhub')->__('Internal Error! No order item was found.'));
+        }
 
         $itemsAmount = 0; // floatval ($mageOrder->getBaseShippingAmount ());
 
