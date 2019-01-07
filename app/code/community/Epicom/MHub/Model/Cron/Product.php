@@ -86,7 +86,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
                 $mhubProduct = $mhubProductCollection->getFirstItem ();
 
-                $productCode = $product->getData ($this->_codeAttribute);
+                $productCode = preg_replace ('/[^A-Za-z0-9_\-\/\.]+/', "", $product->getData ($this->_codeAttribute));
 
                 $mhubProduct->setProductId ($productId)
                     ->setExternalCode ($productCode ? $productCode : $productId)
