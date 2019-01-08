@@ -112,6 +112,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                ->where ('external_code IS NOT NULL')
                ->group ('product_id')
                ->order ('updated_at DESC')
+               ->order ('status DESC')
                ->limit ($limit ? $limit : self::DEFAULT_QUEUE_LIMIT)
         ;
 
