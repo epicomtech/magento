@@ -77,6 +77,9 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const QUEUE_LIMIT_150 = 150;
     const QUEUE_LIMIT_180 = 180;
     const QUEUE_LIMIT_210 = 210;
+    const QUEUE_LIMIT_240 = 240;
+    const QUEUE_LIMIT_270 = 270;
+    const QUEUE_LIMIT_300 = 300;
 
     const OPERATION_IN   = 'in';
     const OPERATION_OUT  = 'out';
