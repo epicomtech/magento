@@ -75,6 +75,15 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 )->where ('e.updated_at > mhub.synced_at OR mhub.synced_at IS NULL')
             ;
 
+            // orphans
+            $select->joinLeft (
+                array ('relation' => 'catalog_product_relation'),
+                'e.entity_id = relation.child_id',
+                array ('parent_id')
+            )->where (sprintf ("(type_id = '%s' AND parent_id IS NULL) || (type_id = '%s')",
+                Mage_Catalog_Model_Product_Type::TYPE_SIMPLE, Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE
+            ));
+
             foreach ($collection as $product)
             {
                 $productId = $product->getId();
