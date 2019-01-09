@@ -29,6 +29,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
 
         $collection->addAttributeToFilter ('sfo.status', array ('eq' => $orderStatus));
         $collection->addAttributeToFilter ('sfo.' . Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true));
+        $collection->addAttributeToFilter ('sfo.' . Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID, array ('notnull' => true));
 
         $select = $collection->getSelect ()
             ->joinLeft(
