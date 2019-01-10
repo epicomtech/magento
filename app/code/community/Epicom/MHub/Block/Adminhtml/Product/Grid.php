@@ -22,6 +22,14 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
         $collection = Mage::getModel('mhub/product')->getCollection();
         $this->setCollection($collection);
 
+        $collection->getSelect()->joinLeft(
+            array ('product' => Mage::getSingleton ('core/resource')->getTableName ('catalog_product_entity')),
+            'main_table.product_id = product.entity_id',
+            array(
+                'type_id' => 'product.type_id',
+            )
+        );
+
         return parent::_prepareCollection();
     }
 
@@ -33,6 +41,12 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
             'width'  => '50px',
             'type'   => 'number',
             'index'  => 'entity_id',
+        ));
+        $this->addColumn('type_id', array(
+            'header' => Mage::helper('mhub')->__('Type'),
+            'index'  => 'type_id',
+            'type'    => 'options',
+            'options' => Mage::getModel ('catalog/product_type')->getOptionArray (),
         ));
         $this->addColumn('product_id', array(
             'header' => Mage::helper('mhub')->__('Product ID'),
