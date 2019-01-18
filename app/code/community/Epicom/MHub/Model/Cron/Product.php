@@ -316,6 +316,12 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             }
         }
 
+        $parentProduct = Mage::getModel ('catalog/product')->load ($productId); // images
+
+        $parentHeight = $parentProduct->getData ($this->_heightAttribute);
+        $parentWidth  = $parentProduct->getData ($this->_widthAttribute);
+        $parentLength = $parentProduct->getData ($this->_lengthAttribute);
+
         foreach ($collection as $mageProduct)
         {
             $productCode = preg_replace ('/[^A-Za-z0-9_\-\/\.]+/', "", $mageProduct->getData ($this->_codeAttribute));
@@ -331,6 +337,10 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 $productWeight = intval ($productWeight * 1000);
             }
 
+            $productHeight = $mageProduct->getData ($this->_heightAttribute);
+            $productWidth  = $mageProduct->getData ($this->_widthAttribute);
+            $productLength = $mageProduct->getData ($this->_lengthAttribute);
+
             $post = array(
                 'nome'            => $mageProduct->getName (),
                 'nomeReduzido'    => substr ($mageProduct->getData ($this->_offerTitleAttribute), 0, 60), // $mageProduct->getShortDescription (),
@@ -341,9 +351,14 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 'foraDeLinha'     => false, // boolval ($mageProduct->getData ($this->_outOfLineAttribute)),
                 'estoque'         => $productQty > 0 ? $productQty : 0,
                 'dimensoes' => array(
+                    /*
                     'altura'      => $mageProduct->getData ($this->_heightAttribute),
                     'largura'     => $mageProduct->getData ($this->_widthAttribute),
                     'comprimento' => $mageProduct->getData ($this->_lengthAttribute),
+                    */
+                    'altura'      => $productHeight ? $productHeight : $parentHeight,
+                    'largura'     => $productWidth ? $productWidth : $parentWidth,
+                    'comprimento' => $productLength ? $productLength : $parentLength,
                     'peso'        => $productWeight, // intval ($mageProduct->getWeight ())
                 ),
                 'imagens' => array (),
@@ -402,6 +417,19 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 );
             }
 
+            if (count ($post ['imagens']) == 0)
+            {
+                foreach ($parentProduct->getMediaGalleryImages () as $_image)
+                {
+                    $post ['imagens'][] = array(
+                        'zoom'  => (string) Mage::helper ('catalog/image')->init ($parentProduct, 'image',       $_image->getFile ()),
+                        'maior' => (string) Mage::helper ('catalog/image')->init ($parentProduct, 'small_image', $_image->getFile ()),
+                        'menor' => (string) Mage::helper ('catalog/image')->init ($parentProduct, 'thumbnail',   $_image->getFile ()),
+                        'order' => $_image->getPosition (),
+                    );
+                }
+            }
+
             try
             {
                 $productsSkusPostMethod = str_replace ('{productCode}', $product->getExternalCode (), self::PRODUCTS_SKUS_POST_METHOD);
@@ -441,7 +469,10 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
             $post = array(
                 'nome'       => $mageProduct->getName (),
+                /*
                 'disponivel' => boolval ($mageProduct->getIsInStock ()),
+                */
+                'disponivel' => $mageProduct->getStatus () == Mage_Catalog_Model_Product_Status::STATUS_ENABLED,
                 'precoDe'    => $priceFrom,
                 'preco'      => $priceTo,
                 'codigoMarketplace' => null, // TODO : marketplace support

@@ -23,7 +23,10 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             ->addFieldToFilter ('method', array ('in' => array (
                 Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU,
                 Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU,
-                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU
+                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU,
+                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_PRICE,
+                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_STOCK,
+                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_AVAILABILITY,
             )))
         ;
         $select = $collection->getSelect ();
@@ -34,6 +37,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             ->group ('external_sku')
             ->group ('method')
             ->order ('updated_at DESC')
+            ->order ('status DESC')
             ->limit ($limit ? $limit : self::DEFAULT_QUEUE_LIMIT)
         ;
 
@@ -184,7 +188,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 // sku
                 $mageProduct->setName ($productsSkusResult->nome);
                 $mageProduct->setUrl ($productsSkusResult->nome);
-                $mageProduct->setStatus ($productsSkusResult->ativo
+                $mageProduct->setStatus ($productsSkusResult->disponivel
                     ? Mage_Catalog_Model_Product_Status::STATUS_ENABLED
                     : Mage_Catalog_Model_Product_Status::STATUS_DISABLED
                 );
@@ -628,7 +632,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $mageProduct->save ();
 
                 // stock
-                $setIsInStock = $productsAvailabilityResult->disponivel;
+                $setIsInStock = true; // $productsAvailabilityResult->disponivel;
                 $setQty = $productsAvailabilityResult->estoque;
 
                 $stockItem = Mage::getModel ('cataloginventory/stock_item')
@@ -717,6 +721,10 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
         $write->query (sprintf ("UPDATE %s SET status = '%s', message = '%s' WHERE external_sku = '%s' AND method = '%s'",
             $table, Epicom_MHub_Helper_Data::STATUS_ERROR, $message, $product->getExternalSku (), $product->getMethod ()
+        ));
+
+        $write->query (sprintf ("DELETE FROM %s WHERE entity_id <> %s AND external_sku = '%s' AND method = '%s'",
+            $table, $product->getId (), $product->getExternalSku (), $product->getMethod ()
         ));
     }
 

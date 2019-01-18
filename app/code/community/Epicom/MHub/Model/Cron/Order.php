@@ -126,6 +126,8 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 		$rawPostcode = $billingAddress->getPostcode();
 		$postCode    = Mage::helper ('mhub')->validatePostcode ($rawPostcode);
 
+        $number = explode ('/', $billingAddress->getStreet2 ());
+
         $post = array(
             'codigoPedido' => $mageOrder->getIncrementId(),
             'dataPedido'   => date ('c', strtotime ($mageOrder->getCreatedAt())),
@@ -145,7 +147,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
                 'complemento' => $billingAddress->getStreet3(),
                 'estado'      => $this->getRegionName ($billingAddress->getRegionId(), $billingAddress->getCountryId()),
                 'logradouro'  => $billingAddress->getStreet1(),
-                'numero'      => $billingAddress->getStreet2(),
+                'numero'      => $number [0], // $billingAddress->getStreet2(),
                 'telefone'    => $billingAddress->getTelephone(),
                 'referencia'  => null,
             ),
@@ -185,7 +187,9 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
         if (!$mhubQuoteItems->count ())
         {
-            Mage::throwException (Mage::helper ('mhub')->__('Internal Error! No quote item was found.'));
+            Mage::throwException (Mage::helper ('mhub')->__('Internal Error! No quote item was found. Store %s Quote %s Order %s',
+                $mageOrder->getStoreId (), $mageOrder->getQuoteId (), $mageOrder->getIncrementId ()
+            ));
         }
 
         /**
@@ -201,7 +205,9 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
         if (!$mageOrderItems->count ())
         {
-            Mage::throwException (Mage::helper ('mhub')->__('Internal Error! No order item was found.'));
+            Mage::throwException (Mage::helper ('mhub')->__('Internal Error! No order item was found. Store %s Quote %s Order %s',
+                $mageOrder->getStoreId (), $mageOrder->getQuoteId (), $mageOrder->getIncrementId ()
+            ));
         }
 
         $itemsAmount = 0; // floatval ($mageOrder->getBaseShippingAmount ());

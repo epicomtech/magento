@@ -597,6 +597,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </best_price>
+                        <!--
                         <remove_quotes translate="label" module="mhub">
                             <label>Remove Quotes</label>
                             <frontend_type>select</frontend_type>
@@ -606,6 +607,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </remove_quotes>
+                        -->
                         <minimum_weight translate="label" module="mhub">
                             <label>Minimum Weight (grams)</label>
                             <frontend_type>text</frontend_type>

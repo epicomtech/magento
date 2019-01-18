@@ -44,6 +44,7 @@ class Epicom_MHub_Block_Adminhtml_Quote_Grid extends Mage_Adminhtml_Block_Widget
 		    'width'  => '50px',
 	        'type'   => 'number',
 		    'index'  => 'entity_id',
+            'filter_index' => 'main_table.entity_id',
 		));
 		$this->addColumn ('store_id', array(
 		    'header'  => Mage::helper ('mhub')->__('Store'),
