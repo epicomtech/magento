@@ -129,7 +129,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         $number = explode ('/', $billingAddress->getStreet2 ());
 
         $post = array(
-            'codigoPedido' => $mageOrder->getIncrementId(),
+            'codigoPedido' => $order->getOrderIncrementId (), // $mageOrder->getIncrementId(),
             'dataPedido'   => date ('c', strtotime ($mageOrder->getCreatedAt())),
             'valorTotal'   => null, // $mageOrder->getBaseGrandTotal(),
             'itens'        => array(),
