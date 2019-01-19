@@ -234,6 +234,13 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
             $itemQuote = $mhubQuoteItems->getItemByColumnValue ('sku', $productId);
 
+            if (!$itemQuote || !$itemQuote->getId ())
+            {
+                Mage::throwException (Mage::helper ('mhub')->__('Internal Error! No quote item INFORMATION was found. Store %s Quote %s Order %s',
+                    $mageOrder->getStoreId (), $mageOrder->getQuoteId (), $mageOrder->getIncrementId ()
+                ));
+            }
+
             $shippingAmount      = $itemQuote->getPrice ();
             $shippingDescription = $itemQuote->getTitle ();
 
