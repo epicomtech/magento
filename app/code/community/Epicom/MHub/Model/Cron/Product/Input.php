@@ -87,7 +87,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
         if (empty ($productsInfoResult))
         {
-            throw new Exception (Mage::helper ('mhub')->__('Empty Product Info!'));
+            throw Mage::exception (Mage::helper ('mhub')->__('Empty Product Info! ID %s', $productId));
         }
 
         /**
@@ -98,7 +98,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
         if (empty ($productsSkusResult))
         {
-            throw new Exception (Mage::helper ('mhub')->__('Empty SKU Info!'));
+            throw Mage::exception (Mage::helper ('mhub')->__('Empty SKU Info! SKU %s', $productSku));
         }
 
         /**
@@ -242,7 +242,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                             if (!$productAttribute || !$productAttribute->getId ())
                             {
-                                throw new Exception (Mage::helper ('mhub')->__('Custom attribute not found: %s value: %s', $attribute->nome, $attribute->valor));
+                                throw Mage::exception (Mage::helper ('mhub')->__('Custom attribute not found: %s value: %s SKU: %s', $attribute->nome, $attribute->valor, $productSku));
                             }
 
                             $productAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productAttribute->getId (), array(
@@ -347,7 +347,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                         if (!$productBrandAttribute || !$productBrandAttributeId)
                         {
-                            throw new Exception (Mage::helper ('mhub')->__('Brand attribute not found: %s value: %s', $productBrandAttribute, $productBrandValue));
+                            throw Mage::exception (Mage::helper ('mhub')->__('Brand attribute not found: %s value: %s SKU: %s', $productBrandAttribute, $productBrandValue, $productSku));
                         }
 
                         $productBrandAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productBrandAttributeId, array(
@@ -370,7 +370,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                         if (!$productManufacturerAttribute || !$productManufacturerAttributeId)
                         {
-                            throw new Exception (Mage::helper ('mhub')->__('Manufacturer attribute not found: %s value: %s', $productManufacturerAttribute, $productManufacturerValue));
+                            throw Mage::exception (Mage::helper ('mhub')->__('Manufacturer attribute not found: %s value: %s SKU: %s', $productManufacturerAttribute, $productManufacturerValue, $productSku));
                         }
 
                         $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($productManufacturerAttributeId, array(
@@ -611,7 +611,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                 if (empty ($productsAvailabilityResult))
                 {
-                    throw new Exception (Mage::helper ('mhub')->__('Empty SKU Availability!'));
+                    throw Mage::exception (Mage::helper ('mhub')->__('Empty SKU Availability! SKU %s', $productSku));
                 }
 
                 // price
@@ -680,7 +680,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         }
         catch (Exception $e)
         {
-            throw new Exception (Mage::helper ('mhub')->__('Invalid Product Tracking!'));
+            throw Mage::exception (Mage::helper ('mhub')->__('Invalid SKU Tracking! SKU %s', $productSku));
         }
 
         return $mageProduct->getId ();

@@ -68,5 +68,10 @@
             <block type="mhub/adminhtml_product_association" name="product_association" />
         </reference>
     </admin_mhub_adminhtml_product_association_index>
+    <admin_mhub_adminhtml_error_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_error" name="error" />
+        </reference>
+    </admin_mhub_adminhtml_error_index>
 </layout>
 

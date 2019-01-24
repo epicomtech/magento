@@ -220,4 +220,11 @@
 "Internal Error! No quote item was found.","Erro Interno! Nenhum item de cotação foi encontrado."
 "Internal Error! No order item was found.","Erro Interno! Nenhum item de pedido foi encontrado."
 "An error occurred saving the order.","Ocorreu um erro salvando o pedido."
+"E-mail Template","Modelo do E-mail"
+"E-mail Sender","Remetente do E-mail"
+"E-mail Recipient","E-mail do Destinatário"
+"Save Error","Salvar Erro"
+"Manage Errors","Gerenciar Erros"
+"Errors Manager","Gerenciador de Erros"
+"Remove Errors","Remover Erros"
 

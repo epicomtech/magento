@@ -86,13 +86,18 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
                 if ($this->_orderId)
                 {
+                    try
+                    {
+                        throw Mage::exception ('Epicom_MHub', $e->getMessage (), $e->getCode ());
+                    }
+                    catch (Exception $ex)
+                    {
+
                     $errorMessage = Mage::getStoreConfig ('mhub/checkout/error_message');
 
                     throw new Exception (__($errorMessage ? $errorMessage : $this->_errorMessage));
 
-                    /*
-                    throw new Exception (__('Order saving error: %s', $order->getOrderIncrementId ()));
-                    */
+                    }
                 }
             }
 
