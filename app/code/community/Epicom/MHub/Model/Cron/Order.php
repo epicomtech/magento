@@ -15,7 +15,12 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
     private function readMHubOrdersMagento ()
     {
+        /*
         $orderStatus = Mage::getStoreConfig ('mhub/order/reserve_filter');
+        */
+        $reserveFilter = Mage::getStoreConfig ('mhub/order/reserve_filter'); // bank_slip
+        $confirmFilter = Mage::getStoreConfig ('mhub/order/confirm_filter'); // creditcard
+        $erpFilter     = Mage::getStoreConfig ('mhub/order/erp_filter'); // ERP
 
         $collection = Mage::getModel ('sales/order')->getCollection ();
 
@@ -25,7 +30,10 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         }
         else
         {
+            /*
             $collection->addAttributeToFilter ('main_table.status', array ('eq' => $orderStatus));
+            */
+            $collection->addAttributeToFilter ('main_table.status', array ('in' => array ($reserveFilter, $confirmFilter, $erpFilter)));
             $collection->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true));
         }
 

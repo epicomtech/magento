@@ -9,6 +9,12 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 {
     const CUSTOMER_MODE_REGISTER = Mage_Checkout_Model_Api_Resource_Customer::MODE_REGISTER;
 
+    /**
+     * field_1: carrier
+     * field_2: shipping
+     */
+    const SHIPPING_DESCRIPTION_REGEX = '/(.*)([\d])(.*)/';
+
     public function create ($marketplace, $orderCode, $createdAt, $items, $recipient, $shipping)
     {
         if (empty ($marketplace) || empty ($orderCode) || empty ($createdAt)
@@ -94,7 +100,8 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 
         $customerMode   = Mage::getStoreConfig ('mhub/quote/customer_mode');
 
-        $customerName   = explode (chr (32), $recipient ['nomeDestinatario']);
+        $customerName   = $recipient ['nomeDestinatario'];
+        $_customerPos   = strpos ($customerName, " ");
         $customerEmail  = $recipient ['emailDestinatario'];
         $customerTaxvat = $recipient ['cpfCnpjDestinatario'];
 
@@ -107,12 +114,13 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         {
             $mageCustomer = Mage::getModel ('customer/customer')
                 ->setEmail ($customerEmail)
-                ->setFirstname ($customerName [0])
-                ->setLastname  ($customerName [1])
-                ->setTaxvat ($customerTaxvat)
-                // ->save ()
             ;
         }
+
+        $mageCustomer->setTaxvat ($customerTaxvat)
+            ->setFirstname (substr ($customerName, 0, $_customerPos))
+            ->setLastname  (substr ($customerName, $_customerPos + 1))
+        ;
 
         $mageCustomer->setMode ($customerMode);
 
@@ -122,22 +130,31 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 
             $mageCustomer->setPassword ($customerPassword)
                 ->setPasswordConfirmation ($customerPassword)
+                ->save ()
             ;
         }
-/*
+
         $customerId = $mageCustomer->getId ();
+
+        if (intval ($customerId) > 0)
+        {
 
         Mage::getModel ('checkout/cart_customer_api')->set ($quoteId, array(
             'mode'        => Mage_Checkout_Model_Api_Resource_Customer::MODE_CUSTOMER,
             'customer_id' => $customerId,
         ));
-*/
+
+        }
+        else
+        {
+
         Mage::getModel ('checkout/cart_customer_api')->set ($quoteId, $mageCustomer->getData (), $storeId);
 
-        // $customerAddressId = Mage::getModel ('customer/address_api')->create ($customerId, array(
+        }
+
         $customerAddress = Mage::getModel ('customer/address')->setData (array (
-            'firstname'  => $customerName [0],
-            'lastname'   => $customerName [1],
+            'firstname'  => substr ($customerName, 0, $_customerPos),
+            'lastname'   => substr ($customerName, $_customerPos + 1),
             'company'    => $shipping ['referenciaEntrega'],
             'street'     => array(
                 $shipping ['logradouroEntrega'],
@@ -153,6 +170,13 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             'telephone'  => $shipping ['telefoneEntrega'],
         ));
 
+        $customerAddressId = null;
+
+        if (intval ($customerId) > 0)
+        {
+            $customerAddressId = Mage::getModel ('customer/address_api')->create ($customerId, $customerAddress->getData ());
+        }
+
         $customerAddressModes = array(
             Mage_Checkout_Model_Api_Resource_Customer::ADDRESS_BILLING,
             Mage_Checkout_Model_Api_Resource_Customer::ADDRESS_SHIPPING
@@ -160,18 +184,25 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 
         foreach ($customerAddressModes as $mode)
         {
-            /*
+            if (intval ($customerId) > 0)
+            {
+
             Mage::getModel ('checkout/cart_customer_api')->setAddresses ($quoteId, array(
                 array(
                     'mode'       => $mode,
             		'address_id' => $customerAddressId
                 )
-            ));
-            */
+            ), $storeId);
+
+            }
+            else
+            {
 
             $customerAddress->setMode ($mode);
 
             Mage::getModel ('checkout/cart_customer_api')->setAddresses ($quoteId, array ($customerAddress->getData ()), $storeId);
+
+            }
         }
 
         Mage::getModel ('checkout/cart_shipping_api')->setShippingMethod (
@@ -205,7 +236,44 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             ->save ()
         ;
 
-        return array ('codigoPedido' => $incrementId);
+        $result = array(
+            'codigoDoPedido'      => $incrementId,
+            'parametrosExtras'    => null,
+            'diasParaEntrega'     => 0,
+            'valorDoFrete'        => 0,
+            'valorTotalDoPedido'  => $mageOrder->getBaseGrandTotal (),
+            'produtosPedido'      => array (),
+            'requestLogs'         => null,
+            'cancelarPedidoCanal' => false,
+            'mensagem'            => Mage::helper ('mhub')->__('Order successfully created'),
+        );
+
+        foreach ($items as $_item)
+        {
+            $result ['produtosPedido'][] = array(
+                'codigoProduto'     => $_item ['codigo'],
+                'quantidadeProduto' => $_item ['quantidade'],
+            );
+
+            /**
+             * Freight
+             */
+            preg_match (self::SHIPPING_DESCRIPTION_REGEX, $_item ['formaEntrega'], $_shipping);
+
+            $_daysForDelivery = preg_replace ('[\D]', "", $_shipping [2]);
+
+            if (intval ($_daysForDelivery) > $result ['diasParaEntrega'])
+            {
+                $result ['diasParaEntrega'] = $_daysForDelivery;
+            }
+
+            if (floatval ($_item ['valorFrete']) > $result ['valorFrete'])
+            {
+                $result ['valorFrete'] = $_item ['valorFrete'];
+            }
+        }
+
+        return $result;
     }
 
     public function _getRegionByCode ($regionCode, $attribute, $countryId = 'BR')

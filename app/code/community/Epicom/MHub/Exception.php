@@ -24,6 +24,7 @@ class Epicom_MHub_Exception extends Mage_Core_Exception
             ;
 
             $emailTemplate->send ($emailRecipient, null, array (
+                'email_subject' => Mage::getStoreConfig ('mhub/error/email_subject'),
                 'website_url'   => sprintf ("http://%s%s", $_SERVER ['HTTP_HOST'], $_SERVER ['REQUEST_URI']),
                 'error_message' => $message,
             ));
@@ -33,8 +34,13 @@ class Epicom_MHub_Exception extends Mage_Core_Exception
 
         if ($saveError)
         {
+            $httpPost   = $_SERVER ['HTTP_HOST'];
+            $requestUri = $_SERVER ['REQUEST_URI'];
+
+            $url = !empty ($httpPost) ? sprintf ("http://%s%s", $httpPost, $requestUri) : 'crontab';
+
             Mage::getModel ('mhub/error')
-                ->setUrl (sprintf ("http://%s%s", $_SERVER ['HTTP_HOST'], $_SERVER ['REQUEST_URI']))
+                ->setUrl ($url)
                 ->setMessage ($message)
                 ->setCode ($code)
                 ->setCreatedAt (date ('c'))

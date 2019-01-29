@@ -373,6 +373,7 @@
             <order>
                 <reserve_filter>pending</reserve_filter>
                 <confirm_filter>processing</confirm_filter>
+                <erp_filter>processing</erp_filter>
                 <cancel_filter>canceled</cancel_filter>
                 <sent_filter>complete</sent_filter>
             </order>
