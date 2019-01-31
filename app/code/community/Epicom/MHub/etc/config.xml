@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Epicom_MHub>
-            <version>0.1.13</version>
+            <version>0.1.14</version>
         </Epicom_MHub>
     </modules>
     <global>
@@ -139,9 +139,22 @@
                     <file>epicom_mhub/error.html</file>
                     <type>text</type>
                 </mhub_error_email_template>
+                <mhub_report_email_template translate="label" module="mhub">
+                    <label>Epicom MHub Report</label>
+                    <file>epicom_mhub/report.html</file>
+                    <type>text</type>
+                </mhub_report_email_template>
             </email>
         </template>
         <events>
+            <catalog_product_save_after>
+                <observers>
+                    <epicom_mhub_catalog_product_save_after>
+                        <class>mhub/observer</class>
+                        <method>catalogProductSaveAfter</method>
+                    </epicom_mhub_catalog_product_save_after>
+                </observers>
+            </catalog_product_save_after>
             <sales_quote_collect_totals_after>
                 <observers>
                     <epicom_mhub_sales_quote_collect_totals_after>
@@ -286,6 +299,10 @@
                 <schedule><cron_expr>*/10 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runOrderComplete</model></run>
             </epicom_mhub_order_complete>
+            <epicom_mhub_order_conciliation>
+                <schedule><cron_expr>0 4 * * *</cron_expr></schedule>
+                <run><model>mhub/cron::runOrderConciliation</model></run>
+            </epicom_mhub_order_conciliation>
             <epicom_mhub_shipment>
                 <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runShipment</model></run>

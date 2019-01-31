@@ -18,7 +18,7 @@ class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_
 
         if (!$mageOrder->canInvoice ())
         {
-            return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order has invoices'), null /* order_has_invoices */);
+            return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order has invoices'), null /* order_has_invoices */, 200);
         }
 
         $itemsQty = array ();
@@ -209,14 +209,19 @@ class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_
         return array ('confirmado' => true);
     }
 
-    protected function _error ($model, $message, $fault = null)
+    protected function _error ($model, $message, $fault = null, $response = 400)
     {
-        parent::_log ($model, $message, $fault);
+        parent::_log ($model, $message, $fault, $response);
 
         $result = array(
             'codigoPedido' => $model->getOrderExternalId (),
             'mensagem'     => $message,
         );
+
+        if ($response == 200)
+        {
+            $result ['confirmado'] = true;
+        }
 
         return $result;
     }

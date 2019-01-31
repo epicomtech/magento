@@ -11,6 +11,8 @@ class Epicom_MHub_Exception extends Mage_Core_Exception
     {
         parent::__construct ($message, $code);
 
+        if ($code == 409 /* Resource Exists */) return;
+
         $emailRecipient = Mage::getStoreConfig ('mhub/error/email_recipient');
 
         if (!empty ($emailRecipient))

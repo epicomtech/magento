@@ -229,4 +229,9 @@
 "Manage Errors","Gerenciar Erros"
 "Errors Manager","Gerenciador de Erros"
 "Remove Errors","Remover Erros"
+"Epicom MHub Conciliation Report: %s orders","Relatório de Conciliação Epicom MHub: %s pedidos"
+"Order %s [ %s ] ERROR: %s","Pedido %s [ %s ] ERRO: %s"
+"Order external number is empty!","Pedido faltando número externo!"
+"Order info is empty!","Pedido faltando informações!"
+"Order number is different!","Pedido com número diferente!"
 

@@ -42,11 +42,14 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                 $totalFreight += floatval ($item ['precoFrete']);
             }
 
+            $deliveryMethod = $jsonData ['entrega']['formaEntrega'];
+            $deliveryTime   = $jsonData ['entrega']['prazoEntrega'];
+
             $method = Mage::getModel ('shipping/rate_result_method')
                 ->setCarrier ($this->_code)
                 ->setCarrierTitle ($this->getConfigData ('title'))
                 ->setMethod ($this->_code . '_provider')
-                ->setMethodTitle (Mage::helper ('mhub')->__('Provider'))
+                ->setMethodTitle (sprintf ("%s - %s", $deliveryMethod, $deliveryTime))
                 ->setPrice ($totalFreight)
                 ->setCost (0)
             ;

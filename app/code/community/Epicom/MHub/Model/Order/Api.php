@@ -36,7 +36,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 
         if (!empty ($mageOrder) && intval ($mageOrder->getId ()) > 0)
         {
-            return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Order already exists'), null /* order_already_exists */);
+            return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Order already exists'), null /* order_already_exists */, 200);
         }
 
         $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
@@ -267,9 +267,9 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
                 $result ['diasParaEntrega'] = $_daysForDelivery;
             }
 
-            if (floatval ($_item ['valorFrete']) > $result ['valorFrete'])
+            if (floatval ($_item ['precoFrete']) > $result ['valorFrete'])
             {
-                $result ['valorFrete'] = $_item ['valorFrete'];
+                $result ['valorFrete'] = $_item ['precoFrete'];
             }
         }
 
@@ -286,9 +286,9 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         return $result;
     }
 
-    protected function _error ($model, $message, $fault = null)
+    protected function _error ($model, $message, $fault = null, $response = 400)
     {
-        parent::_log ($model, $message, $fault);
+        parent::_log ($model, $message, $fault, $response);
 
         $orderAutoCancel = Mage::getStoreConfigFlag ('mhub/order/auto_cancel');
 

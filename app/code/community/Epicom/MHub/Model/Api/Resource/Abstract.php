@@ -10,9 +10,9 @@
  */
 abstract class Epicom_MHub_Model_Api_Resource_Abstract extends Mage_Api_Model_Resource_Abstract
 {
-    protected function _log ($model, $message, $fault = null)
+    protected function _log ($model, $message, $fault = null, $response = 400)
     {
-        Mage::app ()->getResponse ()->setHttpResponseCode (400);
+        Mage::app ()->getResponse ()->setHttpResponseCode ($response);
 
         $model->setStatus (Epicom_MHub_Helper_Data::STATUS_ERROR)
             ->setMessage ($message)

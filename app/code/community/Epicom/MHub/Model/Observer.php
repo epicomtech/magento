@@ -10,6 +10,39 @@
  */
 class Epicom_MHub_Model_Observer
 {
+    public function catalogProductSaveAfter ($observer)
+    {
+        if (Mage::helper ('mhub')->isMarketplace ()) return;
+
+        $event   = $observer->getEvent ();
+        $product = $event->getProduct ();
+
+        $parentIds = Mage::getModel ('catalog/product_type_configurable')->getParentIdsByChild ($product->getId ());
+
+        if (count ($parentIds) > 0)
+        {
+            $collection = Mage::getModel ('mhub/product')->getCollection ()
+                ->addFieldToFilter ('product_id', array ('in' => $parentIds))
+                ->addFieldToFilter ('operation', array ('eq' => Epicom_MHub_Helper_Data::OPERATION_OUT))
+            ;
+
+            foreach ($collection as $item)
+            {
+                $item->delete ();
+            }
+/*
+            foreach ($parentIds as $id)
+            {
+                $mhubProduct = Mage::getModel ('mhub/product')->load ($id, 'product_id');
+                if ($mhubProduct && intval ($mhubProduct->getId ()) > 0)
+                {
+                    $mhubProduct->delete ();
+                }
+            }
+*/
+        }
+    }
+
     public function salesQuoteCollectTotalsAfter ($observer)
     {
         $quote = $observer->getQuote ();
@@ -135,6 +168,24 @@ class Epicom_MHub_Model_Observer
                 'url'     => Mage::getUrl('admin_mhub/adminhtml_shipment/massRemove'),
                 'confirm' => Mage::helper('mhub')->__('Are you sure?')
             ));
+        }
+        else if ($block instanceof Mage_Adminhtml_Block_Sales_Order_Grid)
+        {
+            $block->addColumnAfter ('is_epicom', array(
+                'header'  => Mage::helper ('mhub')->__('Is Epicom'),
+                'width'   => '70px',
+                'index'   => 'is_epicom',
+                'type'    => 'options',
+                'options' => Mage::getSingleton ('adminhtml/system_config_source_yesno')->toArray (),
+            ), 'real_order_id');
+
+            $block->addColumnAfter ('ext_order_id', array(
+                'header' => Mage::helper ('mhub')->__('Ext. Order ID'),
+                'width'  => '70px',
+                'index'  => 'ext_order_id',
+            ), 'is_epicom');
+
+            $block->sortColumnsByOrder ();
         }
     }
 }
