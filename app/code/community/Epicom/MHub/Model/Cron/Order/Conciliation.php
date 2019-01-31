@@ -16,12 +16,16 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
             return false;
         }
 
-        // $filterStatus = Mage::getStoreConfig ('mhub/order/reserve_filter');
+        $cancelFilter = Mage::getStoreConfig ('mhub/order/cancel_filter');
 
         $collection = Mage::getModel ('sales/order')->getCollection ()
+            /*
             ->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true))
-            // ->addAttributeToFilter ('main_table.status', array ('in' => array ($reserveFilter)))
+            */
+            ->addAttributeToFilter ('main_table.status', array ('neq' => $cancelFilter))
         ;
+
+        $collection->getSelect ()->where ('is_epicom IS NOT NULL OR ext_order_id IS NOT NULL');
 
         $filename = tempnam ('/tmp', 'epicom_mhub-order_conciliation-');
 
@@ -53,12 +57,12 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
 
                     if (empty ($response))
                     {
-                        throw new Exception (Mage::helper ('mhub')->__('Order info is empty!'));
+                        throw new Exception (Mage::helper ('mhub')->__('Epicom information is empty!'));
                     }
 
                     if (strcmp ($response->codigoPedidoMarketplace, $order->getIncrementId ()))
                     {
-                        throw new Exception (Mage::helper ('mhub')->__('Order number is different!'));
+                        throw new Exception (Mage::helper ('mhub')->__('Epicom number is different: %s', $response->codigoPedidoMarketplace));
                     }
                 }
                 catch (Exception $e)

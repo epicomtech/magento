@@ -232,6 +232,6 @@
 "Epicom MHub Conciliation Report: %s orders","Relatório de Conciliação Epicom MHub: %s pedidos"
 "Order %s [ %s ] ERROR: %s","Pedido %s [ %s ] ERRO: %s"
 "Order external number is empty!","Pedido faltando número externo!"
-"Order info is empty!","Pedido faltando informações!"
-"Order number is different!","Pedido com número diferente!"
+"Epicom information is empty!","Sem informações na Epicom!"
+"Epicom number is different: %s","Número Epicom é diferente: %s"
 
