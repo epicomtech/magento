@@ -56,7 +56,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                         throw new Exception (Mage::helper ('mhub')->__('Order info is empty!'));
                     }
 
-                    if (strcmp ($response ['codigoPedidoMarketplace'], $order->getIncrementId ()))
+                    if (strcmp ($response->codigoPedidoMarketplace, $order->getIncrementId ()))
                     {
                         throw new Exception (Mage::helper ('mhub')->__('Order number is different!'));
                     }
