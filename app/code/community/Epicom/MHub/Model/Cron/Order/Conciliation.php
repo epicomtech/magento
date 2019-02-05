@@ -33,10 +33,14 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
 
         file_put_contents ($filename, Mage::helper ('mhub')->__('Epicom MHub Conciliation Report: %s orders', $collection->getSize ()) . PHP_EOL, FILE_APPEND);
 
+        $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
+
         if ($collection->count () > 0)
         {
             Mage::getSingleton ('core/resource_iterator')->walk ($collection->getSelect (), array (function ($args) {
                 $filename = $args ['filename'];
+
+                $productIdAttribute = $args ['product_id_attribute'];
 
                 $order = Mage::getModel ('sales/order')
                     ->setData ($args ['row'])
@@ -62,14 +66,63 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
 
                     if (strcmp ($response->codigoPedidoMarketplace, $order->getIncrementId ()))
                     {
+                        return; // splitted_order
+
                         throw new Exception (Mage::helper ('mhub')->__('Epicom number is different: %s', $response->codigoPedidoMarketplace));
+                    }
+
+                    $orderItems = Mage::getResourceModel ('sales/order_item_collection')
+                        ->setOrderFilter ($order)
+                        ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
+                        ->filterByTypes (array (
+                            Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+                            Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+                        ))
+                    ;
+
+                    foreach ($orderItems as $item)
+                    {
+                        $productId    = $item->getData ($productIdAttribute);
+                        $productQty   = $item->getQtyOrdered ();
+                        $productFound = false;
+
+                        foreach ($response->itens as $_item)
+                        {
+                            if ($productId == $_item->id)
+                            {
+                                if ($productQty != $_item->quantidade)
+                                {
+                                    throw new Exception (Mage::helper ('mhub')->__(
+                                        'Product SKU %s has wrong quantity! Magento: %s Epicom: %s',
+                                        $productId, $productQty, $_item->quantidade
+                                    ));
+                                }
+
+                                $productFound = true;
+
+                                break;
+                            }
+                        }
+
+                        if (!$productFound)
+                        {
+                            /*
+                            throw new Exception (Mage::helper ('mhub')->__('Product not found! SKU: %s Qty: %s', $productId, $productQty));
+                            */
+
+                            $message = Mage::helper ('mhub')->__('Product not found! SKU: %s Qty: %s', $productId, $productQty);
+
+                            file_put_contents ($filename, Mage::helper ('mhub')->__('Order %s [ %s ] ERROR: %s',
+                                $order->getIncrementId (), $extOrderId, $message . PHP_EOL
+                            ), FILE_APPEND);
+                        }
                     }
                 }
                 catch (Exception $e)
                 {
                     file_put_contents ($filename, Mage::helper ('mhub')->__('Order %s [ %s ] ERROR: %s', $order->getIncrementId (), $extOrderId, $e->getMessage () . PHP_EOL), FILE_APPEND);
                 }
-            }), array ('filename' => $filename));
+            }), array ('filename' => $filename, 'product_id_attribute' => $productIdAttribute));
         }
 
         $this->_putDatetime ($filename);

@@ -36,6 +36,16 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             ))
             ->group ('external_sku')
             ->group ('method')
+            ->order (sprintf ("FIELD(method,%s)", implode (',', array_map (
+                function ($n) { return "'{$n}'"; }, array(
+                    Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_AVAILABILITY,
+                    Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_STOCK,
+                    Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_PRICE,
+                    Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU,
+                    Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU,
+                    Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU,
+                )
+            ))))
             ->order ('updated_at DESC')
             ->order ('status DESC')
             ->limit ($limit ? $limit : self::DEFAULT_QUEUE_LIMIT)
@@ -87,7 +97,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
         if (empty ($productsInfoResult))
         {
-            throw Mage::exception (Mage::helper ('mhub')->__('Empty Product Info! ID %s', $productId));
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Empty Product Info! ID %s', $productId), 9999);
         }
 
         /**
@@ -98,7 +108,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
         if (empty ($productsSkusResult))
         {
-            throw Mage::exception (Mage::helper ('mhub')->__('Empty SKU Info! SKU %s', $productSku));
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Empty SKU Info! SKU %s', $productSku), 9999);
         }
 
         /**
@@ -242,7 +252,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                             if (!$productAttribute || !$productAttribute->getId ())
                             {
-                                throw Mage::exception (Mage::helper ('mhub')->__('Custom attribute not found: %s value: %s SKU: %s', $attribute->nome, $attribute->valor, $productSku));
+                                throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Custom attribute not found: %s value: %s SKU: %s', $attribute->nome, $attribute->valor, $productSku), 9999);
                             }
 
                             $productAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productAttribute->getId (), array(
@@ -347,7 +357,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                         if (!$productBrandAttribute || !$productBrandAttributeId)
                         {
-                            throw Mage::exception (Mage::helper ('mhub')->__('Brand attribute not found: %s value: %s SKU: %s', $productBrandAttribute, $productBrandValue, $productSku));
+                            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Brand attribute not found: %s value: %s SKU: %s', $productBrandAttribute, $productBrandValue, $productSku), 9999);
                         }
 
                         $productBrandAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productBrandAttributeId, array(
@@ -611,7 +621,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                 if (empty ($productsAvailabilityResult))
                 {
-                    throw Mage::exception (Mage::helper ('mhub')->__('Empty SKU Availability! SKU %s', $productSku));
+                    throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Empty SKU Availability! SKU %s', $productSku), 9999);
                 }
 
                 // price
@@ -680,7 +690,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         }
         catch (Exception $e)
         {
-            throw Mage::exception (Mage::helper ('mhub')->__('Invalid SKU Tracking! SKU %s', $productSku));
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Invalid SKU Tracking! SKU %s', $productSku), 9999);
         }
 
         return $mageProduct->getId ();

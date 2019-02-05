@@ -200,9 +200,9 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
         if (!$mhubQuoteItems->count ())
         {
-            Mage::throwException (Mage::helper ('mhub')->__('Internal Error! No quote item was found. Store %s Quote %s Order %s',
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Internal Error! No quote item was found. Store %s Quote %s Order %s',
                 $mageOrder->getStoreId (), $mageOrder->getQuoteId (), $mageOrder->getIncrementId ()
-            ));
+            ), 9999);
         }
 
         /**
@@ -213,14 +213,17 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         $mageOrderItems = Mage::getResourceModel ('sales/order_item_collection')
             ->setOrderFilter ($mageOrder)
             ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
-            ->filterByTypes (array (Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
+            ->filterByTypes (array (
+                Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+                Mage_Catalog_Model_Product_Type::TYPE_GROUPED
+            ))
         ;
 
         if (!$mageOrderItems->count ())
         {
-            Mage::throwException (Mage::helper ('mhub')->__('Internal Error! No order item was found. Store %s Quote %s Order %s',
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Internal Error! No order item was found. Store %s Quote %s Order %s',
                 $mageOrder->getStoreId (), $mageOrder->getQuoteId (), $mageOrder->getIncrementId ()
-            ));
+            ), 9999);
         }
 
         $itemsAmount = 0; // floatval ($mageOrder->getBaseShippingAmount ());
@@ -249,9 +252,9 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
             if (!$itemQuote || !$itemQuote->getId ())
             {
-                Mage::throwException (Mage::helper ('mhub')->__('Internal Error! No quote item INFORMATION was found. Store %s Quote %s Order %s',
+                throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Internal Error! No quote item INFORMATION was found. Store %s Quote %s Order %s',
                     $mageOrder->getStoreId (), $mageOrder->getQuoteId (), $mageOrder->getIncrementId ()
-                ));
+                ), 9999);
             }
 
             $shippingAmount      = $itemQuote->getPrice ();
