@@ -128,11 +128,14 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
             curl_setopt ($curl, CURLOPT_CUSTOMREQUEST, $request);
         }
 
+        curl_setopt ($curl, CURLOPT_FAILONERROR, true);
+
         $result = curl_exec ($curl);
         $response = json_decode ($result);
         $info = curl_getinfo ($curl);
 
         $message = null;
+
         switch ($httpCode = $info ['http_code'])
         {
             case 400: { $message = 'Invalid Request';      break; }
@@ -143,6 +146,11 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
             case 409: { $message = 'Resource Exists';      break; }
             case 500: { $message = 'Internal Error';       break; }
             case 200: { $message = null; /* Success! */    break; }
+        }
+
+        if ($error = curl_error ($curl))
+        {
+            $message = $error;
         }
 
         if ($this->getStoreConfig ('debug'))

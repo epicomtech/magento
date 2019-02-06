@@ -125,6 +125,11 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
             }), array ('filename' => $filename, 'product_id_attribute' => $productIdAttribute));
         }
 
+        if (substr_count (file_get_contents ($filename), PHP_EOL) == 2)
+        {
+            file_put_contents ($filename, Mage::helper ('mhub')->__('No pending orders/products to send to Epicom.') . PHP_EOL, FILE_APPEND);
+        }
+
         $this->_putDatetime ($filename);
 
         $emailRecipient = Mage::getStoreConfig ('mhub/report/email_recipient');

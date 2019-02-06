@@ -15,7 +15,7 @@ class Epicom_MHub_Block_Adminhtml_Nf_Edit_Tab_Form extends Mage_Adminhtml_Block_
 		$fieldset = $form->addFieldset ('mhub_form', array ('legend' => Mage::helper ('mhub')->__('NF Information')));
 
 		$fieldset->addField ('order_increment_id', 'text', array(
-	        'label'    => Mage::helper ('mhub')->__('Order Increment ID'),
+	        'label'    => Mage::helper ('mhub')->__('Order Inc. ID'),
 	        'class'    => 'required-entry validate-alphanum',
 	        'name'     => 'order_increment_id',
 	        'required' => true,
