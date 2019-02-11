@@ -57,6 +57,8 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
 
     protected function _prepareColumns()
     {
+        $store = $this->_getStore();
+
         $this->addColumn('rate_id', array(
             'header' => Mage::helper('mhub')->__('ID'),
             'align'  =>'right',
@@ -70,6 +72,7 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
             'width'  => '50px',
             'type'   => 'number',
             'index'  => 'address_id',
+            'filter_index' => 'main_table.address_id',
         ));
         $this->addColumn ('store_id', array(
             'header' => Mage::helper ('mhub')->__('Store'),
@@ -131,6 +134,8 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
         $this->addColumn('price', array(
             'header'  => Mage::helper('mhub')->__('Price'),
             'index'   => 'price',
+            'type'   => 'price',
+            'currency_code' => $store->getBaseCurrency()->getCode(),
             'filter_index' => 'main_table.price',
         ));
         $this->addColumn('error_message', array(
@@ -180,6 +185,13 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
     public function getRowUrl($row)
     {
         // return $this->getUrl('*/*/edit', array('id' => $row->getId()));
+    }
+
+    protected function _getStore()
+    {
+        $storeId = (int) $this->getRequest()->getParam('store', 0);
+
+        return Mage::app()->getStore($storeId);
     }
 }
 

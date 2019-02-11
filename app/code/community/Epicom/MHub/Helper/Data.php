@@ -62,6 +62,22 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const API_PRODUCT_ASSOCIATED_SKU       = 'sku_associado';
     const API_PRODUCT_DISASSOCIATED_SKU    = 'sku_desassociado';
 
+    const API_ORDER_STATUS_CREATED            = 'Criado';
+    const API_ORDER_STATUS_RESERVED           = 'Reservado';
+    const API_ORDER_STATUS_CONFIRMED          = 'Confirmado';
+    const API_ORDER_STATUS_CANCELED           = 'Cancelado';
+    const API_ORDER_STATUS_APPROVED           = 'Aprovado';
+    const API_ORDER_STATUS_REFUSED            = 'Recusado';
+    const API_ORDER_STATUS_APPROVAL_ERROR     = 'ErroNaAprovacao';
+    const API_ORDER_STATUS_SHIPPED            = 'Despachado';
+    const API_ORDER_STATUS_DELIVERED          = 'Entregue';
+    const API_ORDER_STATUS_NOT_DELIVERED      = 'Não Entregue';
+    const API_ORDER_STATUS_INTEGRATION_ERROR  = 'ErroNaIntegracao';
+    const API_ORDER_STATUS_CANCELLATION_ERROR = 'ErroNoCancelamento';
+    const API_ORDER_STATUS_ADDRESS_NOT_FOUND  = 'Pedido sem endereço';
+    const API_ORDER_STATUS_OUT_OF_STOCK       = 'Estoque Insuficiente';
+    const API_ORDER_STATUS_WAIT_CANCELLATION  = 'AguardandoCancelamentoCanal';
+
     const API_SHIPMENT_EVENT_CREATED  = 'criacao_evento_entrega';
 
     const API_SHIPMENT_EVENT_NF        = 'nota_fiscal_emitida';

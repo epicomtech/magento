@@ -69,10 +69,10 @@ class Epicom_MHub_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller
     {
         try
         {
-            $ids = $this->getRequest()->getPost('entity_ids', array());
+            $ids = $this->getRequest()->getPost('shipment_ids', array());
             foreach ($ids as $id)
             {
-                $model = Mage::getModel('mhub/shipment')->load($id);
+                $model = Mage::getModel('mhub/shipment')->load($id, 'shipment_id');
 /*
                 if ($model->getEvent () != Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_CREATED)
                 {
@@ -93,6 +93,12 @@ class Epicom_MHub_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller
                     case Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_NF:
                     {
                         $mhubNf = Mage::getModel ('mhub/nf')->load ($mageOrder->getIncrementId (), 'order_increment_id');
+
+                        if (!$mhubNf || !$mhubNf->getId ())
+                        {
+                            throw new Exception (Mage::helper ('mhub')->__('Order NF was not found.'));
+                        }
+
                         $mhubNf->setStatus (Epicom_Mhub_Helper_Data::STATUS_OKAY)
                             ->setSyncedAt (date ('c'))
                             ->save ()
@@ -194,7 +200,7 @@ class Epicom_MHub_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller
             Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
         }
 
-        $this->_redirect('*/*/');
+        $this->_redirect('adminhtml/sales_shipment/index');
     }
 }
 

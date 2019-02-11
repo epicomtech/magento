@@ -139,8 +139,24 @@ class Epicom_MHub_Model_Observer
     {
         $block = $observer->getEvent ()->getBlock ();
 
-        if ($block instanceof Epicom_MHub_Block_Adminhtml_Shipment_Grid)
+        if ($block instanceof Mage_Adminhtml_Block_Sales_Shipment_Grid)
         {
+            $block->addColumnAfter ('is_epicom', array(
+                'header'  => Mage::helper ('mhub')->__('Is Epicom'),
+                'width'   => '70px',
+                'index'   => 'is_epicom',
+                'type'    => 'options',
+                'options' => Mage::getSingleton ('adminhtml/system_config_source_yesno')->toArray (),
+            ), 'increment_id');
+
+            $block->addColumnAfter ('ext_shipment_id', array(
+                'header' => Mage::helper ('mhub')->__('Ext. Shipment ID'),
+                'width'  => '70px',
+                'index'  => 'ext_shipment_id',
+            ), 'is_epicom');
+
+            $block->sortColumnsByOrder ();
+
             $block->getMassactionBlock ()->removeItem('remove_shipments');
 
             $values = Mage::getModel ('mhub/adminhtml_system_config_source_event')->toArray ();
@@ -162,7 +178,9 @@ class Epicom_MHub_Model_Observer
                     )
                 )
             ));
-
+        }
+        else if ($block instanceof Epicom_MHub_Block_Adminhtml_Shipment_Grid)
+        {
             $block->getMassactionBlock()->addItem('remove_shipments', array(
                 'label'   => Mage::helper('mhub')->__('Remove Shipments'),
                 'url'     => Mage::getUrl('admin_mhub/adminhtml_shipment/massRemove'),

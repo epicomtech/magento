@@ -148,6 +148,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
                 'nfNumero'      => $mhubNf->getNumber (),
                 'nfDataEmissao' => $mhubNf->getIssuedAt (),
                 'nfChaveAcesso' => $mhubNf->getAccessKey (),
+                'NfCFOP'        => $mhubNf->getCfop (),
                 'nfLink'        => $mhubNf->getLink (),
             ));
         }

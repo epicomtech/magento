@@ -9,6 +9,29 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
 {
     const ORDERS_INFO_METHOD = 'pedidos/{orderId}';
 
+    protected $_orderStatuses = array ();
+
+    public function _construct ()
+    {
+        $mhubOrderConfig = Mage::getStoreConfig ('mhub/order');
+
+        $this->_orderStatuses = array(
+            Epicom_MHub_Helper_Data::API_ORDER_STATUS_RESERVED => array(
+                $mhubOrderConfig ['reserve_filter'],
+            ),
+            Epicom_MHub_Helper_Data::API_ORDER_STATUS_APPROVED => array(
+                $mhubOrderConfig ['confirm_filter'],
+                $mhubOrderConfig ['erp_filter'],
+            ),
+            Epicom_MHub_Helper_Data::API_ORDER_STATUS_CANCELED => array(
+                $mhubOrderConfig ['cancel_filter'],
+            ),
+            Epicom_MHub_Helper_Data::API_ORDER_STATUS_SHIPPED  => array(
+                $mhubOrderConfig ['sent_filter'],
+            ),
+        );
+    }
+
     public function run ()
     {
         if (!$this->getHelper ()->isMarketplace ())
@@ -69,6 +92,17 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                         return; // splitted_order
 
                         throw new Exception (Mage::helper ('mhub')->__('Epicom number is different: %s', $response->codigoPedidoMarketplace));
+                    }
+
+                    foreach ($this->_orderStatuses as $status => $values)
+                    {
+                        if (!strcmp ($response->status, $status))
+                        {
+                            if (!in_array ($order->getStatus (), $values))
+                            {
+                                throw new Exception (Mage::helper ('mhub')->__('Epicom order status is different: %s <-> %s', $status, $order->getStatusLabel ()));
+                            }
+                        }
                     }
 
                     $orderItems = Mage::getResourceModel ('sales/order_item_collection')

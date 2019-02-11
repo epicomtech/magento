@@ -53,7 +53,6 @@ class Epicom_MHub_Block_Adminhtml_NF_Grid extends Mage_Adminhtml_Block_Widget_Gr
         $this->addColumn ('cfop', array(
             'header' => Mage::helper ('mhub')->__('CFOP'),
             'index'  => 'cfop',
-            'type'   => 'number',
         ));
 		$this->addColumn ('link', array(
 		    'header' => Mage::helper ('mhub')->__('Link'),

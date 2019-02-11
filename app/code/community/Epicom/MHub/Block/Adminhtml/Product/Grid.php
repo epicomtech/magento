@@ -41,6 +41,7 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
             'width'  => '50px',
             'type'   => 'number',
             'index'  => 'entity_id',
+            'filter_index' => 'main_table.entity_id',
         ));
         $this->addColumn('type_id', array(
             'header' => Mage::helper('mhub')->__('Type'),
@@ -51,6 +52,7 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
         $this->addColumn('product_id', array(
             'header' => Mage::helper('mhub')->__('Product ID'),
             'index'  => 'product_id',
+            'type'   => 'number',
         ));
         $this->addColumn('external_id', array(
             'header' => Mage::helper('mhub')->__('External ID'),
@@ -97,6 +99,7 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
             'index'  => 'updated_at',
             'type'   => 'datetime',
             'width'  => '100px',
+            'filter_index' => 'main_table.updated_at',
         ));
         $this->addColumn('synced_at', array(
             'header' => Mage::helper('mhub')->__('Synced At'),

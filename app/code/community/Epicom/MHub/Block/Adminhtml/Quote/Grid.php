@@ -49,7 +49,8 @@ class Epicom_MHub_Block_Adminhtml_Quote_Grid extends Mage_Adminhtml_Block_Widget
 		$this->addColumn ('store_id', array(
 		    'header'  => Mage::helper ('mhub')->__('Store'),
 		    'index'   => 'store_id',
-            'type'    => 'store',
+            'type'    => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
             'filter_index' => 'main_table.store_id',
 		));
 		$this->addColumn ('customer_email', array(

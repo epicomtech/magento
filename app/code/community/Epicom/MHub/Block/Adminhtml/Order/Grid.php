@@ -37,6 +37,7 @@ class Epicom_MHub_Block_Adminhtml_Order_Grid extends Mage_Adminhtml_Block_Widget
         $this->addColumn('order_id', array(
             'header' => Mage::helper('mhub')->__('Order ID'),
             'index'  => 'order_id',
+            'type'   => 'number',
         ));
         $this->addColumn('order_increment_id', array(
             'header' => Mage::helper('mhub')->__('Order Inc. ID'),
