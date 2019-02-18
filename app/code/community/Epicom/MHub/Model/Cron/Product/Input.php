@@ -778,7 +778,10 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             {
                 if (!strcmp ($group->nome, Epicom_MHub_Helper_Data::PRODUCT_FIXED_GROUP_NAME))
                 {
-                    return true;
+                    if (is_array ($group->atributos) && count ($group->atributos) > 0)
+                    {
+                        return true;
+                    }
                 }
             }
         }

@@ -235,6 +235,7 @@
 "Epicom information is empty!","Sem informações na Epicom!"
 "Epicom number is different: %s","Número Epicom é diferente: %s"
 "Epicom order status is different: %s <-> %s","Status do pedido Epicom é diferente: %s <-> %s"
+"Unknown Epicom order status: %s","Status do pedido Epicom é desconhecido: %s"
 "No pending orders/products to send to Epicom.","Nenhum pedido/produto pendente para enviar para a Epicom."
 "Order NF was not found.","A Nota Fiscal do Pedido não foi encontrada."
 "Is Epicom","É Epicom"

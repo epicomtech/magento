@@ -7,6 +7,8 @@
 
 class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_Abstract
 {
+    const ORDERS_INFO_METHOD = 'pedidos/{orderId}';
+
     public function approve ($orderCode, $orderCodeEpicom, $marketplace, $recipient)
     {
         if (/* empty ($orderCode) || */ empty ($orderCodeEpicom) || empty ($marketplace) || empty ($recipient))
@@ -86,9 +88,40 @@ class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_
 
         try
         {
-            $mageOrder->cancel ()->save ();
+            $ordersInfoMethod = str_replace ('{orderId}', $orderCodeEpicom, self::ORDERS_INFO_METHOD);
 
-            $mageOrder->addStatusToHistory ($orderStatus, $orderComment, $orderNotified)->save ();
+            $response = $this->getHelper ()->api ($ordersInfoMethod);
+
+            if (empty ($response))
+            {
+                throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Epicom information is empty!'), 9999);
+            }
+
+            $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
+
+            $itemsQty = 0;
+
+            foreach ($response->itens as $item)
+            {
+                foreach ($mageOrder->getAllItems as $orderItem)
+                {
+                    if (!strcmp ($orderItem->getData ($productIdAttribute), $item->id))
+                    {
+                        $orderItem->cancel ();
+
+                        ++ $itemsQty;
+
+                        continue;
+                    }
+                }
+            }
+
+            if (count ($response->itens) == $itemsQty && $itemsQty > 0)
+            {
+                $mageOrder->cancel ()->save ();
+
+                $mageOrder->addStatusToHistory ($orderStatus, $orderComment, $orderNotified)->save ();
+            }
         }
         catch (Mage_Core_Exception $e)
         {

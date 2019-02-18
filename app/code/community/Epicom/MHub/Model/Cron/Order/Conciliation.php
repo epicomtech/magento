@@ -8,26 +8,36 @@
 class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_Abstract
 {
     const ORDERS_INFO_METHOD = 'pedidos/{orderId}';
+    const SHIPMENTS_INFO_METHOD = 'pedidos/{orderId}/entregas';
+
+    protected $_mhubOrderConfig = null;
 
     protected $_orderStatuses = array ();
 
     public function _construct ()
     {
-        $mhubOrderConfig = Mage::getStoreConfig ('mhub/order');
+        $this->_mhubOrderConfig = Mage::getStoreConfig ('mhub/order');
 
         $this->_orderStatuses = array(
             Epicom_MHub_Helper_Data::API_ORDER_STATUS_RESERVED => array(
-                $mhubOrderConfig ['reserve_filter'],
+                $this->_mhubOrderConfig ['reserve_filter'],
+            ),
+            Epicom_MHub_Helper_Data::API_ORDER_STATUS_CONFIRMED => array(
+                $this->_mhubOrderConfig ['confirm_filter'],
+                $this->_mhubOrderConfig ['erp_filter'],
             ),
             Epicom_MHub_Helper_Data::API_ORDER_STATUS_APPROVED => array(
-                $mhubOrderConfig ['confirm_filter'],
-                $mhubOrderConfig ['erp_filter'],
+                $this->_mhubOrderConfig ['confirm_filter'],
+                $this->_mhubOrderConfig ['erp_filter'],
             ),
             Epicom_MHub_Helper_Data::API_ORDER_STATUS_CANCELED => array(
-                $mhubOrderConfig ['cancel_filter'],
+                $this->_mhubOrderConfig ['cancel_filter'],
             ),
             Epicom_MHub_Helper_Data::API_ORDER_STATUS_SHIPPED  => array(
-                $mhubOrderConfig ['sent_filter'],
+                $this->_mhubOrderConfig ['sent_filter'],
+            ),
+            Epicom_MHub_Helper_Data::API_ORDER_STATUS_DELIVERED => array(
+                Mage::getStoreConfig ('mhub/complete/delivered_status'),
             ),
         );
     }
@@ -49,6 +59,16 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
         ;
 
         $collection->getSelect ()->where ('is_epicom IS NOT NULL OR ext_order_id IS NOT NULL');
+
+        $collection->getSelect ()
+            ->reset (Zend_Db_Select::COLUMNS)
+            ->columns (array (
+                'entity_id',
+                'increment_id',
+                'ext_order_id',
+                'status',
+            ))
+        ;
 
         $filename = tempnam ('/tmp', 'epicom_mhub-order_conciliation-');
 
@@ -94,6 +114,91 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                         throw new Exception (Mage::helper ('mhub')->__('Epicom number is different: %s', $response->codigoPedidoMarketplace));
                     }
 
+                    if (!in_array ($response->status, array_keys ($this->_orderStatuses)))
+                    {
+                        throw new Exception (Mage::helper ('mhub')->__('Unknown Epicom order status: %s', $response->status));
+                    }
+                    else
+                    {
+                        switch ($response->status)
+                        {
+                            case Epicom_MHub_Helper_Data::API_ORDER_STATUS_RESERVED:
+                            {
+                                if (in_array ($order->getStatus (), array (
+                                    $this->_mhubOrderConfig ['confirm_filter'], $this->_mhubOrderConfig ['erp_filter']
+                                )))
+                                {
+                                    $mhubOrderStatus = Mage::getModel ('mhub/order_status')->load ($order->getId (), 'order_id');
+
+                                    if ($mhubOrderStatus && $mhubOrderStatus->getId ()) $mhubOrderStatus->delete ();
+                                }
+
+                                break;
+                            }
+                            case Epicom_MHub_Helper_Data::API_ORDER_STATUS_DELIVERED:
+                            {
+                                $shipmentsInfoMethod = str_replace ('{orderId}', $extOrderId, self::SHIPMENTS_INFO_METHOD);
+
+                                $response = $this->getHelper ()->api ($shipmentsInfoMethod);
+
+                                if (empty ($response)) break;
+
+                                foreach ($response as $shipment)
+                                {
+                                    foreach ($shipment->statusEntrega as $status)
+                                    {
+                                        if (!strcmp ($status->tipo, Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_DELIVERED))
+                                        {
+                                            $orderItems = Mage::getResourceModel ('sales/order_item_collection')
+                                                ->setOrderFilter ($order)
+                                                ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
+                                                ->filterByTypes (array (
+                                                    Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+                                                    Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+                                                ))
+                                                ->addFieldToFilter ('qty_delivered', array ('null' => true))
+                                            ;
+
+                                            $orderItems->getSelect ()
+                                                ->reset (Zend_Db_Select::COLUMNS)
+                                                ->columns (array (
+                                                    'item_id',
+                                                    'qty_ordered',
+                                                    $productIdAttribute,
+                                                ))
+                                            ;
+
+                                            foreach ($shipment->skus as $sku)
+                                            {
+                                                foreach ($orderItems as $item)
+                                                {
+                                                    $productId    = $item->getData ($productIdAttribute);
+                                                    $productQty   = $item->getQtyOrdered ();
+
+                                                    if (!strcmp ($productId, $sku->id) && $productQty == $sku->quantidade)
+                                                    {
+                                                        $item->setData ('qty_delivered', $sku->quantidade)->save ();
+
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                break;
+                            }
+                            default:
+                            {
+                                // nothing_here
+
+                                break;
+                            }
+                        }
+
                     foreach ($this->_orderStatuses as $status => $values)
                     {
                         if (!strcmp ($response->status, $status))
@@ -105,12 +210,23 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                         }
                     }
 
+                    } // in_array
+
                     $orderItems = Mage::getResourceModel ('sales/order_item_collection')
                         ->setOrderFilter ($order)
                         ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
                         ->filterByTypes (array (
                             Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
                             Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+                        ))
+                    ;
+
+                    $orderItems->getSelect ()
+                        ->reset (Zend_Db_Select::COLUMNS)
+                        ->columns (array (
+                            'item_id',
+                            'qty_ordered',
+                            $productIdAttribute,
                         ))
                     ;
 

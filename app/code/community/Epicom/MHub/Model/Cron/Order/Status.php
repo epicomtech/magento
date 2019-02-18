@@ -10,19 +10,24 @@ class Epicom_MHub_Model_Cron_Order_Status extends Epicom_MHub_Model_Cron_Abstrac
     const ORDERS_CONFIRMATION_POST_METHOD = 'pedidos/{orderId}';
 
     private $_confirmFilter = null;
+    private $_erpFilter     = null;
     private $_cancelFilter  = null;
+    private $_sentFilter    = null;
 
     public function _construct ()
     {
         $this->_confirmFilter = Mage::getStoreConfig ('mhub/order/confirm_filter');
         $this->_erpFilter     = Mage::getStoreConfig ('mhub/order/erp_filter');
         $this->_cancelFilter  = Mage::getStoreConfig ('mhub/order/cancel_filter');
+        $this->_sentFilter    = Mage::getStoreConfig ('mhub/order/sent_filter');
     }
 
     private function readMHubOrdersStatusesMagento ()
     {
         $collection = Mage::getModel ('sales/order')->getCollection ()
-            ->addAttributeToFilter ('main_table.status', array ('in' => array ($this->_confirmFilter, $this->_cancelFilter, $this->_erpFilter)))
+            ->addAttributeToFilter ('main_table.status', array ('in' => array (
+                $this->_confirmFilter, $this->_erpFilter, $this->_cancelFilter, $this->_sentFilter,
+            )))
             ->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID, array ('notnull' => true))
             ->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM,    array ('notnull' => true))
         ;

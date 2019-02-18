@@ -107,6 +107,16 @@
                     </product_attributes>
                 </item>
             </quote>
+            <order>
+                <item>
+                    <product_attributes>
+                        <mhub_product_id />
+                        <mhub_product_sku />
+                        <mhub_product_code />
+                        <qty_delivered />
+                    </product_attributes>
+                </item>
+            </order>
         </sales>
         <fieldsets>
             <sales_convert_quote_item>
