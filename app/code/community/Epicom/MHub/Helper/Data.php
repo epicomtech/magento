@@ -121,7 +121,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
 
         $uniqid = md5 (uniqid (rand (), true));
 
-        curl_setopt ($curl, CURLOPT_CONNECTTIMEOUT, 0); // indefinitely
+        curl_setopt ($curl, CURLOPT_CONNECTTIMEOUT, $timeout);
         curl_setopt ($curl, CURLOPT_TIMEOUT, $timeout);
         curl_setopt ($curl, CURLOPT_URL, $url . $mode . '/' . $method . '?ts=' . time ());
         curl_setopt ($curl, CURLOPT_USERPWD, "{$key}:{$token}");

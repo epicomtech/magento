@@ -165,6 +165,14 @@
                     </epicom_mhub_catalog_product_save_after>
                 </observers>
             </catalog_product_save_after>
+            <catalog_product_delete_before>
+                <observers>
+                    <epicom_mhub_catalog_product_delete_before>
+                        <class>mhub/observer</class>
+                        <method>catalogProductDeleteBefore</method>
+                    </epicom_mhub_catalog_product_delete_before>
+                </observers>
+            </catalog_product_delete_before>
             <sales_quote_collect_totals_after>
                 <observers>
                     <epicom_mhub_sales_quote_collect_totals_after>

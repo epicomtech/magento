@@ -35,8 +35,10 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
             ),
             Epicom_MHub_Helper_Data::API_ORDER_STATUS_SHIPPED  => array(
                 $this->_mhubOrderConfig ['sent_filter'],
+                Mage::getStoreConfig ('mhub/shipment/sent_status'),
             ),
             Epicom_MHub_Helper_Data::API_ORDER_STATUS_DELIVERED => array(
+                Mage::getStoreConfig ('mhub/shipment/delivered_status'),
                 Mage::getStoreConfig ('mhub/complete/delivered_status'),
             ),
         );

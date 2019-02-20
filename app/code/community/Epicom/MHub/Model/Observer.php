@@ -10,6 +10,15 @@
  */
 class Epicom_MHub_Model_Observer
 {
+    const PRODUCTS_SKUS_AVAILABLE_PATCH_METHOD = 'produtos/{productCode}/skus/{skuCode}/disponibilidades';
+
+    protected $_codeAttribute = null;
+
+    public function __construct ()
+    {
+        $this->_productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
+    }
+
     public function catalogProductSaveAfter ($observer)
     {
         if (Mage::helper ('mhub')->isMarketplace ()) return;
@@ -40,6 +49,56 @@ class Epicom_MHub_Model_Observer
                 }
             }
 */
+        }
+    }
+
+    public function catalogProductDeleteBefore ($observer)
+    {
+        if (Mage::helper ('mhub')->isMarketplace ()) return;
+
+        $event   = $observer->getEvent ();
+        $product = $event->getProduct ();
+
+        $productCode = $product->getData ($this->_productCodeAttribute);
+
+        $childrenIds = array ();
+
+        if (!strcmp ($product->getTypeId (), Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
+        {
+            $childrenIds = array ($product->getId ());
+        }
+        else
+        {
+            $childrenIds = $product->getTypeInstance ()->getChildrenIds ($product->getId ());
+        }
+
+        $collection = Mage::getModel ('catalog/product')->getCollection ()
+            ->addAttributeToFilter ('entity_id', array ('in' => $childrenIds))
+            ->addAttributeToSelect ($this->_productCodeAttribute)
+        ;
+
+        foreach ($collection as $item)
+        {
+            $skuCode = $item->getData ($this->_productCodeAttribute);
+
+            try
+            {
+                $productsSkusAvailablePatchMethod = str_replace (
+                    array ('{productCode}', '{skuCode}'),
+                    array ($productCode, $skuCode),
+                    self::PRODUCTS_SKUS_AVAILABLE_PATCH_METHOD
+                );
+
+                $post = array(
+                    'disponibilidade' => false
+                );
+
+                Mage::helper ('mhub')->api ($productsSkusAvailablePatchMethod, $post, 'PATCH');
+            }
+            catch (Exception $e)
+            {
+                throw Mage::exception ('Epicom_MHub', $e->getMessage (), $e->getCode ());
+            }
         }
     }
 
