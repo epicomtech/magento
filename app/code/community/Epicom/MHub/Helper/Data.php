@@ -44,6 +44,9 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const ORDER_ATTRIBUTE_IS_EPICOM    = 'is_epicom';
     const ORDER_ATTRIBUTE_EXT_ORDER_ID = 'ext_order_id';
 
+    const ORDER_ATTRIBUTE_SYNCED_IN  = 'mhub_synced_in';
+    const ORDER_ATTRIBUTE_SYNCED_OUT = 'mhub_synced_out';
+
     const SHIPMENT_ATTRIBUTE_IS_EPICOM       = 'is_epicom';
     const SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID = 'ext_shipment_id';
 

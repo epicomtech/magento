@@ -15,19 +15,18 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
     const DEFAULT_QUEUE_LIMIT = 60;
 
+    protected $_methods = array(
+        Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU,
+        Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU,
+        Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU,
+    );
+
     private function readMHubProductsCollection ()
     {
         $limit = intval (Mage::getStoreConfig ('mhub/queue/product'));
 
         $collection = Mage::getModel ('mhub/product')->getCollection ()
-            ->addFieldToFilter ('method', array ('in' => array (
-                Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU,
-                Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU,
-                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU,
-                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_PRICE,
-                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_STOCK,
-                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_AVAILABILITY,
-            )))
+            ->addFieldToFilter ('method', array ('in' => $this->_methods))
         ;
         $select = $collection->getSelect ();
         $select->where ('synced_at < updated_at OR synced_at IS NULL')
@@ -37,14 +36,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             ->group ('external_sku')
             ->group ('method')
             ->order (sprintf ("FIELD(method,%s)", implode (',', array_map (
-                function ($n) { return "'{$n}'"; }, array(
-                    Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_AVAILABILITY,
-                    Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_STOCK,
-                    Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_PRICE,
-                    Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU,
-                    Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU,
-                    Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU,
-                )
+                function ($n) { return "'{$n}'"; }, $this->_methods
             ))))
             ->order ('updated_at DESC')
             ->order ('status DESC')
@@ -82,7 +74,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         return true;
     }
 
-    private function updateMHubProduct (Epicom_MHub_Model_Product $product)
+    protected function updateMHubProduct (Epicom_MHub_Model_Product $product)
     {
         $productId  = $product->getExternalId ();
         $productSku = $product->getExternalSku ();

@@ -88,5 +88,10 @@ class Epicom_MHub_Model_Cron_Abstract
     {
         Mage::log ($text, null, Epicom_MHub_Helper_Data::LOG, $this->_debug);
     }
+
+    protected function _fault ($code, $message = null)
+    {
+        throw new Exception ($message, 9999);
+    }
 }
 

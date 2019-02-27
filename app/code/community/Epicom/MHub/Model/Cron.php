@@ -27,6 +27,11 @@ class Epicom_MHub_Model_Cron
         Mage::getModel ('mhub/cron_product_input')->run ();
     }
 
+    public function runProductAvailability ()
+    {
+        Mage::getModel ('mhub/cron_product_availability')->run ();
+    }
+
     public function runProvider ()
     {
         Mage::getModel ('mhub/cron_provider')->run ();
@@ -55,25 +60,6 @@ class Epicom_MHub_Model_Cron
     public function runShipment ()
     {
         Mage::getModel ('mhub/cron_shipment')->run ();
-    }
-
-    public function runQueue ()
-    {
-        $this->runBrand ();
-
-        $this->runCategory ();
-
-        $this->runProduct ();
-
-        $this->runOrder ();
-
-        $this->runOrderStatus ();
-
-        $this->runOrderConciliation ();
-
-        $this->runOrderComplete ();
-
-        $this->runShipment ();
     }
 }
 

@@ -10,6 +10,8 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
     const ORDERS_INFO_METHOD = 'pedidos/{orderId}';
     const SHIPMENTS_INFO_METHOD = 'pedidos/{orderId}/entregas';
 
+    const COLLECTION_PAGE_SIZE = 1000;
+
     protected $_mhubOrderConfig = null;
 
     protected $_orderStatuses = array ();
@@ -54,15 +56,14 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
         $cancelFilter = Mage::getStoreConfig ('mhub/order/cancel_filter');
 
         $collection = Mage::getModel ('sales/order')->getCollection ()
-            /*
-            ->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true))
-            */
+            ->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_SYNCED_OUT, array ('null' => true))
             ->addAttributeToFilter ('main_table.status', array ('neq' => $cancelFilter))
         ;
 
         $collection->getSelect ()->where ('is_epicom IS NOT NULL OR ext_order_id IS NOT NULL');
 
         $collection->getSelect ()
+            // ->limit (self::COLLECTION_PAGE_SIZE)
             ->reset (Zend_Db_Select::COLUMNS)
             ->columns (array (
                 'entity_id',
@@ -80,7 +81,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
 
         $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
 
-        if ($collection->count () > 0)
+        if ($collection->getSize () > 0)
         {
             Mage::getSingleton ('core/resource_iterator')->walk ($collection->getSelect (), array (function ($args) {
                 $filename = $args ['filename'];
@@ -89,6 +90,15 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
 
                 $order = Mage::getModel ('sales/order')
                     ->setData ($args ['row'])
+                ;
+
+                $orderItems = Mage::getResourceModel ('sales/order_item_collection')
+                    ->setOrderFilter ($order)
+                    ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
+                    ->filterByTypes (array (
+                        Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+                        Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+                    ))
                 ;
 
                 try
@@ -141,16 +151,17 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                             {
                                 $shipmentsInfoMethod = str_replace ('{orderId}', $extOrderId, self::SHIPMENTS_INFO_METHOD);
 
-                                $response = $this->getHelper ()->api ($shipmentsInfoMethod);
+                                $shipmentsInfoResponse = $this->getHelper ()->api ($shipmentsInfoMethod);
 
-                                if (empty ($response)) break;
+                                if (empty ($shipmentsInfoResponse)) break;
 
-                                foreach ($response as $shipment)
+                                foreach ($shipmentsInfoResponse as $shipment)
                                 {
                                     foreach ($shipment->statusEntrega as $status)
                                     {
                                         if (!strcmp ($status->tipo, Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_DELIVERED))
                                         {
+                                            /*
                                             $orderItems = Mage::getResourceModel ('sales/order_item_collection')
                                                 ->setOrderFilter ($order)
                                                 ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
@@ -169,7 +180,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                                                     $productIdAttribute,
                                                 ))
                                             ;
-
+                                            */
                                             foreach ($shipment->skus as $sku)
                                             {
                                                 foreach ($orderItems as $item)
@@ -213,7 +224,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                     }
 
                     } // in_array
-
+                    /*
                     $orderItems = Mage::getResourceModel ('sales/order_item_collection')
                         ->setOrderFilter ($order)
                         ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
@@ -231,7 +242,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                             $productIdAttribute,
                         ))
                     ;
-
+                    */
                     foreach ($orderItems as $item)
                     {
                         $productId    = $item->getData ($productIdAttribute);
@@ -258,17 +269,26 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
 
                         if (!$productFound)
                         {
-                            /*
                             throw new Exception (Mage::helper ('mhub')->__('Product not found! SKU: %s Qty: %s', $productId, $productQty));
-                            */
-
+                            /*
                             $message = Mage::helper ('mhub')->__('Product not found! SKU: %s Qty: %s', $productId, $productQty);
 
                             file_put_contents ($filename, Mage::helper ('mhub')->__('Order %s [ %s ] ERROR: %s',
                                 $order->getIncrementId (), $extOrderId, $message . PHP_EOL
                             ), FILE_APPEND);
+                            */
                         }
                     }
+
+                    $resource = Mage::getSingleton ('core/resource');
+                    $write    = $resource->getConnection ('core_write');
+                    $table    = $resource->getTableName ('sales/order');
+
+                    $query = sprintf ('UPDATE %s SET %s = 1 WHERE entity_id = %s LIMIT 1',
+                        $table, Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_SYNCED_OUT, $order->getId ()
+                    );
+
+                    $write->query ($query);
                 }
                 catch (Exception $e)
                 {

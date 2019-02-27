@@ -26,9 +26,9 @@ class Epicom_MHub_Model_Adminhtml_System_Config_Source_Limit
             Epicom_MHub_Helper_Data::QUEUE_LIMIT_150 => Mage::helper ('mhub')->__('150 items'),
             Epicom_MHub_Helper_Data::QUEUE_LIMIT_180 => Mage::helper ('mhub')->__('180 items'),
             Epicom_MHub_Helper_Data::QUEUE_LIMIT_210 => Mage::helper ('mhub')->__('210 items'),
-            Epicom_MHub_Helper_Data::QUEUE_LIMIT_210 => Mage::helper ('mhub')->__('240 items'),
-            Epicom_MHub_Helper_Data::QUEUE_LIMIT_210 => Mage::helper ('mhub')->__('270 items'),
-            Epicom_MHub_Helper_Data::QUEUE_LIMIT_210 => Mage::helper ('mhub')->__('300 items'),
+            Epicom_MHub_Helper_Data::QUEUE_LIMIT_240 => Mage::helper ('mhub')->__('240 items'),
+            Epicom_MHub_Helper_Data::QUEUE_LIMIT_270 => Mage::helper ('mhub')->__('270 items'),
+            Epicom_MHub_Helper_Data::QUEUE_LIMIT_300 => Mage::helper ('mhub')->__('300 items'),
         );
 
         return $result;
