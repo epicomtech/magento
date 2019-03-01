@@ -79,6 +79,23 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         $productId  = $product->getExternalId ();
         $productSku = $product->getExternalSku ();
 
+        $collection = Mage::getModel ('mhub/product')->getCollection ()
+            ->addFieldToFilter ('external_id',  array ('eq' => $productId))
+            ->addFieldToFilter ('external_sku', array ('eq' => $productSku))
+            ->addFieldToFilter ('method',       array ('in' => array(
+                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_PRICE,
+                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_STOCK,
+                Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_AVAILABILITY,
+            )))
+            ->addFieldToFilter ('operation', array ('eq' => Epicom_MHub_Helper_Data::OPERATION_IN))
+            ->addFieldToFilter ('status',    array ('neq' => Epicom_MHub_Helper_Data::STATUS_OKAY))
+        ;
+
+        if ($collection->count () > 0)
+        {
+            return false; // availability_first
+        }
+
         /**
          * Product Info
          */
