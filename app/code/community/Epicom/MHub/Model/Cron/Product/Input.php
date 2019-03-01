@@ -615,6 +615,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         }
                     }
                 }
+
+                break;
             }
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_PRICE:
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_STOCK:
@@ -678,6 +680,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         ;
                     }
                 }
+
+                break;
             }
         }
 
