@@ -12,6 +12,13 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
     protected $_code = self::CODE;
 
+    protected $_uniqueShipping = null;
+
+    public function _construct ()
+    {
+        $this->_uniqueShipping = Mage::getStoreConfigFlag ('mhub/cart/unique_shipping');
+    }
+
 	public function collectRates (Mage_Shipping_Model_Rate_Request $request)
 	{
 		if (!$this->getConfigFlag ('active')) return false;
@@ -93,12 +100,10 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
             {
                 if (strcmp ($item->status, 'ok'))
                 {
-                    $uniqueShipping = Mage::getStoreConfigFlag ('mhub/cart/unique_shipping');
-
                     $errorMessage   = Mage::helper ('mhub')->__(Mage::getStoreConfig ('mhub/cart/error_message'));
                     $productMessage = Mage::helper ('mhub')->__(Mage::getStoreConfig ('mhub/cart/product_message'));
 
-                    $shippingItems   = $uniqueShipping ? $item->itens : array ($item);
+                    $shippingItems   = $this->_uniqueShipping ? $item->itens : array ($item);
 
                     $ids = array ();
 
@@ -132,6 +137,11 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
                 if (is_array ($item->fretes) && count ($item->fretes) > 0)
                 {
+                    $shippingItems = $this->_uniqueShipping ? $item->itens : array ($item);
+
+                    foreach ($shippingItems as $_item)
+                    {
+
                     foreach ($item->fretes as $freight)
                     {
 			            $carrier  = $freight->transportadora;
@@ -148,9 +158,9 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                             ->setPostcode ($postCode)
 		                    ->setCarrier ($this->_code)
 			                ->setCarrierTitle ($this->getConfigData ('title'))
-			                ->setMethod (implode ('_', array ($item->id, $_carrier, $_modality)))
+			                ->setMethod (implode ('_', array ($_item->id, $_carrier, $_modality)))
 			                ->setMethodTitle ($modality . ' - ' . $formatedTime)
-                            ->setSku ($item->id)
+                            ->setSku ($_item->id)
                             ->setDays ($time)
 			                ->setPrice ($price)
 			                ->setCost (0)
@@ -158,6 +168,8 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
 			            $result->append ($method);
                     }
+
+                    } // shippingItems
                 }
             }
 		}
