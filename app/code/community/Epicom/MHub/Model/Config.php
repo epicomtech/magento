@@ -199,9 +199,9 @@ class Epicom_MHub_Model_Config
             }
         }
 
-        // $cartCalculateMethod = self::CART_CALCULATE_METHOD . ($unique ? '&entregaUnica=true' : null);
+        $unique = $unique ? 'true' : 'false';
 
-        $result = Mage::helper ('mhub')->api (self::CART_CALCULATE_METHOD, $post, null, array ('entregaUnica' => true));
+        $result = Mage::helper ('mhub')->api (self::CART_CALCULATE_METHOD, $post, null, array ('entregaUnica' => $unique));
 
         if ($cache)
         {
