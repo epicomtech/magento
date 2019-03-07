@@ -21,6 +21,37 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU,
     );
 
+    protected $_defaultAttributeSetId = null;
+
+    protected $_productWeightMode = null;
+
+    protected $_productCodeAttribute        = null;
+    protected $_productModelAttribute       = null;
+    protected $_productEanAttribute         = null;
+    protected $_productUrlAttribute         = null;
+    protected $_productOutOfLineAttribute   = null;
+    protected $_productOfferTitleAttribute  = null;
+    protected $_productHeightAttribute      = null;
+    protected $_productWidthAttribute       = null;
+    protected $_productLengthAttribute      = null;
+
+    public function _construct ()
+    {
+        $this->_defaultAttributeSetId = Mage::getStoreConfig ('mhub/attributes_set/product');
+
+        $this->_productWeightMode = Mage::getStoreConfig ('mhub/product/weight_mode');
+
+        $this->_productCodeAttribute       = Mage::getStoreConfig ('mhub/product/code');
+        $this->_productModelAttribute      = Mage::getStoreConfig ('mhub/product/model');
+        $this->_productEanAttribute        = Mage::getStoreConfig ('mhub/product/ean');
+        $this->_productUrlAttribute        = Mage::getStoreConfig ('mhub/product/url');
+        $this->_productOutOfLineAttribute  = Mage::getStoreConfig ('mhub/product/out_of_line');
+        $this->_productOfferTitleAttribute = Mage::getStoreConfig ('mhub/product/offer_title');
+        $this->_productHeightAttribute     = Mage::getStoreConfig ('mhub/product/height');
+        $this->_productWidthAttribute      = Mage::getStoreConfig ('mhub/product/width');
+        $this->_productLengthAttribute     = Mage::getStoreConfig ('mhub/product/length');
+    }
+
     private function readMHubProductsCollection ()
     {
         $limit = intval (Mage::getStoreConfig ('mhub/queue/product'));
@@ -91,7 +122,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             ->addFieldToFilter ('status',    array ('neq' => Epicom_MHub_Helper_Data::STATUS_OKAY))
         ;
 
-        if ($collection->count () > 0)
+        if ($collection->getSize () > 0)
         {
             return false; // availability_first
         }
@@ -162,7 +193,13 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 // attributeset by category id
                 $categoryId = $productsSkusResult->codigoCategoria;
 
-                $collection = Mage::getModel('catalog/category')->getCollection ()
+                $collection = Mage::getModel('catalog/category')->getCollection ();
+
+                $collection->getSelect ()->reset (Zend_Db_Select::COLUMNS)
+                    ->columns (array ('entity_id'))
+                ;
+
+                $collection
                     ->addAttributeToSelect (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET, array ('notnull' => true))
                     ->addAttributeToSelect (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE, array ('eq' => '1'))
                     ->addAttributeToFilter ('entity_id', array ('eq' => $categoryId))
@@ -171,8 +208,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $mageCategory = $collection->getFirstItem ();
 
                 $categoryAttributeSetId = $mageCategory->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET);
-                $defaultAttributeSetId  = Mage::getStoreConfig ('mhub/attributes_set/product');
-                $productAttributeSetId  = $categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId;
+                $productAttributeSetId  = $categoryAttributeSetId ? $categoryAttributeSetId : $this->_defaultAttributeSetId;
                 /*
                 $productHasVariations = (is_array ($productsInfoResult->grupos) && count ($productsInfoResult->grupos) > 0
                     && is_array ($productsInfoResult->grupos [0]->atributos) && count ($productsInfoResult->grupos [0]->atributos) > 0
@@ -217,8 +253,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 // weight
                 $productWeight = intval ($productsSkusResult->dimensoes->peso);
 
-                $productWeightMode = Mage::getStoreConfig ('mhub/product/weight_mode');
-                if (!strcmp ($productWeightMode, Epicom_MHub_Helper_Data::PRODUCT_WEIGHT_KILO) && $productWeight > 0)
+                if (!strcmp ($this->_productWeightMode, Epicom_MHub_Helper_Data::PRODUCT_WEIGHT_KILO) && $productWeight > 0)
                 {
                     $productWeight = floatval ($productWeight / 1000);
                 }
@@ -229,25 +264,15 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $mageProduct->setDescription ($productsInfoResult->descricao);
 
                 // custom
-                $productCodeAttribute         = Mage::getStoreConfig ('mhub/product/code');
-                $productModelAttribute        = Mage::getStoreConfig ('mhub/product/model');
-                $productEanAttribute          = Mage::getStoreConfig ('mhub/product/ean');
-                $productUrlAttribute          = Mage::getStoreConfig ('mhub/product/url');
-                // $productOutOfLineAttribute    = Mage::getStoreConfig ('mhub/product/out_of_line');
-                $productOfferTitleAttribute    = Mage::getStoreConfig ('mhub/product/offer_title');
-                $productHeightAttribute       = Mage::getStoreConfig ('mhub/product/height');
-                $productWidthAttribute        = Mage::getStoreConfig ('mhub/product/width');
-                $productLengthAttribute       = Mage::getStoreConfig ('mhub/product/length');
-
-                $mageProduct->setData ($productCodeAttribute, $productsSkusResult->codigo);
-                $mageProduct->setData ($productModelAttribute, $productsSkusResult->modelo);
-                $mageProduct->setData ($productEanAttribute, $productsSkusResult->ean);
-                $mageProduct->setData ($productUrlAttribute, $productsSkusResult->url);
-                // $mageProduct->setData ($productOutOfLineAttribute, $productsSkusResult->foraDeLinha);
-                $mageProduct->setData ($productOfferTitleAttribute, $productsSkusResult->nomeReduzido);
-                $mageProduct->setData ($productHeightAttribute, $productHeight = $productsSkusResult->dimensoes->altura);
-                $mageProduct->setData ($productWidthAttribute,  $productWidth  = $productsSkusResult->dimensoes->largura);
-                $mageProduct->setData ($productLengthAttribute, $productLength = $productsSkusResult->dimensoes->comprimento);
+                $mageProduct->setData ($this->_productCodeAttribute,       $productsSkusResult->codigo);
+                $mageProduct->setData ($this->_productModelAttribute,      $productsSkusResult->modelo);
+                $mageProduct->setData ($this->_productEanAttribute,        $productsSkusResult->ean);
+                $mageProduct->setData ($this->_productUrlAttribute,        $productsSkusResult->url);
+                $mageProduct->setData ($this->_productOutOfLineAttribute,  $productsSkusResult->foraDeLinha);
+                $mageProduct->setData ($this->_productOfferTitleAttribute, $productsSkusResult->nomeReduzido);
+                $mageProduct->setData ($this->_productHeightAttribute,     $productHeight = $productsSkusResult->dimensoes->altura);
+                $mageProduct->setData ($this->_productWidthAttribute,      $productWidth  = $productsSkusResult->dimensoes->largura);
+                $mageProduct->setData ($this->_productLengthAttribute,     $productLength = $productsSkusResult->dimensoes->comprimento);
 
                 // groups
                 if ($productHasVariations)
@@ -343,8 +368,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $parentProduct->setMetaKeyword ($productsInfoResult->palavrasChave);
 
                     // custom
-                    $parentProduct->setData ($productCodeAttribute, $productsInfoResult->codigo);
-                    $parentProduct->setData ($productOfferTitleAttribute, $productsSkusResult->nomeReduzido);
+                    $parentProduct->setData ($this->_productCodeAttribute,       $productsInfoResult->codigo);
+                    $parentProduct->setData ($this->_productOfferTitleAttribute, $productsSkusResult->nomeReduzido);
 
                     if ($productWeight > 0 && $productWeight < $parentProduct->getWeight ())
                     {
@@ -353,9 +378,9 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 /*
                     $parentProduct->setWeight ($productWeight > 0 ? $productWeight : 999999);
 */
-                    $parentProduct->setData ($productHeightAttribute, $productHeight);
-                    $parentProduct->setData ($productWidthAttribute,  $productWidth);
-                    $parentProduct->setData ($productLengthAttribute, $productLength);
+                    $parentProduct->setData ($this->_productHeightAttribute, $productHeight);
+                    $parentProduct->setData ($this->_productWidthAttribute,  $productWidth);
+                    $parentProduct->setData ($this->_productLengthAttribute, $productLength);
 
                     // brand
                     $productBrandValue = $productsInfoResult->marca;
@@ -471,12 +496,32 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $productAttributeSets = null;
 
                     $configurableAttributeSets = explode (',', Mage::getStoreConfig ('mhub/attributes_set/product_associations'));
+
+                    $configurableAttributeIds = array ();
+
                     foreach ($configurableAttributeSets as $value)
                     {
                         list ($attributeSetId, $attributeId) = explode (':', $value);
 
-                        $attribute = Mage::getModel ('eav/entity_attribute')->load ($attributeId);
+                        $configurableAttributeIds [$attributeId] = $attributeSetId;
+                    }
 
+                    $collection = Mage::getModel ('eav/entity_attribute')->getCollection ()
+                        ->addFieldToFilter ('attribute_id', array ('in' => array_keys ($configurableAttributeIds)))
+                    ;
+
+                    $collection->getSelect ()->reset (Zend_Db_Select::COLUMNS)
+                        ->columns (array ('attribute_id', 'attribute_code', 'frontend_label'))
+                    ;
+
+                    foreach ($collection as $attribute)
+                    {
+                        $attributeId = $attribute->getId ();
+
+                        $attributeSetId = $configurableAttributeIds [$attributeId];
+                        /*
+                        $attribute = Mage::getModel ('eav/entity_attribute')->load ($attributeId);
+                        */
                         $productAttributeSets [] = array (
                             'attribute_id'     => $attributeId,
                             'attribute_code'   => $attribute->getAttributeCode (),
@@ -516,9 +561,26 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         ->addFieldToFilter ('parent_sku', array ('eq' => $productId))
                     ;
 
-                    foreach ($collection as $item)
+                    $collection->getSelect ()->reset (Zend_Db_Select::COLUMNS)
+                        ->columns (array ('id' => 'entity_id', 'name' => 'sku'))
+                    ;
+
+                    $simpleSKUs = array_values ($collection->toOptionHash ());
+
+                    $collection = Mage::getModel ('catalog/product')->getCollection ()
+                        ->addAttributeToFilter (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, array ('in' => $simpleSKUs))
+                        ->addAttributeToSelect ('price')
+                        ->addAttributeToSelect ('special_price')
+                    ;
+
+                    foreach ($collection as $simpleProduct)
                     {
-                        $simpleProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $item->getSku ());
+                        /*
+                        $simpleProduct = Mage::getModel ('catalog/product')->loadByAttribute (
+                            Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $item->getSku (),
+                            array ('price', 'special_price')
+                        );
+                        */
                         if ($simpleProduct && intval ($simpleProduct->getId ()) > 0)
                         {
                             foreach ($productAttributeSets as $value)
@@ -554,7 +616,10 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 }
                 else
                 {
-                    $parentProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
+                    $parentProduct = Mage::getModel ('catalog/product')->loadByAttribute (
+                        Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId, null
+                    );
+
                     if ($parentProduct && intval ($parentProduct->getId ()) > 0)
                     {
                         $parentProduct->delete ();
@@ -816,8 +881,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         if (!$result) return false;
 */
         $collection = $this->readMHubProductsCollection ();
-        $length = $collection->count ();
-        if (!$length) return false;
+        if (!$collection->getSize ()) return false;
 
         $this->updateProducts ($collection);
 
