@@ -21,6 +21,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_SKU,
     );
 
+    protected $_configurableAttributeSets = null;
+
     protected $_defaultAttributeSetId = null;
 
     protected $_productWeightMode = null;
@@ -35,8 +37,18 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
     protected $_productWidthAttribute       = null;
     protected $_productLengthAttribute      = null;
 
+    protected $_productSummaryAttribute     = null;
+
+    protected $_productBrandAttribute       = null;
+    protected $_productBrandAttributeId     = null;
+
+    protected $_productManufacturerAttribute   = null;
+    protected $_productManufacturerAttributeId = null;
+
     public function _construct ()
     {
+        $this->_configurableAttributeSets = explode (',', Mage::getStoreConfig ('mhub/attributes_set/product_associations'));
+
         $this->_defaultAttributeSetId = Mage::getStoreConfig ('mhub/attributes_set/product');
 
         $this->_productWeightMode = Mage::getStoreConfig ('mhub/product/weight_mode');
@@ -50,6 +62,14 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         $this->_productHeightAttribute     = Mage::getStoreConfig ('mhub/product/height');
         $this->_productWidthAttribute      = Mage::getStoreConfig ('mhub/product/width');
         $this->_productLengthAttribute     = Mage::getStoreConfig ('mhub/product/length');
+
+        $this->_productSummaryAttribute    = Mage::getStoreConfig ('mhub/product/summary');
+
+        $this->_productBrandAttribute      = Mage::getStoreConfig ('mhub/product/brand');
+        $this->_productManufacturerAttribute = Mage::getStoreConfig ('mhub/product/manufacturer');
+
+        $this->_productBrandAttributeId    = $this->getConfig ()->getAttributeId ($this->_productBrandAttribute);
+        $this->_productManufacturerAttributeId = $this->getConfig ()->getAttributeId ($this->_productManufacturerAttribute);
     }
 
     private function readMHubProductsCollection ()
@@ -386,34 +406,30 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $productBrandValue = $productsInfoResult->marca;
                     if (!empty ($productBrandValue))
                     {
-                        $productBrandAttribute   = Mage::getStoreConfig ('mhub/product/brand');
-                        $productBrandAttributeId = $this->getConfig ()->getAttributeId ($productBrandAttribute);
-
-                        if (!$productBrandAttribute || !$productBrandAttributeId)
+                        if (!$this->_productBrandAttribute || !$this->_productBrandAttributeId)
                         {
-                            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Brand attribute not found: %s value: %s SKU: %s', $productBrandAttribute, $productBrandValue, $productSku), 9999);
+                            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Brand attribute not found: %s value: %s SKU: %s', $this->_productBrandAttribute, $productBrandValue, $productSku), 9999);
                         }
 
-                        $productBrandAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productBrandAttributeId, array(
+                        $productBrandAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($this->_productBrandAttributeId, array(
                             'order' => '0',
                             'label' => array (
                                 array ('store_code' => 'admin', 'value' => $productBrandValue)
                             ),
                         ));
 
-                        $parentProduct->setData ($productBrandAttribute, $productBrandAttributeOptionId);
+                        $parentProduct->setData ($this->_productBrandAttribute, $productBrandAttributeOptionId);
                     }
 
                     // manufacturer
                     $productManufacturerValue = $productsInfoResult->codigoFornecedor;
                     if (!empty ($productManufacturerValue))
                     {
-                        $productManufacturerAttribute   = Mage::getStoreConfig ('mhub/product/manufacturer');
-                        $productManufacturerAttributeId = $this->getConfig ()->getAttributeId ($productManufacturerAttribute);
+                        $parentProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER, $productManufacturerValue);
 
-                        if (!$productManufacturerAttribute || !$productManufacturerAttributeId)
+                        if (!$this->_productManufacturerAttribute || !$this->_productManufacturerAttributeId)
                         {
-                            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Manufacturer attribute not found: %s value: %s SKU: %s', $productManufacturerAttribute, $productManufacturerValue, $productSku), 9999);
+                            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Manufacturer attribute not found: %s value: %s SKU: %s', $this->_productManufacturerAttribute, $productManufacturerValue, $productSku), 9999);
                         }
 
                         $mhubProductManufacturer = Mage::getModel ('mhub/provider')->load ($productManufacturerValue, 'code');
@@ -423,16 +439,14 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                             $productManufacturerValue = $mhubProductManufacturer->getName ();
                         }
 
-                        $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($productManufacturerAttributeId, array(
+                        $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($this->_productManufacturerAttributeId, array(
                             'order' => '0',
                             'label' => array (
                                 array ('store_code' => 'admin', 'value' => $productManufacturerValue)
                             ),
                         ));
 
-                        $parentProduct->setData ($productManufacturerAttribute, $productManufacturerOptionId);
-
-                        $parentProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER, $productManufacturerValue);
+                        $parentProduct->setData ($this->_productManufacturerAttribute, $productManufacturerOptionId);
                     }
 
                     // attributes
@@ -448,8 +462,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         }
                     }
 
-                    $productSummaryAttribute      = Mage::getStoreConfig ('mhub/product/summary');
-                    $parentProduct->setData ($productSummaryAttribute, $attributesResult);
+                    $parentProduct->setData ($this->_productSummaryAttribute, $attributesResult);
 
                     $parentProduct->save ();
 
@@ -501,11 +514,9 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                     $productAttributeSets = null;
 
-                    $configurableAttributeSets = explode (',', Mage::getStoreConfig ('mhub/attributes_set/product_associations'));
-
                     $configurableAttributeIds = array ();
 
-                    foreach ($configurableAttributeSets as $value)
+                    foreach ($this->_configurableAttributeSets as $value)
                     {
                         list ($attributeSetId, $attributeId) = explode (':', $value);
 
