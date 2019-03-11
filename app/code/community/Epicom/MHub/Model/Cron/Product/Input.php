@@ -408,13 +408,19 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $productManufacturerValue = $productsInfoResult->codigoFornecedor;
                     if (!empty ($productManufacturerValue))
                     {
-                        /*
                         $productManufacturerAttribute   = Mage::getStoreConfig ('mhub/product/manufacturer');
                         $productManufacturerAttributeId = $this->getConfig ()->getAttributeId ($productManufacturerAttribute);
 
                         if (!$productManufacturerAttribute || !$productManufacturerAttributeId)
                         {
-                            throw Mage::exception (Mage::helper ('mhub')->__('Manufacturer attribute not found: %s value: %s SKU: %s', $productManufacturerAttribute, $productManufacturerValue, $productSku));
+                            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Manufacturer attribute not found: %s value: %s SKU: %s', $productManufacturerAttribute, $productManufacturerValue, $productSku), 9999);
+                        }
+
+                        $mhubProductManufacturer = Mage::getModel ('mhub/provider')->load ($productManufacturerValue, 'code');
+
+                        if ($mhubProductManufacturer && $mhubProductManufacturer->getId ())
+                        {
+                            $productManufacturerValue = $mhubProductManufacturer->getName ();
                         }
 
                         $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($productManufacturerAttributeId, array(
@@ -425,7 +431,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         ));
 
                         $parentProduct->setData ($productManufacturerAttribute, $productManufacturerOptionId);
-                        */
+
                         $parentProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER, $productManufacturerValue);
                     }
 

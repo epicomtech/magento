@@ -8,7 +8,7 @@
 $installer = $this;
 $installer->startSetup ();
 
-function updateMHubQuoteTable ($installer, $model)
+function updateMHubQuoteTable2 ($installer, $model)
 {
     $table = $installer->getTable ($model);
 
@@ -22,7 +22,7 @@ function updateMHubQuoteTable ($installer, $model)
         ));
 }
 
-updateMHubQuoteTable ($installer, Epicom_MHub_Helper_Data::QUOTE_TABLE);
+updateMHubQuoteTable2 ($installer, Epicom_MHub_Helper_Data::QUOTE_TABLE);
 
 $installer->endSetup ();
 

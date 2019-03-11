@@ -376,7 +376,7 @@
             <product>
                 <weight_mode>gram</weight_mode>
                 <id>mhub_product_id</id>
-                <code>sku</code><!-- mhub_product_code -->
+                <code>mhub_product_code</code>
                 <brand>mhub_product_brand</brand>
                 <ean>mhub_product_ean</ean>
                 <!--

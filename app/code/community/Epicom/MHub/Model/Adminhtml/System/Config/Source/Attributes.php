@@ -13,7 +13,9 @@ class Epicom_MHub_Model_Adminhtml_System_Config_Source_Attributes
     public function getAttributeCollection ()
     {
         $collection = Mage::getResourceModel ('eav/entity_attribute_collection')
-            ->setEntityTypeFilter ($this->getEntityTypeId ());
+            ->setEntityTypeFilter ($this->getEntityTypeId ())
+            ->addFieldToFilter ('is_visible', true)
+        ;
         $collection->getSelect()->order('frontend_label');
 
         return $collection;
