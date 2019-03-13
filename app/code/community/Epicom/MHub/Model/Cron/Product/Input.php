@@ -322,7 +322,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 }
 
                 $mageProduct->save ();
-
+/*
                 // stock
                 $stockItem = Mage::getModel ('cataloginventory/stock_item')
                     ->assignProduct ($mageProduct)
@@ -335,7 +335,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     ->setQty (0)
                     ->save ()
                 ;
-
+*/
                 $productIds = array ($mageProduct->getId ());
 
                 $productNotExists = false;
@@ -465,7 +465,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $parentProduct->setData ($this->_productSummaryAttribute, $attributesResult);
 
                     $parentProduct->save ();
-
+/*
                     // stock
                     $stockItem = Mage::getModel ('cataloginventory/stock_item')
                         ->assignProduct ($parentProduct)
@@ -478,7 +478,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         ->setQty (0)
                         ->save ()
                     ;
-
+*/
                     // product association
                     $assocItem = Mage::getModel ('mhub/product_association')->load ($productSku, 'sku');
                     if (empty ($assocItem) || !$assocItem->getId ())
