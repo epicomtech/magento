@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Epicom_MHub>
-            <version>0.1.16</version>
+            <version>0.1.18</version>
         </Epicom_MHub>
     </modules>
     <global>
@@ -104,6 +104,7 @@
                         <mhub_product_id />
                         <mhub_product_sku />
                         <mhub_product_code />
+                        <mhub_product_manufacturer />
                     </product_attributes>
                 </item>
             </quote>
@@ -113,6 +114,7 @@
                         <mhub_product_id />
                         <mhub_product_sku />
                         <mhub_product_code />
+                        <mhub_product_manufacturer />
                         <qty_delivered />
                     </product_attributes>
                 </item>
@@ -129,6 +131,9 @@
                 <mhub_product_code>
                     <to_order_item>*</to_order_item>
                 </mhub_product_code>
+                <mhub_product_manufacturer>
+                    <to_order_item>*</to_order_item>
+                </mhub_product_manufacturer>
             </sales_convert_quote_item>
             <sales_convert_order_item>
                 <mhub_product_id>
@@ -140,6 +145,9 @@
                 <mhub_product_code>
                     <to_quote_item>*</to_quote_item>
                 </mhub_product_code>
+                <mhub_product_manufacturer>
+                    <to_quote_item>*</to_quote_item>
+                </mhub_product_manufacturer>
             </sales_convert_order_item>
         </fieldsets>
         <template>
@@ -279,6 +287,7 @@
                     <mhub_product_id />
                     <mhub_product_sku />
                     <mhub_product_code />
+                    <mhub_product_manufacturer />
                 </attributes>
             </collection>
         </product>
@@ -305,6 +314,10 @@
                 <schedule><cron_expr>* * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runProductAvailability</model></run>
             </epicom_mhub_product_availability>
+            <epicom_mhub_manufacturer>
+                <schedule><cron_expr>0 5 * * *</cron_expr></schedule>
+                <run><model>mhub/cron::runManufacturer</model></run>
+            </epicom_mhub_manufacturer>
             <epicom_mhub_provider>
                 <schedule><cron_expr>0 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runProvider</model></run>

@@ -109,9 +109,15 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             }
             catch (Exception $e)
             {
+                /*
                 if (!strcmp ($product->getMethod (), Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU))
                 {
                     $this->disableMHubProduct ($product, $e->getCode ());
+                }
+                */
+                if ($e->getCode () == 404)
+                {
+                    $result = $this->disableMHubProduct ($product, $e->getCode ());
                 }
 
                 $this->logMHubProduct ($product, $e->getMessage ());
@@ -294,6 +300,53 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $mageProduct->setData ($this->_productWidthAttribute,      $productWidth  = $productsSkusResult->dimensoes->largura);
                 $mageProduct->setData ($this->_productLengthAttribute,     $productLength = $productsSkusResult->dimensoes->comprimento);
 
+                // brand
+                $productBrandValue = $productsInfoResult->marca;
+                if (!empty ($productBrandValue))
+                {
+                    if (!$this->_productBrandAttribute || !$this->_productBrandAttributeId)
+                    {
+                        throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Brand attribute not found: %s value: %s SKU: %s', $this->_productBrandAttribute, $productBrandValue, $productSku), 9999);
+                    }
+
+                    $productBrandAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($this->_productBrandAttributeId, array(
+                        'order' => '0',
+                        'label' => array (
+                            array ('store_code' => 'admin', 'value' => $productBrandValue)
+                        ),
+                    ));
+
+                    $mageProduct->setData ($this->_productBrandAttribute, $productBrandAttributeOptionId);
+                }
+
+                // manufacturer
+                $productManufacturerValue = $productsInfoResult->codigoFornecedor;
+                if (!empty ($productManufacturerValue))
+                {
+                    $mageProduct->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER, $productManufacturerValue);
+
+                    if (!$this->_productManufacturerAttribute || !$this->_productManufacturerAttributeId)
+                    {
+                        throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Manufacturer attribute not found: %s value: %s SKU: %s', $this->_productManufacturerAttribute, $productManufacturerValue, $productSku), 9999);
+                    }
+
+                    $mhubProductManufacturer = Mage::getModel ('mhub/provider')->load ($productManufacturerValue, 'code');
+
+                    if ($mhubProductManufacturer && $mhubProductManufacturer->getId ())
+                    {
+                        $productManufacturerValue = $mhubProductManufacturer->getName ();
+                    }
+
+                    $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($this->_productManufacturerAttributeId, array(
+                        'order' => '0',
+                        'label' => array (
+                            array ('store_code' => 'admin', 'value' => $productManufacturerValue)
+                        ),
+                    ));
+
+                    $mageProduct->setData ($this->_productManufacturerAttribute, $productManufacturerOptionId);
+                }
+
                 // groups
                 if ($productHasVariations)
                 {
@@ -308,7 +361,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                             {
                                 throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Custom attribute not found: %s value: %s SKU: %s', $attribute->nome, $attribute->valor, $productSku), 9999);
                             }
-
+                            /*
                             $productAttributeOptionId = $this->getConfig ()->addAttributeOptionValue ($productAttribute->getId (), array(
                                 'order' => '0',
                                 'label' => array (
@@ -317,6 +370,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                             ));
 
                             $mageProduct->setData ($productAttribute->getAttributeCode (), $productAttributeOptionId);
+                            */
+                            $mageProduct->setData ($attribute->codigoAtributoCategoria, $attribute->codigoValorAtributoCategoria);
                         }
                     }
                 }
@@ -841,6 +896,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             if ($mageProduct && intval ($mageProduct->getId ()) > 0)
             {
                 $mageProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_DISABLED)->save ();
+
+                return $mageProduct->getId ();
             }
         }
     }

@@ -169,6 +169,7 @@ class Epicom_MHub_Model_Config
             ->addAttributeToFilter ('type_id',   Mage_Catalog_Model_Product_Type::TYPE_SIMPLE)
             ->addAttributeToFilter ('entity_id', array ('in' => array_keys ($result)))
             ->AddAttributeToFilter ($productIdAttribute, array ('notnull' => true))
+            ->addAttributeToSelect (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER)
         ;
 
         if (!$collection->count ()) return false;
@@ -199,9 +200,29 @@ class Epicom_MHub_Model_Config
             }
         }
 
-        $unique = $unique ? 'true' : 'false';
+        $result = Mage::helper ('mhub')->api (self::CART_CALCULATE_METHOD, $post, null, array ('entregaUnica' => ($unique ? 'true' : 'false')));
 
-        $result = Mage::helper ('mhub')->api (self::CART_CALCULATE_METHOD, $post, null, array ('entregaUnica' => $unique));
+        if ($unique)
+        {
+            foreach ($result as $i => $values)
+            {
+                foreach ($values->itens as $j => $_item)
+                {
+                    $product = $collection->getItemByColumnValue ($productIdAttribute, $_item->id);
+
+                    $result [$i]->itens [$j]->fornecedor = $product->getData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER);
+                }
+            }
+        }
+        else
+        {
+            foreach ($result as $id => $_item)
+            {
+                $product = $collection->getItemByColumnValue ($productIdAttribute, $_item->id);
+
+                $result [$id]->fornecedor = $product->getData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER);
+            }
+        }
 
         if ($cache)
         {

@@ -26,7 +26,7 @@ class Epicom_MHub_Model_Cron_Provider extends Epicom_MHub_Model_Cron_Abstract
 
                 $provider->setExternalId ($item->id)
                     ->setCode ($item->codigo)
-                    ->setName ($item->nome)
+                    ->setName ($item->nomeFantasia)
                     ->setUseCategories ($item->usaCategorias)
                     ->setUpdatedAt (date ('c'))
                     ->save ()

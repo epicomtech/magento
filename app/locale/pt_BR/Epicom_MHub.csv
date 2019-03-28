@@ -239,4 +239,6 @@
 "No pending orders/products to send to Epicom.","Nenhum pedido/produto pendente para enviar para a Epicom."
 "Order NF was not found.","A Nota Fiscal do Pedido não foi encontrada."
 "Is Epicom","É Epicom"
+"No product was found! SKU: %s","Nenhum produto encontrado! SKU: %s"
+"Shipping amount is different! EPICOM: %s MAGENTO: %s","Valor do frete é diferente! EPICOM: %s MAGENTO: %s"
 

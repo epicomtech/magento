@@ -67,6 +67,10 @@ class Epicom_MHub_Block_Adminhtml_Quote_Grid extends Mage_Adminhtml_Block_Widget
 		    'header' => Mage::helper ('mhub')->__('Postcode'),
 		    'index'  => 'postcode',
 		));
+		$this->addColumn ('provider', array(
+		    'header' => Mage::helper ('mhub')->__('Provider'),
+		    'index'  => 'provider',
+		));
 		$this->addColumn ('sku', array(
 		    'header' => Mage::helper ('mhub')->__('SKU'),
 		    'index'  => 'sku',

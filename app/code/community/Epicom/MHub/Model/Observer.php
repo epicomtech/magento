@@ -132,9 +132,13 @@ class Epicom_MHub_Model_Observer
         $productSku  = $product->getData (Mage::getStoreConfig ('mhub/product/sku'));
         $productCode = $product->getData (Mage::getStoreConfig ('mhub/product/code'));
 
+        $productManufacturer = $product->getData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER);
+
         $quoteItem->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID,   $productId);
         $quoteItem->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SKU,  $productSku);
         $quoteItem->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_CODE, $productCode);
+
+        $quoteItem->setData (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER, $productManufacturer);
     }
 
     public function salesOrderPlaceBefore (Varien_Event_Observer $observer)

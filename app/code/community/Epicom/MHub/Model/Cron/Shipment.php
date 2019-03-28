@@ -19,7 +19,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
         $select = $collection->getSelect ()
             ->join(
                 array ('sfo' => Mage::getSingleton ('core/resource')->getTableName ('sales_flat_order')),
-                'main_table.order_id = sfo.entity_id',
+                'main_table.order_id = sfo.entity_id AND sfo.ext_order_id IS NOT NULL',
                 array (
                     'order_increment_id' => 'sfo.increment_id',
                     Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM,
@@ -28,8 +28,10 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
             );
 
         $collection->addAttributeToFilter ('sfo.status', array ('eq' => $orderStatus));
+        /*
         $collection->addAttributeToFilter ('sfo.' . Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true));
         $collection->addAttributeToFilter ('sfo.' . Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID, array ('notnull' => true));
+        */
 
         $select = $collection->getSelect ()
             ->joinLeft(
@@ -165,6 +167,11 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
         foreach ($mageShipmentItems as $item)
         {
             $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute ('entity_id', $item->getProductId (), $productCodeAttribute);
+
+            if (!$mageProduct || !$mageProduct->getId ())
+            {
+                throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('No product was found! SKU: %s', $item->getSku ()), 9999);
+            }
 
             $productCode = $mageProduct->getData ($productCodeAttribute);
 

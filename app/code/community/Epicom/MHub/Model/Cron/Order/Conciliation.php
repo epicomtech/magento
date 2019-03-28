@@ -70,6 +70,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                 'increment_id',
                 'ext_order_id',
                 'status',
+                'base_shipping_amount',
             ))
         ;
 
@@ -243,6 +244,9 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                         ))
                     ;
                     */
+
+                    $shippingAmount = 0;
+
                     foreach ($orderItems as $item)
                     {
                         $productId    = $item->getData ($productIdAttribute);
@@ -263,6 +267,8 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
 
                                 $productFound = true;
 
+                                $shippingAmount += $_item->valorFrete;
+
                                 break;
                             }
                         }
@@ -278,6 +284,11 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                             ), FILE_APPEND);
                             */
                         }
+                    }
+
+                    if (round ($shippingAmount, 2) != round ($order->getBaseShippingAmount (), 2))
+                    {
+                        throw new Exception (Mage::helper ('mhub')->__('Shipping amount is different! EPICOM: %s MAGENTO: %s', $shippingAmount, $order->getBaseShippingAmount ()));
                     }
 
                     $resource = Mage::getSingleton ('core/resource');

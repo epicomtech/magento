@@ -53,7 +53,7 @@ class Epicom_MHub_Block_Adminhtml_Nf_Edit_Tab_Form extends Mage_Adminhtml_Block_
         $fieldset->addField ('issued_at', 'date', array(
             'label'    => Mage::helper ('mhub')->__('Issued At'),
             'name'     => 'issued_at',
-            'class'    => 'required-entry validate-date',
+            'class'    => 'required-entry',
             'required' => true,
             'image'    => $this->getSkinUrl ('images/grid-cal.gif'),
             'format'   => Mage::app ()->getLocale ()->getDateFormat (Mage_Core_Model_Locale::FORMAT_TYPE_SHORT),

@@ -164,6 +164,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 			                ->setMethod (implode ('_', array ($_item->id, $_carrier, $_modality)))
 			                ->setMethodTitle ($modality . ' - ' . $formatedTime)
                             ->setSku ($_item->id)
+                            ->setProvider ($_item->fornecedor)
                             ->setDays ($time)
 			                ->setPrice ($price)
 			                ->setCost (0)
@@ -306,6 +307,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                 'quote_id'   => $quote->getId (),
                 'postcode'   => $rate->getPostcode (),
                 'sku'        => $rate->getSku (),
+                'provider'   => $rate->getProvider (),
                 'method'     => $rate->getMethod (),
                 'title'      => $rate->getMethodTitle (),
                 'price'      => $rate->getPrice (),

@@ -13,6 +13,8 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
     protected $_errorMessage = 'An error occurred saving the order.';
 
+    protected $_providers = array ();
+
     private function readMHubOrdersMagento ()
     {
         /*
@@ -208,6 +210,8 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         /**
          * Order Items
          */
+        $uniqueShipping = Mage::getStoreConfigFlag ('mhub/cart/unique_shipping');
+
         $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
 
         $mageOrderItems = Mage::getResourceModel ('sales/order_item_collection')
@@ -259,6 +263,15 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
             $shippingAmount      = $itemQuote->getPrice ();
             $shippingDescription = $itemQuote->getTitle ();
+
+            if ($uniqueShipping && in_array ($itemQuote->getProvider (), $this->_providers))
+            {
+                $shippingAmount = 0;
+            }
+            else
+            {
+                $this->_providers [] = $itemQuote->getProvider ();
+            }
 
             $itemsAmount += floatval ($shippingAmount);
 
