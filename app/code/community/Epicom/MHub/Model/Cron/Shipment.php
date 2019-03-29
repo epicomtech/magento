@@ -142,6 +142,11 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
             }
         }
 
+        if (empty ($post ['tracking'] || empty ($post ['linkRastreioEntrega'])))
+        {
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('No tracking information was found! Shipment: %s', $mageShipment->getIncrementId ()), 9999);
+        }
+
         $mhubNf = Mage::getModel ('mhub/nf')->load ($mageOrder->getIncrementId (), 'order_increment_id');
         if ($mhubNf && $mhubNf->getId ())
         {
@@ -153,6 +158,10 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
                 'NfCFOP'        => $mhubNf->getCfop (),
                 'nfLink'        => $mhubNf->getLink (),
             ));
+        }
+        else
+        {
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('No N.F. information was found! Order: %s', $mageOrder->getIncrementId ()), 9999);
         }
 
         $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');

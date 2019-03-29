@@ -98,6 +98,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                     ->addFieldToFilter ($productIdAttribute, array ('notnull' => true))
                     ->filterByTypes (array (
                         Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+                        Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL,
                         Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
                     ))
                 ;

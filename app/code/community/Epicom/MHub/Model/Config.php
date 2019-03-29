@@ -166,7 +166,10 @@ class Epicom_MHub_Model_Config
         $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
 
         $collection = Mage::getModel ('catalog/product')->getCollection ()
-            ->addAttributeToFilter ('type_id',   Mage_Catalog_Model_Product_Type::TYPE_SIMPLE)
+            ->addAttributeToFilter ('type_id', array ('in' => array(
+                Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+                Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL,
+            )))
             ->addAttributeToFilter ('entity_id', array ('in' => array_keys ($result)))
             ->AddAttributeToFilter ($productIdAttribute, array ('notnull' => true))
             ->addAttributeToSelect (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER)

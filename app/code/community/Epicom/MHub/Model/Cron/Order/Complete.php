@@ -34,6 +34,7 @@ class Epicom_MHub_Model_Cron_Order_Complete extends Epicom_MHub_Model_Cron_Abstr
                 ->setOrderFilter ($order)
                 ->filterByTypes (array (
                     Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+                    Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL,
                     Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
                 ))
                 /*

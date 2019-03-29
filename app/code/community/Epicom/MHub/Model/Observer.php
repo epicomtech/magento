@@ -63,7 +63,9 @@ class Epicom_MHub_Model_Observer
 
         $childrenIds = array ();
 
-        if (!strcmp ($product->getTypeId (), Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
+        if (!strcmp ($product->getTypeId (), Mage_Catalog_Model_Product_Type::TYPE_SIMPLE)
+            || !strcmp ($product->getTypeId (), Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL)
+        )
         {
             $childrenIds = array ($product->getId ());
         }

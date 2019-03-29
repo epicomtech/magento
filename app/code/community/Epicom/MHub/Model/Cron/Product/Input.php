@@ -335,6 +335,11 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     if ($mhubProductManufacturer && $mhubProductManufacturer->getId ())
                     {
                         $productManufacturerValue = $mhubProductManufacturer->getName ();
+
+                        if ($mhubProductManufacturer->getIsService ())
+                        {
+                            $mageProduct->setTypeId (Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL);
+                        }
                     }
 
                     $productManufacturerOptionId    = $this->getConfig ()->addAttributeOptionValue ($this->_productManufacturerAttributeId, array(

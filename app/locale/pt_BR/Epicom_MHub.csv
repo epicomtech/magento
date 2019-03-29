@@ -241,4 +241,7 @@
 "Is Epicom","É Epicom"
 "No product was found! SKU: %s","Nenhum produto encontrado! SKU: %s"
 "Shipping amount is different! EPICOM: %s MAGENTO: %s","Valor do frete é diferente! EPICOM: %s MAGENTO: %s"
+"Is Service","É Serviço"
+"No tracking information was found! Shipment: %s","Nenhuma informação de rastreio foi encontrada! Entrega: %s"
+"No N.F. information was found! Order: %s","Nenhuma informação de Nota Fiscal foi encontrada! Pedido: %s"
 

@@ -40,6 +40,14 @@ class Epicom_MHub_Block_Adminhtml_Provider_Edit_Tab_Form extends Mage_Adminhtml_
             'type'     => 'options',
             'options'  => Mage::getModel ('adminhtml/system_config_source_yesno')->toArray (),
 		));
+		$fieldset->addField ('is_service', 'select', array(
+		    'label'    => Mage::helper ('mhub')->__('Is Service'),
+		    'class'    => 'required-entry validate-select',
+		    'name'     => 'is_service',
+		    'required' => true,
+		    'type'     => 'options',
+		    'options'  => Mage::getModel ('adminhtml/system_config_source_yesno')->toArray (),
+		));
 
 		if (Mage::getSingleton ('adminhtml/session')->getProviderData ())
 		{

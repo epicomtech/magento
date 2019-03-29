@@ -53,6 +53,12 @@ class Epicom_MHub_Block_Adminhtml_Provider_Grid extends Mage_Adminhtml_Block_Wid
             'type'    => 'options',
             'options' => Mage::getModel ('adminhtml/system_config_source_yesno')->toArray (),
 		));
+		$this->addColumn ('is_service', array(
+		    'header'  => Mage::helper ('mhub')->__('Is Service'),
+		    'index'   => 'is_service',
+		    'type'    => 'options',
+		    'options' => Mage::getModel ('adminhtml/system_config_source_yesno')->toArray (),
+		));
 		$this->addColumn ('updated_at', array(
 			'header' => Mage::helper ('mhub')->__('Updated At'),
 			'index'  => 'updated_at',
