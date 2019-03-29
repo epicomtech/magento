@@ -450,9 +450,9 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     {
                         $parentProduct->setWeight ($productWeight);
                     }
-/*
+
                     $parentProduct->setWeight ($productWeight > 0 ? $productWeight : 999999);
-*/
+
                     $parentProduct->setData ($this->_productHeightAttribute, $productHeight);
                     $parentProduct->setData ($this->_productWidthAttribute,  $productWidth);
                     $parentProduct->setData ($this->_productLengthAttribute, $productLength);
@@ -520,7 +520,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $parentProduct->setData ($this->_productSummaryAttribute, $attributesResult);
 
                     $parentProduct->save ();
-/*
+
                     // stock
                     $stockItem = Mage::getModel ('cataloginventory/stock_item')
                         ->assignProduct ($parentProduct)
@@ -533,7 +533,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         ->setQty (0)
                         ->save ()
                     ;
-*/
+
                     // product association
                     $assocItem = Mage::getModel ('mhub/product_association')->load ($productSku, 'sku');
                     if (empty ($assocItem) || !$assocItem->getId ())
