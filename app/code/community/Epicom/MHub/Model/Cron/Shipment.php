@@ -44,8 +44,12 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
         {
             $shipmentId = $shipment->getId ();
 
+            $websiteId = Mage::app ()->getStore ($shipment->getStoreId ())->getWebsiteId ();
+
             $mhubShipment = Mage::getModel ('mhub/shipment')->load ($shipmentId, 'shipment_id');
             $mhubShipment->setShipmentId ($shipment->getId ())
+                ->setWebsiteId ($websiteId)
+                ->setStoreId ($shipment->getStoreId ())
                 ->setShipmentIncrementId ($shipment->getIncrementId())
                 ->setOrderId ($shipment->getOrderId ())
                 ->setOrderIncrementId ($shipment->getOrderIncrementId ())
@@ -195,7 +199,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
         {
             $shipmentsPostMethod = str_replace ('{orderId}', $extOrderId, self::SHIPMENTS_POST_METHOD);
 
-            $result = $this->getHelper ()->api ($shipmentsPostMethod, $post);
+            $result = $this->getHelper ()->api ($shipmentsPostMethod, $post, null, $shipment->getStoreId ());
 
             $extShipmentId = $result->id;
 
@@ -210,7 +214,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
             {
                 $shipmentsPatchMethod = str_replace (array ('{orderId}', '{shipmentId}'), array ($extOrderId, $shipment->getExternalShipmentId ()), self::SHIPMENTS_PATCH_METHOD);
 
-                $this->getHelper ()->api ($shipmentsPatchMethod, $post, 'PATCH');
+                $this->getHelper ()->api ($shipmentsPatchMethod, $post, 'PATCH', $shipment->getStoreId ());
             }
             else
             {

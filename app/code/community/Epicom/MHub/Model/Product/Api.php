@@ -31,7 +31,12 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
             $this->_fault ('invalid_request_param');
         }
 
+        $websiteId = Mage::app ()->getWebsite ()->getId ();
+        $storeId   = Mage::app ()->getStore ()->getId ();
+
         $product = Mage::getModel ('mhub/product')
+            ->setWebsiteId ($websiteId)
+            ->setStoreId ($storeId)
             ->setOperation (Epicom_MHub_Helper_Data::OPERATION_IN)
             ->setMethod ($type)
             ->setSendDate ($send_date)

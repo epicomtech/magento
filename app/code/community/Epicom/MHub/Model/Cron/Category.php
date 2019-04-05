@@ -54,6 +54,8 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
             ->addIdFilter ($categoryIds)
         ;
 
+        $storeGroups = array ();
+
         foreach ($collection as $category)
         {
             $categoryId = $category->getId ();
@@ -61,8 +63,19 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
             $categoryAttributeSetId = $category->getData (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_SET);
             $defaultAttributeSetId  = Mage::getStoreConfig ('mhub/attributes_set/product');
 
+            $categoryPath = explode ('/', $category->getPath ());
+            $categoryRoot = $categoryPath [1]; // root_category_id
+
+            if (empty ($storeGroups [$categoryRoot]))
+            {
+                $storeGroups [$categoryRoot] = Mage::getModel ('core/store_group')->load ($categoryRoot, 'root_category_id');
+            }
+
             $mhubCategory = Mage::getModel ('mhub/category')->load ($categoryId, 'category_id');
+
             $mhubCategory->setCategoryId ($categoryId)
+                ->setWebsiteId ($storeGroups [$categoryRoot]->getWebsiteId ())
+                ->setStoreId ($storeGroups [$categoryRoot]->getDefaultStoreId ())
                 ->setAttributeSetId ($categoryAttributeSetId ? $categoryAttributeSetId : $defaultAttributeSetId)
                 ->setAssociable (intval ($categoryAttributeSetId) > 0 ? true : false)
                 ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
@@ -140,7 +153,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 
         try
         {
-            $this->getHelper ()->api (self::CATEGORIES_POST_METHOD, $post);
+            $this->getHelper ()->api (self::CATEGORIES_POST_METHOD, $post, null, $category->getStoreId ());
         }
         catch (Exception $e)
         {
@@ -148,7 +161,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
             {
                 $categoriesPatchMethod = str_replace ('{categoryId}', $mageCategory->getId (), self::CATEGORIES_PATCH_METHOD);
 
-                $this->getHelper ()->api ($categoriesPatchMethod, $post, 'PATCH');
+                $this->getHelper ()->api ($categoriesPatchMethod, $post, 'PATCH', $category->getStoreId ());
             }
             else
             {
@@ -234,7 +247,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
                     'atributoValorLivre' => count ($values) == 0 /* !$attribute->getSourceModel () */ ? true : false
                 );
 
-                $this->getHelper ()->api (self::ATTRIBUTES_METHOD, $post, 'PUT');
+                $this->getHelper ()->api (self::ATTRIBUTES_METHOD, $post, 'PUT', $category->getStoreId ());
 
                 /**
                  * Associations
@@ -255,7 +268,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
                     'CodigosValores'  => $allowedValues,
                 );
 
-                $this->getHelper ()->api ($categoriesAttributesMethod, $post, 'PUT');
+                $this->getHelper ()->api ($categoriesAttributesMethod, $post, 'PUT', $category->getStoreId ());
             }
         }
 

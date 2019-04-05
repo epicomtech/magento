@@ -43,6 +43,18 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
             'index'  => 'entity_id',
             'filter_index' => 'main_table.entity_id',
         ));
+        $this->addColumn('website_id', array(
+            'header'  => Mage::helper('mhub')->__('Website'),
+            'index'   => 'website_id',
+            'type'    => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getWebsiteOptionHash (true),
+        ));
+        $this->addColumn('store_id', array(
+            'header'  => Mage::helper('mhub')->__('Store'),
+            'index'   => 'store_id',
+            'type'    => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
+        ));
         $this->addColumn('type_id', array(
             'header' => Mage::helper('mhub')->__('Type'),
             'index'  => 'type_id',

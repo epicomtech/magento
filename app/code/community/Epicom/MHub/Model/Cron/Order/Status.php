@@ -43,8 +43,12 @@ class Epicom_MHub_Model_Cron_Order_Status extends Epicom_MHub_Model_Cron_Abstrac
         {
             $orderId = $order->getId();
 
+            $websiteId = Mage::app ()->getStore ($order->getStoreId ())->getWebsiteId ();
+
             $mhubOrder = Mage::getModel ('mhub/order_status')->load ($orderId, 'order_id');
             $mhubOrder->setOrderId ($orderId)
+                ->setWebsiteId ($websiteId)
+                ->setStoreId ($order->getStoreId ())
                 ->setOrderIncrementId ($order->getIncrementId())
                 ->setOrderExternalId ($order->getExtOrderId())
                 ->setUpdatedAt (date ('c'))
@@ -141,7 +145,7 @@ class Epicom_MHub_Model_Cron_Order_Status extends Epicom_MHub_Model_Cron_Abstrac
 
         $ordersPatchMethod = str_replace ('{orderId}', $order_status->getOrderExternalId (), self::ORDERS_CONFIRMATION_POST_METHOD);
 
-        $result = $this->getHelper ()->api ($ordersPatchMethod, $post, 'PATCH');
+        $result = $this->getHelper ()->api ($ordersPatchMethod, $post, 'PATCH', $order_status->getStoreId ());
 
         return true;
     }

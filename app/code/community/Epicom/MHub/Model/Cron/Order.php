@@ -50,8 +50,12 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         {
             $orderId = $order->getId();
 
+            $websiteId = Mage::app ()->getStore ($order->getStoreId ())->getWebsiteId ();
+
             $mhubOrder = Mage::getModel ('mhub/order')->load ($orderId, 'order_id');
             $mhubOrder->setOrderId ($orderId)
+                ->setWebsiteId ($websiteId)
+                ->setStoreId ($order->getStoreId ())
                 ->setOrderIncrementId ($order->getIncrementId())
                 ->setOrderExternalId ($order->getExtOrderId())
                 ->setUpdatedAt (date ('c'))
@@ -304,7 +308,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
         try
         {
-            $result = $this->getHelper ()->api (self::ORDERS_POST_METHOD, $post);
+            $result = $this->getHelper ()->api (self::ORDERS_POST_METHOD, $post, null, $order->getStoreId ());
 
             $extOrderId = $result->id;
 

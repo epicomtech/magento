@@ -111,28 +111,25 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
 
     const LOG = 'epicom_mhub.log';
 
-    public function api ($method, $post = null, $request = null, array $query = array ())
+    public function api ($method, $post = null, $request = null, $store = null)
     {
-        $timeout = $this->getStoreConfig ('timeout');
-        $url = $this->getStoreConfig ('url');
-        $mode = $this->getStoreconfig ('mode');
-        $key = $this->getStoreConfig ('key');
-        $token = $this->getStoreConfig ('token');
-        $ssl = intval ($this->getStoreConfig ('ssl'));
+        $timeout = $this->getStoreConfig ('timeout', $store);
+        $url     = $this->getStoreConfig ('url',     $store);
+        $mode    = $this->getStoreconfig ('mode',    $store);
+        $key     = $this->getStoreConfig ('key',     $store);
+        $token   = $this->getStoreConfig ('token',   $store);
+
+        $ssl = intval ($this->getStoreConfig ('ssl', $store));
 
         $curl = curl_init ();
 
         $uniqid = md5 (uniqid (rand (), true));
 
-        $query ['ts'] = time ();
-
-        $method .= '?' . http_build_query ($query);
-
         curl_setopt ($curl, CURLOPT_CONNECTTIMEOUT, $timeout);
         curl_setopt ($curl, CURLOPT_TIMEOUT, $timeout);
         curl_setopt ($curl, CURLOPT_URL, $url . $mode . '/' . $method);
         curl_setopt ($curl, CURLOPT_USERPWD, "{$key}:{$token}");
-        curl_setopt ($curl, CURLOPT_HTTPHEADER, array ('Content-Type: application/json', "X-Trace-Id: {$uniqid}", "Cache-Control: no-cache"));
+        curl_setopt ($curl, CURLOPT_HTTPHEADER, array ('Content-Type: application/json', "X-Trace-Id: {$uniqid}"));
         curl_setopt ($curl, CURLOPT_RETURNTRANSFER, 1);
         // SSL off?
         curl_setopt ($curl, CURLOPT_SSL_VERIFYPEER, $ssl);
@@ -176,7 +173,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
             $message = $error;
         }
 
-        if ($this->getStoreConfig ('debug'))
+        if ($this->getStoreConfig ('debug', $store))
         {
             $text = implode (' : ' , array ($request, $method, json_encode ($post), $message, $result, $uniqid));
 
@@ -212,14 +209,14 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
         return $this->getConfig()->getEntityTypeId ($entityType);
     }
 
-    public function getStoreConfig ($key)
+    public function getStoreConfig ($key, $store = null)
     {
-        return Mage::getStoreConfig ("mhub/settings/{$key}");
+        return Mage::getStoreConfig ("mhub/settings/{$key}", $store);
     }
 
-    public function isMarketplace ()
+    public function isMarketplace ($store = null)
     {
-        return !strcmp ($this->getStoreConfig ('mode'), self::API_MODE_MARKETPLACE);
+        return !strcmp ($this->getStoreConfig ('mode', $store), self::API_MODE_MARKETPLACE);
     }
 
     public function isWebhook ()

@@ -159,7 +159,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         $helper = Mage::Helper ('mhub');
 
         $productsInfoMethod = str_replace ('{productId}', $productId, self::PRODUCTS_INFO_METHOD);
-        $productsInfoResult = $helper->api ($productsInfoMethod);
+        $productsInfoResult = $helper->api ($productsInfoMethod, null, null, $product->getStoreId ());
 
         if (empty ($productsInfoResult))
         {
@@ -170,7 +170,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
          * SKU Info
          */
         $productsSkusMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_SKUS_METHOD);
-        $productsSkusResult = $helper->api ($productsSkusMethod);
+        $productsSkusResult = $helper->api ($productsSkusMethod, null, null, $product->getStoreId ());
 
         if (empty ($productsSkusResult))
         {
@@ -770,7 +770,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 }
 
                 $productsAvailabilityMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_AVAILABILITY_METHOD);
-                $productsAvailabilityResult = $helper->api ($productsAvailabilityMethod);
+                $productsAvailabilityResult = $helper->api ($productsAvailabilityMethod, null, null, $product->getStoreId ());
 
                 if (empty ($productsAvailabilityResult))
                 {
@@ -841,7 +841,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
         try
         {
-            $helper->api (self::PRODUCTS_TRACKING_METHOD, $post, 'PUT');
+            $helper->api (self::PRODUCTS_TRACKING_METHOD, $post, 'PUT', $product->getStoreId ());
         }
         catch (Exception $e)
         {

@@ -34,6 +34,18 @@ class Epicom_MHub_Block_Adminhtml_Shipment_Grid extends Mage_Adminhtml_Block_Wid
             'type'   => 'number',
             'index'  => 'entity_id',
         ));
+        $this->addColumn('website_id', array(
+            'header'  => Mage::helper('mhub')->__('Website'),
+            'index'   => 'website_id',
+            'type'    => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getWebsiteOptionHash (true),
+        ));
+        $this->addColumn('store_id', array(
+            'header'  => Mage::helper('mhub')->__('Store'),
+            'index'   => 'store_id',
+            'type'    => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
+        ));
         $this->addColumn('order_id', array(
             'header' => Mage::helper('mhub')->__('Order ID'),
             'index'  => 'order_id',

@@ -30,8 +30,13 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
             $this->_fault ('invalid_request_param');
         }
 
+        $websiteId = Mage::app ()->getWebsite ()->getId ();
+        $storeId   = Mage::app ()->getStore ()->getId ();
+
         // transaction
         $shipment = Mage::getModel ('mhub/shipment')
+            ->setWebsiteId ($websiteId)
+            ->setStoreId ($storeId)
             ->setMethod ($type)
             ->setSendDate ($send_date)
             ->setParameters (json_encode ($parameters))
