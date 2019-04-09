@@ -205,7 +205,7 @@ class Epicom_MHub_Model_Config
 
         $uniqueParam = $unique ? 'true' : 'false';
 
-        $result = Mage::helper ('mhub')->api (self::CART_CALCULATE_METHOD . "?entregaUnica={$uniqueParam}", $post);
+        $result = Mage::helper ('mhub')->api (self::CART_CALCULATE_METHOD . "?entregaUnica={$uniqueParam}", $post, null, $this->getStoreId ());
 
         if ($unique)
         {
@@ -237,6 +237,11 @@ class Epicom_MHub_Model_Config
         }
 
         return $result;
+    }
+
+    public function getStoreId ()
+    {
+        return Mage::app ()->getStore ()->getId ();
     }
 }
 
