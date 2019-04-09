@@ -175,14 +175,14 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
 
         if ($this->getStoreConfig ('debug', $store))
         {
-            $text = implode (' : ' , array ($request, $method, json_encode ($post), $message, $result, $uniqid));
+            $text = implode (' : ' , array ($request, $method, json_encode ($post), $message, $result, $uniqid, $store));
 
             Mage::log ($text, null, self::LOG, true);
         }
 
         if (!empty ($message))
         {
-            $message = implode (' : ' , array ($request, $method, json_encode ($post), $message, $result, $uniqid));
+            $message = implode (' : ' , array ($request, $method, json_encode ($post), $message, $result, $uniqid, $store));
 
             throw Mage::exception ('Epicom_MHub', $message, $httpCode);
         }
