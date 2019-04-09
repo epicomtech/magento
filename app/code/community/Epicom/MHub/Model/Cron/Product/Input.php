@@ -252,7 +252,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $mageProduct->setTaxClassId (0); // none
                     $mageProduct->setWeight (999999);
                     $mageProduct->setPrice (999999);
-                    $mageProduct->setWebsiteIds (array (1)); // Default
+                    $mageProduct->setWebsiteIds (array ($product->getWebsiteId ()));
                     $mageProduct->setCategoryIds (array ($mageCategory->getId ()));
                 }
 
@@ -427,7 +427,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                         $parentProduct->setVisibility (Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
                         $parentProduct->setWeight (999999);
                         $parentProduct->setPrice (999999);
-                        $parentProduct->setWebsiteIds (array (1)); // Default
+                        $parentProduct->setWebsiteIds (array ($product->getWebsiteId ()));
                         $parentProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
                         $parentProduct->setCategoryIds (array ($mageCategory->getId ()));
                     }

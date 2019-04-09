@@ -55,13 +55,13 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
         $helper = Mage::Helper ('mhub');
 
         $productsInfoMethod = str_replace ('{productId}', $productId, self::PRODUCTS_INFO_METHOD);
-        $productsInfoResult = $helper->api ($productsInfoMethod);
+        $productsInfoResult = $helper->api ($productsInfoMethod, null, null, $storeId);
 
         /**
          * SKU Info
          */
         $productsSkusMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_SKUS_METHOD);
-        $productsSkusResult = $helper->api ($productsSkusMethod);
+        $productsSkusResult = $helper->api ($productsSkusMethod, null, null, $storeId);
 
         /**
          * Load

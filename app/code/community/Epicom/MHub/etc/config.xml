@@ -410,6 +410,7 @@
             <cart>
                 <cache_enabled>1</cache_enabled>
                 <cache_lifetime>3600</cache_lifetime>
+                <unique_shipping>1</unique_shipping>
                 <best_price>1</best_price>
                 <minimum_weight>0</minimum_weight>
                 <error_message><![CDATA[Some products are currently unavailable for purchase.]]></error_message>

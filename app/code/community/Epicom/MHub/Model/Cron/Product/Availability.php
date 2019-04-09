@@ -47,7 +47,7 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
         }
 
         $productsAvailabilityMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_AVAILABILITY_METHOD);
-        $productsAvailabilityResult = $this->getHelper ()->api ($productsAvailabilityMethod);
+        $productsAvailabilityResult = $this->getHelper ()->api ($productsAvailabilityMethod, null, null, $product->getStoreId ());
 
         if (empty ($productsAvailabilityResult))
         {
