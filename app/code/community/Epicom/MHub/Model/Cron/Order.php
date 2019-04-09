@@ -302,7 +302,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
         $post ['valorDesconto'] = $baseDiscountAmount;
 
-        $post ['valorTotal'] = $itemsAmount - $baseDiscountAmount;
+        $post ['valorTotal'] = round ($itemsAmount - $baseDiscountAmount, 4);
 
         $extOrderId = true;
 

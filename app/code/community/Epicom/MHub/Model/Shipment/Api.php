@@ -71,7 +71,7 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
         $helper = Mage::Helper ('mhub');
 
         $shipmentInfoMethod = str_replace (array ('{orderId}', '{shipmentId}'), array ($orderId, $shipmentId), self::ORDER_SHIPMENT_INFO_METHOD);
-        $shipmentInfoResult = $helper->api ($shipmentInfoMethod);
+        $shipmentInfoResult = $helper->api ($shipmentInfoMethod, null, null, $storeId);
 
         /**
          * Event Info
@@ -79,7 +79,7 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
         $helper = Mage::Helper ('mhub');
 
         $shipmentEventMethod = str_replace (array ('{orderId}', '{shipmentId}', '{eventId}'), array ($orderId, $shipmentId, $eventId), self::ORDER_SHIPMENT_EVENT_METHOD);
-        $shipmentEventResult = $helper->api ($shipmentEventMethod);
+        $shipmentEventResult = $helper->api ($shipmentEventMethod, null, null, $storeId);
 
         /**
          * Parse
