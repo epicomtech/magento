@@ -41,7 +41,12 @@ class Epicom_MHub_Exception extends Mage_Core_Exception
 
             $url = !empty ($httpPost) ? sprintf ("http://%s%s", $httpPost, $requestUri) : 'crontab';
 
+            $websiteId = Mage::app ()->getWebsite ()->getId ();
+            $storeId   = Mage::app ()->getStore ()->getId ();
+
             Mage::getModel ('mhub/error')
+                ->setWebsiteId ($websiteId)
+                ->setStoreId ($storeId)
                 ->setUrl ($url)
                 ->setMessage ($message)
                 ->setCode ($code)

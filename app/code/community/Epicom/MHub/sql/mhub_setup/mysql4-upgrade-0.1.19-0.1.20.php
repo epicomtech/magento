@@ -41,6 +41,7 @@ updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::ORDER_TABLE);
 updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::ORDER_STATUS_TABLE);
 updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::SHIPMENT_TABLE);
 updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::PROVIDER_TABLE);
+updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::ERROR_TABLE);
 
 $installer->endSetup ();
 
