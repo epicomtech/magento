@@ -37,6 +37,17 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
         $productSku = $product->getExternalSku ();
 
         /**
+         * Availability
+         */
+        $productsAvailabilityMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_AVAILABILITY_METHOD);
+        $productsAvailabilityResult = $this->getHelper ()->api ($productsAvailabilityMethod, null, null, $product->getStoreId ());
+
+        if (empty ($productsAvailabilityResult))
+        {
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Empty SKU Availability! SKU %s', $productSku), 404);
+        }
+
+        /**
          * Load
          */
         $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productSku, null);
@@ -44,14 +55,6 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
         if (!$mageProduct || !$mageProduct->getId ())
         {
             $this->_fault ('product_not_exists');
-        }
-
-        $productsAvailabilityMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_AVAILABILITY_METHOD);
-        $productsAvailabilityResult = $this->getHelper ()->api ($productsAvailabilityMethod, null, null, $product->getStoreId ());
-
-        if (empty ($productsAvailabilityResult))
-        {
-            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Empty SKU Availability! SKU %s', $productSku), 9999);
         }
 
         $resource = Mage::getSingleton ('core/resource');

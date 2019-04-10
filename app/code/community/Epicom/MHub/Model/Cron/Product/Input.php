@@ -163,7 +163,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
         if (empty ($productsInfoResult))
         {
-            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Empty Product Info! ID %s', $productId), 9999);
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Empty Product Info! ID %s', $productId), 404);
         }
 
         /**
@@ -174,7 +174,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
         if (empty ($productsSkusResult))
         {
-            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Empty SKU Info! SKU %s', $productSku), 9999);
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Empty SKU Info! SKU %s', $productSku), 404);
         }
 
         /**
@@ -903,6 +903,10 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 $mageProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_DISABLED)->save ();
 
                 return $mageProduct->getId ();
+            }
+            else
+            {
+                return -1;
             }
         }
     }

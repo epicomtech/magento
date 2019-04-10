@@ -91,7 +91,7 @@ class Epicom_MHub_Model_Cron_Abstract
 
     protected function _fault ($code, $message = null)
     {
-        throw new Exception ($message, 9999);
+        throw new Exception ($message, 6666);
     }
 }
 
