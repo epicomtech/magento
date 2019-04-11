@@ -86,10 +86,12 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
             ))
             ->group ('external_sku')
             ->group ('method')
+            /*
             ->order (sprintf ("FIELD(method,%s)", implode (',', array_map (
                 function ($n) { return "'{$n}'"; }, $this->_methods
             ))))
             ->order ('updated_at DESC')
+            */
             ->order ('status DESC')
             ->limit ($limit ? $limit : self::DEFAULT_QUEUE_LIMIT)
         ;
@@ -145,7 +147,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_AVAILABILITY,
             )))
             ->addFieldToFilter ('operation', array ('eq' => Epicom_MHub_Helper_Data::OPERATION_IN))
-            ->addFieldToFilter ('status',    array ('neq' => Epicom_MHub_Helper_Data::STATUS_OKAY))
+            ->addFieldToFilter ('status',    array ('eq' => Epicom_MHub_Helper_Data::STATUS_PENDING))
         ;
 
         if ($collection->getSize () > 0)
@@ -733,7 +735,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     if (empty ($uri)) continue;
 
                     $client = new Zend_Http_Client ();
-                    $client->setUri ($uri);
+                    $client->setUri (trim ($uri));
 
                     $response = $client->request ('GET');
 
