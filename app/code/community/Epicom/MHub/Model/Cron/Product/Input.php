@@ -709,12 +709,15 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                  * Images
                  */
                 $mediaApi = Mage::getModel ('catalog/product_attribute_media_api');
+                $mediaDir = Mage::getBaseDir ('media');
 
                 foreach ($productIds as $id)
                 {
                     foreach ($mediaApi->items ($id) as $item)
                     {
                         $mediaApi->remove ($id, $item ['file']);
+
+                        @ unlink (sprintf ("%s/catalog/product/%s", $mediaDir, $item ['file']));
                     }
                 }
 
