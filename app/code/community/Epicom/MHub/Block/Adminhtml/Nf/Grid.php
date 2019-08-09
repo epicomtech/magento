@@ -34,9 +34,25 @@ class Epicom_MHub_Block_Adminhtml_NF_Grid extends Mage_Adminhtml_Block_Widget_Gr
 	        'type'   => 'number',
 		    'index'  => 'entity_id',
 		));
+        $this->addColumn('website_id', array(
+            'header'  => Mage::helper('mhub')->__('Website'),
+            'index'   => 'website_id',
+            'type'    => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getWebsiteOptionHash (true),
+        ));
+        $this->addColumn('store_id', array(
+            'header'  => Mage::helper('mhub')->__('Store'),
+            'index'   => 'store_id',
+            'type'    => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
+        ));
 		$this->addColumn ('order_increment_id', array(
 		    'header'  => Mage::helper ('mhub')->__('Order Inc. ID'),
 		    'index'   => 'order_increment_id',
+		));
+		$this->addColumn ('skus', array(
+		    'header'  => Mage::helper ('mhub')->__('SKUs'),
+		    'index'   => 'skus',
 		));
 		$this->addColumn ('number', array(
 		    'header'  => Mage::helper ('mhub')->__('Number'),

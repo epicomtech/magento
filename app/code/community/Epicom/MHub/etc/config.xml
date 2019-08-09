@@ -330,6 +330,10 @@
                 <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runOrderStatus</model></run>
             </epicom_mhub_order_status>
+            <epicom_mhub_order_shipment>
+                <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
+                <run><model>mhub/cron::runOrderShipment</model></run>
+            </epicom_mhub_order_shipment>
             <epicom_mhub_order_complete>
                 <schedule><cron_expr>*/10 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runOrderComplete</model></run>
@@ -385,6 +389,7 @@
             <queue>
                 <category>60</category>
                 <product>60</product>
+                <shipment>60</shipment>
             </queue>
             <product>
                 <weight_mode>gram</weight_mode>
@@ -429,6 +434,7 @@
                 <erp_filter>processing</erp_filter>
                 <cancel_filter>canceled</cancel_filter>
                 <sent_filter>complete</sent_filter>
+                <cashback_filter>closed</cashback_filter>
             </order>
             <shipment>
                 <nf_status>processing</nf_status>

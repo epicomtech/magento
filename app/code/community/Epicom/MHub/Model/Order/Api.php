@@ -293,7 +293,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         $orderAutoCancel = Mage::getStoreConfigFlag ('mhub/order/auto_cancel');
 
         $result = array(
-            'codigoPedido' => $model->getOrderExternalId (),
+            'codigoDoPedido' => $model->getOrderExternalId (),
             'mensagem'     => $message,
             'cancelamentoAutomatico' => $orderAutoCancel
         );

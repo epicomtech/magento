@@ -15,6 +15,9 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
     const DEFAULT_QUEUE_LIMIT = 60;
 
+    const DEFAULT_WEBSITE_ID = 1;
+    const DEFAULT_STORE_ID   = 1;
+
     protected $_methods = array(
         Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU,
         Epicom_MHub_Helper_Data::API_PRODUCT_DISASSOCIATED_SKU,
@@ -99,7 +102,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         return $collection;
     }
 
-    private function updateProducts ($collection)
+    protected function updateProducts ($collection)
     {
         foreach ($collection as $product)
         {
@@ -117,17 +120,27 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $this->disableMHubProduct ($product, $e->getCode ());
                 }
                 */
-                if ($e->getCode () == 404)
+                if (in_array ($e->getCode (), array (404, 6666)))
                 {
                     $result = $this->disableMHubProduct ($product, $e->getCode ());
                 }
 
-                $this->logMHubProduct ($product, $e->getMessage ());
+                $this->logMHubProduct ($product, addslashes ($e->getMessage ()));
 
                 self::logException ($e);
             }
 
             if (!empty ($result)) $this->cleanupMHubProduct ($product, $result);
+        }
+
+        if ($collection->getSize () > 0)
+        {
+            $process = Mage::getModel ('index/indexer')
+                ->getProcessByCode ('cataloginventory_stock')
+                ->reindexAll ()
+            ;
+
+            Mage::getModel ('catalog/product_image')->clearCache ();
         }
 
         return true;
@@ -207,6 +220,12 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         )))
         {
             $product->setMethod (Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU);
+        }
+
+        if (!$product->getWebsiteId () || !$product->getStoreId ())
+        {
+            $product->setWebsiteId (self::DEFAULT_WEBSITE_ID);
+            $product->setStoreId (self::DEFAULT_STORE_ID);
         }
 
         /**
@@ -545,8 +564,11 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     $assocItem = Mage::getModel ('mhub/product_association')->load ($productSku, 'sku');
                     if (empty ($assocItem) || !$assocItem->getId ())
                     {
-                        $assocItem = Mage::getModel ('mhub/product_association');
-                        $assocItem->setSku ($productSku);
+                        $assocItem = Mage::getModel ('mhub/product_association')
+                            ->setSku ($productSku)
+                            ->setWebsiteId ($product->getWebsiteId ())
+                            ->setStoreId ($product->getStoreId ())
+                        ;
                     }
 
                     $assocItem->setParentSku ($productId)
@@ -682,6 +704,14 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                                     ->setSpecialPrice ($simpleProduct->getSpecialPrice ())
                                 ;
                             }
+
+                            // lowest special_price
+                            if (($simpleProduct->getSpecialPrice () < $parentProduct->getSpecialPrice ())
+                                || (!empty ($simpleProduct->getSpecialPrice ()) && empty ($parentProduct->getSpecialPrice ()))
+                            )
+                            {
+                                $parentProduct->setSpecialPrice ($simpleProduct->getSpecialPrice ());
+                            }
                         }
                     }
 
@@ -736,13 +766,15 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     }
 
                     if (empty ($uri)) continue;
-
+                    /*
                     $client = new Zend_Http_Client ();
                     $client->setUri (trim ($uri));
 
                     $response = $client->request ('GET');
 
                     $imageContent = $response->getRawBody ();
+                    */
+                    $imageContent = file_get_contents (trim ($uri));
                     if (!empty ($imageContent))
                     {
                         $_image ['file'] = array ('content' => base64_encode ($imageContent), 'mime' => 'image/jpeg');
@@ -763,7 +795,13 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     }
                 }
 
-                break;
+                /**
+                 * Forced Mode?
+                 */
+                if ($product->getMethod () != Epicom_MHub_Helper_Data::API_PRODUCT_ASSOCIATED_SKU)
+                {
+                    break;
+                }
             }
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_PRICE:
             case Epicom_MHub_Helper_Data::API_PRODUCT_UPDATED_STOCK:
@@ -835,11 +873,20 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         /**
          * Webhook
          */
+        $productStatus = $mageProduct->getStatus () == Mage_Catalog_Model_Product_Status::STATUS_ENABLED
+            ? Epicom_MHub_Helper_Data::API_OFFER_STATUS_ACTIVE
+            : Epicom_MHub_Helper_Data::API_OFFER_STATUS_PAUSED
+        ;
+
+        $trackingProduct = $parentProduct ? $parentProduct : $mageProduct;
+
+        $productUrl = $trackingProduct->setStoreId ($product->getStoreId ())->getProductUrl ();
+
         $post = array(
             'skuId'      => $productSku,
-            'codigo'     => $productsSkusResult->codigo,
-            'url'        => $productsSkusResult->url,
-            'status'     => 30, /* Ativa */
+            'status'     => $productStatus,
+            'codigo'     => $mageProduct->getSku (),
+            'url'        => $productUrl,
             'erro'       => null,
             'pendencias' => null
         );
@@ -900,12 +947,33 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
     private function disableMHubProduct (Epicom_MHub_Model_Product $product, $code = null)
     {
-        if (!empty ($product->getExternalSku ()) && $code == 404)
+        if (!empty ($product->getExternalSku ()) && in_array ($code, array (404, 6666)))
         {
             $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $product->getExternalSku ());
             if ($mageProduct && intval ($mageProduct->getId ()) > 0)
             {
                 $mageProduct->setStatus (Mage_Catalog_Model_Product_Status::STATUS_DISABLED)->save ();
+
+                /*
+                 * Association
+                 */
+                $association = Mage::getModel ('mhub/product_association')->load ($product->getExternalSku (), 'sku');
+                if ($association && $association->getId ())
+                {
+                    $association->delete ();
+                }
+
+                /*
+                 * Configurable attributes
+                 */
+                $resource = Mage::getSingleton ('core/resource');
+                $write = $resource->getConnection ('core_write');
+
+                $table = $resource->getTableName ('catalog_product_super_link');
+                $write->delete ($table, "product_id = {$mageProduct->getId ()}");
+
+                $table = $resource->getTableName ('catalog_product_relation');
+                $write->delete ($table, "child_id = {$mageProduct->getId ()}");
 
                 return $mageProduct->getId ();
             }

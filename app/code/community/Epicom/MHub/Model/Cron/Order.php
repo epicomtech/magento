@@ -239,6 +239,8 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
         $itemsPos = $itemsCount = $mageOrderItems->count ();
 
+        $this->_providers = array (); // empty
+
         foreach ($mageOrderItems as $id => $item)
         {
             $productId = $item->getData ($productIdAttribute);

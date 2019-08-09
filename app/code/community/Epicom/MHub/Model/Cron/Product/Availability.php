@@ -30,6 +30,20 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
         $this->_priceSpecialAttribute  = Mage::getModel ('eav/entity_attribute')->loadByCode ($this->_entityTypeId, 'special_price');
     }
 
+    protected function updateProducts ($collection)
+    {
+        $result = parent::updateProducts ($collection);
+
+        if ($collection->getSize () > 0)
+        {
+            $process = Mage::getModel ('index/indexer')
+                ->getProcessByCode ('catalog_product_price')
+                ->reindexAll ()
+            ;
+        }
+
+        return $result;
+    }
 
     protected function updateMHubProduct (Epicom_MHub_Model_Product $product)
     {
@@ -50,7 +64,11 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
         /**
          * Load
          */
-        $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productSku, null);
+        $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute (
+            Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID,
+            $productSku,
+            array ('price', 'special_price', 'status')
+        );
 
         if (!$mageProduct || !$mageProduct->getId ())
         {
@@ -125,6 +143,7 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
                 $parentProduct = Mage::getModel ('catalog/product')->loadByAttribute (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, $productId);
                 if ($parentProduct && intval ($parentProduct->getId ()) > 0)
                 {
+                    // lowest price
                     if ($mageProduct->getPrice () < $parentProduct->getPrice () /* && $mageProduct->isSalable () */)
                     {
                         /*
@@ -142,6 +161,20 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
                             'value'          => $mageProduct->getPrice (),
                         ));
 
+                        $write->insertOnDuplicate ($table, array (
+                            'entity_type_id' => $this->_entityTypeId,
+                            'attribute_id'   => $this->_priceSpecialAttribute->getId (),
+                            'store_id'       => Mage_Core_Model_App::ADMIN_STORE_ID,
+                            'entity_id'      => $parentProduct->getId (),
+                            'value'          => $mageProduct->getSpecialPrice (),
+                        ));
+                    }
+
+                    // lowest special_price
+                    if (($mageProduct->getSpecialPrice () < $parentProduct->getSpecialPrice ())
+                        || (!empty ($mageProduct->getSpecialPrice ()) && empty ($parentProduct->getSpecialPrice ()))
+                    )
+                    {
                         $write->insertOnDuplicate ($table, array (
                             'entity_type_id' => $this->_entityTypeId,
                             'attribute_id'   => $this->_priceSpecialAttribute->getId (),
@@ -183,6 +216,36 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
                     ->save ()
                 ;
             }
+        }
+
+        /**
+         * Webhook
+         */
+        $productStatus = $mageProduct->getStatus () == Mage_Catalog_Model_Product_Status::STATUS_ENABLED
+            ? Epicom_MHub_Helper_Data::API_OFFER_STATUS_ACTIVE
+            : Epicom_MHub_Helper_Data::API_OFFER_STATUS_PAUSED
+        ;
+
+        $trackingProduct = $parentProduct ? $parentProduct : $mageProduct;
+
+        $productUrl = $trackingProduct->setStoreId ($product->getStoreId ())->getProductUrl ();
+
+        $post = array(
+            'skuId'      => $productSku,
+            'status'     => $productStatus,
+            'codigo'     => $mageProduct->getSku (),
+            'url'        => $productUrl,
+            'erro'       => null,
+            'pendencias' => null
+        );
+
+        try
+        {
+            Mage::helper ('mhub')->api (self::PRODUCTS_TRACKING_METHOD, $post, 'PUT', $product->getStoreId ());
+        }
+        catch (Exception $e)
+        {
+            throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Invalid SKU Tracking! SKU %s', $productSku), 9999);
         }
 
         return $mageProduct->getId ();

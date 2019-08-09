@@ -37,9 +37,11 @@ function updateMHubWebsiteStoreTable ($installer, $model)
 
 updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::CATEGORY_TABLE);
 updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::PRODUCT_TABLE);
+updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::PRODUCT_ASSOCIATION_TABLE);
 updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::ORDER_TABLE);
 updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::ORDER_STATUS_TABLE);
 updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::SHIPMENT_TABLE);
+updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::NF_TABLE);
 updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::PROVIDER_TABLE);
 updateMHubWebsiteStoreTable ($installer, Epicom_MHub_Helper_Data::ERROR_TABLE);
 

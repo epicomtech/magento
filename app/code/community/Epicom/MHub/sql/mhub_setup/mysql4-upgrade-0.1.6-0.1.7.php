@@ -48,7 +48,7 @@ SQLBLOCK;
     $installer->getConnection ()->addKey ($table, 'FK_EPICOM_MHUB_PRODUCT_ASSOCIATION_SKU',        'sku',        Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX);
 }
 
-addMHubProductAssociations ($installer, 'epicom_mhub_product_association');
+addMHubProductAssociations ($installer, Epicom_MHub_Helper_Data::PRODUCT_ASSOCIATION_TABLE);
 
 $installer->endSetup ();
 

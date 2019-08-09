@@ -1,60 +1,99 @@
 <?php
 /**
  * @package     Epicom_MHub
- * @copyright   Copyright (c) 2017 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @copyright   Copyright (c) 2019 Gamuza Technologies (http://www.gamuza.com.br/)
  * @author      Eneias Ramos de Melo <eneias@gamuza.com.br>
  */
 
-class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
+class Epicom_MHub_Model_Cron_Order_Shipment extends Epicom_MHub_Model_Cron_Abstract
 {
     const ORDER_SHIPMENT_INFO_METHOD  = 'pedidos/{orderId}/entregas/{shipmentId}';
     const ORDER_SHIPMENT_EVENT_METHOD = 'pedidos/{orderId}/entregas/{shipmentId}/eventos/{eventId}';
 
-    public function manage ($type, $send_date, $parameters)
+    const DEFAULT_QUEUE_LIMIT = 60;
+
+    const INVOICE_EMPTY_MESSAGE = 'Não foi possível criar uma entrega em branco.';
+
+    protected $_events = array(
+        Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_CREATED,
+        Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_NF,
+        Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_SENT,
+        Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_DELIVERED,
+        Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_FAILED,
+        Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_PARCIAL,
+        Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_CANCELED
+    );
+
+    private function readMHubOrderShipmentsCollection ()
     {
-        if (empty ($type) || empty ($send_date) || empty ($parameters))
-        {
-            $this->_fault ('invalid_request_param');
-        }
+        $limit = intval (Mage::getStoreConfig ('mhub/queue/shipment'));
 
-        /**
-         * Transaction
-         */
-		$orderId    = $parameters ['idPedido'];
-        $shipmentId = $parameters ['idEntrega'];
-        $eventId    = $parameters ['idEvento'];
-        $providerId = $parameters ['idFornecedor'];
-
-        if (empty ($orderId) || empty ($shipmentId) || empty ($eventId) || empty ($providerId))
-        {
-            $this->_fault ('invalid_request_param');
-        }
-
-        $websiteId = Mage::app ()->getWebsite ()->getId ();
-        $storeId   = Mage::app ()->getStore ()->getId ();
-
-        // transaction
-        $shipment = Mage::getModel ('mhub/shipment')
-            ->setWebsiteId ($websiteId)
-            ->setStoreId ($storeId)
-            ->setMethod ($type)
-            ->setSendDate ($send_date)
-            ->setParameters (json_encode ($parameters))
-            ->setExternalOrderId ($orderId)
-            ->setExternalShipmentId ($shipmentId)
-            ->setExternalEventId ($eventId)
-            ->setExternalProviderId ($providerId)
-            ->setOperation (Epicom_MHub_Helper_Data::OPERATION_IN)
-            ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
-            ->setMessage (new Zend_Db_Expr ('NULL'))
-            ->setUpdatedAt (date ('c'))
-            ->save ()
+        $collection = Mage::getModel ('mhub/shipment')->getCollection ()
+            ->addFieldToFilter ('event', array ('in' => $this->_events))
         ;
+
+        $collection->getSelect ()
+            ->where ('updated_at > synced_at OR synced_at IS NULL')
+            ->where (sprintf ("operation = '%s' AND status != '%s'",
+                Epicom_MHub_Helper_Data::OPERATION_IN,
+                Epicom_MHub_Helper_Data::STATUS_OKAY
+            ))
+            ->order ('order_id DESC')
+            ->order ('order_increment_id DESC')
+            ->order ('external_order_id')
+            ->order ('external_shipment_id')
+            ->order (sprintf ("FIELD(event,%s)", implode (',', array_map (
+                function ($n) { return "'{$n}'"; }, $this->_events
+            ))))
+            ->limit ($limit ? $limit : self::DEFAULT_QUEUE_LIMIT)
+        ;
+
+        return $collection;
+    }
+
+    protected function updateOrderShipments ($collection)
+    {
+        foreach ($collection as $order)
+        {
+            $result = null;
+
+            try
+            {
+                $result = $this->updateMHubOrderShipment ($order);
+            }
+            catch (Exception $e)
+            {
+                if (!strcmp ($e->getMessage (), self::INVOICE_EMPTY_MESSAGE))
+                {
+                    $result = true; // forced
+                }
+
+                $this->logMHubOrderShipment ($order, addslashes ($e->getMessage ()));
+
+                self::logException ($e);
+            }
+
+            if (!empty ($result)) $this->cleanupMHubOrderShipment ($order, $result);
+        }
+
+        return true;
+    }
+
+    protected function updateMHubOrderShipment (Epicom_MHub_Model_Shipment $shipment)
+    {
+        $orderId    = $shipment->getExternalOrderId ();
+        $shipmentId = $shipment->getExternalShipmentId ();
+        $eventId    = $shipment->getExternalEventId ();
+        $providerId = $shipment->getExternalProviderId ();
+
+        $websiteId  = $shipment->getWebsiteId ();
+        $storeId    = $shipment->getStoreId ();
 
         /**
          * Order Info
          */
         $mageOrder = Mage::getModel ('sales/order')->load ($orderId, Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID);
+
         if (!$mageOrder || !$mageOrder->getId ())
         {
             $this->_fault ('order_not_exists');
@@ -84,11 +123,12 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
         /**
          * Transaction
          */
-        $shipment->setEvent ($shipmentEventResult->tipo)
-            ->save ()
-        ;
-
-        return true; // cron will process this
+        if (!$shipment->getEvent ())
+        {
+            $shipment->setEvent ($shipmentEventResult->tipo)
+                ->save ()
+            ;
+        }
 
         /**
          * Parse
@@ -107,10 +147,10 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
                 {
                     $skus [] = $_sku->id;
                 }
-
+/*
                 $websiteId = Mage::app ()->getStore ()->getWebsiteId ();
                 $storeId   = Mage::app ()->getStore ()->getId ();
-
+*/
                 $mhubNf = Mage::getModel ('mhub/nf')
                     ->setWebsiteId ($websiteId)
                     ->setStoreId ($storeId)
@@ -256,11 +296,46 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
         }
 
         // transaction
-        $shipment->setEvent ($shipmentEventResult->tipo)
-            ->setSyncedAt (date ('c'))
+        $shipment->setSyncedAt (date ('c'))
             ->setStatus (Epicom_MHub_Helper_Data::STATUS_OKAY)
             ->setMessage (new Zend_Db_Expr ('NULL'))
-            ->save ();
+            ->save ()
+        ;
+
+        return true;
+    }
+
+    private function logMHubOrderShipment (Epicom_MHub_Model_Shipment $shipment, $message = null)
+    {
+        $shipment->setStatus (Epicom_MHub_Helper_Data::STATUS_ERROR)
+            ->setMessage ($message)
+            ->save ()
+        ;
+    }
+
+    private function cleanupMHubOrderShipment (Epicom_MHub_Model_Shipment $shipment, $status = null)
+    {
+        $shipment->setSyncedAt (date ('c'))
+            ->setStatus (Epicom_MHub_Helper_Data::STATUS_OKAY)
+            ->setMessage (new Zend_Db_Expr ('NULL'))
+            ->save ()
+        ;
+    }
+
+    public function run ()
+    {
+        if (!$this->getStoreConfig ('active') || !$this->getHelper ()->isMarketplace ())
+        {
+            return false;
+        }
+/*
+        $result = $this->readMHubOrderShipmentsMagento ();
+        if (!$result) return false;
+*/
+        $collection = $this->readMHubOrderShipmentsCollection ();
+        if (!$collection->getSize ()) return false;
+
+        $this->updateOrderShipments ($collection);
 
         return true;
     }

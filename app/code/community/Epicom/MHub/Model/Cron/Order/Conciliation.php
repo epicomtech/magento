@@ -34,6 +34,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
             ),
             Epicom_MHub_Helper_Data::API_ORDER_STATUS_CANCELED => array(
                 $this->_mhubOrderConfig ['cancel_filter'],
+                $this->_mhubOrderConfig ['cashback_filter'],
             ),
             Epicom_MHub_Helper_Data::API_ORDER_STATUS_SHIPPED  => array(
                 $this->_mhubOrderConfig ['sent_filter'],
@@ -288,7 +289,9 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                         }
                     }
 
-                    if (round ($shippingAmount, 2) != round ($order->getBaseShippingAmount (), 2))
+                    if (round ($shippingAmount, 2) != round ($order->getBaseShippingAmount (), 2)
+                        && strcmp ($order->getStatus (), $this->_orderStatuses [Epicom_MHub_Helper_Data::API_ORDER_STATUS_RESERVED])
+                    )
                     {
                         throw new Exception (Mage::helper ('mhub')->__('Shipping amount is different! EPICOM: %s MAGENTO: %s', $shippingAmount, $order->getBaseShippingAmount ()));
                     }

@@ -7,6 +7,26 @@
 
 class Epicom_MHub_Controller_Action extends Mage_Core_Controller_Front_Action
 {
+    public function _fatal ()
+    {
+        $error = error_get_last ();
+        if (!empty ($error))
+        {
+            if ($error ['type'] == E_DEPRECATED)
+            {
+                return false; // ignore
+            }
+
+            echo sprintf ("%s\n%s: %d\n%s: %s\n%s: %s\n%s: %d\n",
+                $this->__('--- FATAL ERROR ---'),
+                $this->__('Type'),    $error ['type'],
+                $this->__('Message'), $error ['message'],
+                $this->__('File'),    $error ['file'],
+                $this->__('Line'),    $error ['line']
+            );
+        }
+    }
+
     public function _construct ()
     {
         if (Mage::getStoreConfigFlag ('mhub/settings/auth_enabled'))
@@ -32,6 +52,10 @@ class Epicom_MHub_Controller_Action extends Mage_Core_Controller_Front_Action
                 die (__('Forbidden'));
             }
         }
+
+        register_shutdown_function (array ($this, '_fatal'));
+
+        ini_set ('always_populate_raw_post_data', '-1');
 
         // Mage::app ()->setCurrentStore (Mage_Core_Model_App::ADMIN_STORE_ID);
     }

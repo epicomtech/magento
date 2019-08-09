@@ -44,6 +44,30 @@ class Epicom_MHub_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller
         $this->_prepareDownloadResponse ($fileName, $content);
     }
 
+    public function massPendingAction()
+    {
+        try
+        {
+            $ids = $this->getRequest()->getPost('entity_ids', array());
+            foreach ($ids as $id)
+            {
+                $model = Mage::getModel('mhub/shipment')->load($id)
+                    ->setStatus(Epicom_MHub_Helper_Data::STATUS_PENDING)
+                    ->setUpdatedAt(date('c'))
+                    ->save()
+                ;
+            }
+
+            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('Item(s) was successfully saved'));
+        }
+        catch (Exception $e)
+        {
+            Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+        }
+
+        $this->_redirect('*/*/');
+    }
+
     public function massRemoveAction()
     {
         try

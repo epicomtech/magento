@@ -170,6 +170,11 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'comparable'       => false,
     'visible_on_front' => true,
     'unique'           => true,
+    'apply_to'         => implode (',', array(
+        Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+        Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL,
+        Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+    )),
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
 

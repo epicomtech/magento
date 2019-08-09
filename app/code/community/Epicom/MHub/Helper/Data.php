@@ -19,6 +19,8 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const QUOTE_TABLE           = 'epicom_mhub_quote';
     const ERROR_TABLE           = 'epicom_mhub_error';
 
+    const PRODUCT_ASSOCIATION_TABLE = 'epicom_mhub_product_association';
+
     const CATEGORY_ATTRIBUTE_SET          = 'mhub_category_attributeset';
     const CATEGORY_ATTRIBUTE_ISACTIVE     = 'mhub_category_isactive';
     const CATEGORY_ATTRIBUTE_SENDPRODUCTS = 'mhub_category_sendproducts';
@@ -64,6 +66,14 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const API_PRODUCT_UPDATED_AVAILABILITY = 'disponibilidade_alterada';
     const API_PRODUCT_ASSOCIATED_SKU       = 'sku_associado';
     const API_PRODUCT_DISASSOCIATED_SKU    = 'sku_desassociado';
+
+    const API_OFFER_STATUS_ACTIVE       = 30;
+    const API_OFFER_STATUS_PAUSED       = 40;
+    const API_OFFER_STATUS_ERROR        = 60;
+    const API_OFFER_STATUS_ENDED        = 70;
+    const API_OFFER_STATUS_SENT         = 80;
+    const API_OFFER_STATUS_SENT_ERROR   = 90;
+    const API_OFFER_STATUS_INVALID_AUTH = 401;
 
     const API_ORDER_STATUS_CREATED            = 'Criado';
     const API_ORDER_STATUS_RESERVED           = 'Reservado';

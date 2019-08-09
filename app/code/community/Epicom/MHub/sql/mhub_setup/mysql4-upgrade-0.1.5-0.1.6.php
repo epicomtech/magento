@@ -31,6 +31,13 @@ SQLBLOCK;
             'comment'  => 'CFOP',
             'after'    => 'access_key',
         ));
+    $installer->getConnection ()
+        ->addColumn ($table, 'skus', array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'nullable' => false,
+            'comment'  => 'SKUs',
+            'after'    => 'order_increment_id',
+        ));
 }
 
 updateMHubNFTable ($installer, Epicom_MHub_Helper_Data::NF_TABLE, 'Epicom MHub NF');

@@ -14,11 +14,31 @@ class Epicom_MHub_Block_Adminhtml_Nf_Edit_Tab_Form extends Mage_Adminhtml_Block_
 
 		$fieldset = $form->addFieldset ('mhub_form', array ('legend' => Mage::helper ('mhub')->__('NF Information')));
 
+		$fieldset->addField ('website_id', 'select', array(
+	        'label'    => Mage::helper ('mhub')->__('Website'),
+	        'class'    => 'required-entry validate-select',
+	        'name'     => 'website_id',
+	        'required' => true,
+            'options'  => Mage::getSingleton ('adminhtml/system_store')->getWebsiteOptionHash (true),
+		));
+		$fieldset->addField ('store_id', 'select', array(
+	        'label'    => Mage::helper ('mhub')->__('Store'),
+	        'class'    => 'required-entry validate-select',
+	        'name'     => 'store_id',
+	        'required' => true,
+            'options'  => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
+		));
 		$fieldset->addField ('order_increment_id', 'text', array(
 	        'label'    => Mage::helper ('mhub')->__('Order Inc. ID'),
 	        'class'    => 'required-entry validate-alphanum',
 	        'name'     => 'order_increment_id',
 	        'required' => true,
+		));
+		$fieldset->addField ('skus', 'text', array(
+	        'label'    => Mage::helper ('mhub')->__('SKUs'),
+	        // 'class'    => 'required-entry',
+	        'name'     => 'skus',
+	        // 'required' => true,
 		));
 		$fieldset->addField ('number', 'text', array(
 	        'label'    => Mage::helper ('mhub')->__('Number'),

@@ -195,13 +195,53 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
 
         $extShipmentId = true;
 
+        /**
+         * GET
+         */
+        try
+        {
+            $shipmentsPostMethod = str_replace ('{orderId}', $extOrderId, self::SHIPMENTS_POST_METHOD);
+
+            $result = $this->getHelper ()->api ($shipmentsPostMethod, null, null, $shipment->getStoreId ());
+
+            $_shippedCount = 0;
+
+            foreach ($result as $_shipment)
+            {
+                foreach ($_shipment->skus as $_sku)
+                {
+                    foreach ($post ['skus' ] as $_id => $_item)
+                    {
+                        if (!strcmp ($_item ['codigo'], $_sku->codigo))
+                        {
+                            ++ $_shippedCount;
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (count ($post ['skus']) == $_shippedCount)
+            {
+                $post = null; // all_items_shipped
+            }
+        }
+        catch (Exception $e)
+        {
+            // nothing_here
+        }
+
+        /**
+         * POST
+         */
         try
         {
             $shipmentsPostMethod = str_replace ('{orderId}', $extOrderId, self::SHIPMENTS_POST_METHOD);
 
             $result = $this->getHelper ()->api ($shipmentsPostMethod, $post, null, $shipment->getStoreId ());
 
-            $extShipmentId = $result->id;
+            $extShipmentId = $result [0]->id;
 
             $mageShipment->setData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_IS_EPICOM, true)
                 ->setData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID, $extShipmentId)

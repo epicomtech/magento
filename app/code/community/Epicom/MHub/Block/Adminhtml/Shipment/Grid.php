@@ -151,6 +151,13 @@ class Epicom_MHub_Block_Adminhtml_Shipment_Grid extends Mage_Adminhtml_Block_Wid
         $this->setMassactionIdField('entity_id');
         $this->getMassactionBlock()->setFormFieldName('entity_ids');
         $this->getMassactionBlock()->setUseSelectAll(true);
+
+        $this->getMassactionBlock()->addItem('pending_shipments', array(
+            'label'   => Mage::helper('mhub')->__('Pending Shipment(s)'),
+            'url'     => $this->getUrl('*/adminhtml_shipment/massPending'),
+            'confirm' => Mage::helper('mhub')->__('Are you sure?')
+        ));
+
         $this->getMassactionBlock()->addItem('remove_shipments', array(
             'label'   => Mage::helper('mhub')->__('Remove Shipments'),
             'url'     => $this->getUrl('*/adminhtml_shipment/massRemove'),
