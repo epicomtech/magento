@@ -14,6 +14,13 @@ class Epicom_MHub_Block_Adminhtml_Provider_Edit_Tab_Form extends Mage_Adminhtml_
 
 		$fieldset = $form->addFieldset ('mhub_form', array ('legend' => Mage::helper ('mhub')->__('Provider Information')));
 
+		$fieldset->addField ('customer_id', 'select', array(
+	        'label'    => Mage::helper ('mhub')->__('Customer'),
+	        'class'    => 'required-entry validate-select',
+	        'name'     => 'customer_id',
+	        'required' => true,
+            'options'  => Epicom_MHub_Block_Adminhtml_Provider_Grid::_getCustomers (),
+		));
 		$fieldset->addField ('external_id', 'text', array(
 	        'label'    => Mage::helper ('mhub')->__('External ID'),
 	        'class'    => 'required-entry validate-digits',

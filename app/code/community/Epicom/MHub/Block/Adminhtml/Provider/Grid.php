@@ -46,6 +46,12 @@ class Epicom_MHub_Block_Adminhtml_Provider_Grid extends Mage_Adminhtml_Block_Wid
             'type'    => 'options',
             'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
         ));
+        $this->addColumn('customer_id', array(
+            'header'  => Mage::helper('mhub')->__('Customer'),
+            'index'   => 'customer_id',
+            'type'    => 'options',
+            'options' => $this->_getCustomers (),
+        ));
 		$this->addColumn ('external_id', array(
 		    'header'  => Mage::helper ('mhub')->__('External ID'),
 		    'index'   => 'external_id',
@@ -127,5 +133,25 @@ class Epicom_MHub_Block_Adminhtml_Provider_Grid extends Mage_Adminhtml_Block_Wid
 
 		return $this;
 	}
+
+    public function _getCustomers ($websiteId = null)
+    {
+        $groupId = Mage::getStoreConfig (Epicom_MHub_Helper_Data::XML_PATH_MHUB_CUSTOMER_GROUP);
+
+        $collection = Mage::getModel ('customer/customer')->getCollection ()
+            ->addFieldToFilter ('group_id', array ('eq' => $groupId))
+        ;
+
+        if (!empty ($websiteId))
+        {
+            $collection->addFieldToFilter ('website_id', $websiteId);
+        }
+
+        $collection->getSelect ()->reset (Zend_Db_Select::COLUMNS)
+            ->columns (array ('id' => 'e.entity_id', 'name' => 'e.email'))
+        ;
+
+        return $collection->toOptionHash ();
+    }
 }
 

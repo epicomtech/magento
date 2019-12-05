@@ -119,6 +119,8 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const STATUS_OKAY    = 'okay';
     const STATUS_ERROR   = 'error';
 
+    const XML_PATH_MHUB_CUSTOMER_GROUP = 'mhub/customer/group';
+
     const LOG = 'epicom_mhub.log';
 
     public function api ($method, $post = null, $request = null, $store = null)
