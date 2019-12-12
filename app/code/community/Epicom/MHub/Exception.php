@@ -9,9 +9,10 @@ class Epicom_MHub_Exception extends Mage_Core_Exception
 {
     public function __construct ($message, $code)
     {
-        parent::__construct ($message, $code);
-
-        if ($code == 409 /* Resource Exists */) return;
+        if ($code == 409 /* Resource Exists */)
+        {
+            return parent::__construct ($message, $code);
+        }
 
         $emailRecipient = Mage::getStoreConfig ('mhub/error/email_recipient');
 
@@ -54,6 +55,8 @@ class Epicom_MHub_Exception extends Mage_Core_Exception
                 ->save ()
             ;
         }
+
+        return parent::__construct ($message, $code);
     }
 }
 
