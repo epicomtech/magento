@@ -30,6 +30,27 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
             )
         );
 
+        $entityTypeId = Mage::getModel ('eav/entity')
+            ->setType (Mage_Catalog_Model_Product::ENTITY)
+            ->getTypeId ()
+        ;
+
+        $manufacturerAttribute = Mage::getModel ('eav/entity_attribute')->loadByCode (
+            $entityTypeId, Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER
+        );
+
+        $resource = Mage::getSingleton ('core/resource');
+        $write    = $resource->getConnection ('core_write');
+        $table    = $resource->getTableName ('catalog_product_entity_' . $manufacturerAttribute->getBackendType ());
+
+        $collection->getSelect()->joinLeft(
+            array ('m' => $table),
+            "product.entity_id = m.entity_id AND m.attribute_id = {$manufacturerAttribute->getAttributeId ()}",
+            array(
+                'manufacturer' => 'm.value',
+            )
+        );
+
         return parent::_prepareCollection();
     }
 
@@ -77,6 +98,13 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
         $this->addColumn('external_sku', array(
             'header' => Mage::helper('mhub')->__('External SKU'),
             'index'  => 'external_sku',
+        ));
+        $this->addColumn('manufacturer', array(
+            'header' => Mage::helper('mhub')->__('Manufacturer'),
+            'index'  => 'manufacturer',
+            'type'    => 'options',
+            'options' => Mage::getModel ('mhub/adminhtml_system_config_source_product_manufacturer')->toArray (),
+            'filter_index' => 'm.value',
         ));
         $this->addColumn('operation', array(
             'header' => Mage::helper('mhub')->__('Operation'),

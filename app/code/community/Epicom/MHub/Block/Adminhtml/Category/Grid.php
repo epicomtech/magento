@@ -134,6 +134,11 @@ class Epicom_MHub_Block_Adminhtml_Category_Grid extends Mage_Adminhtml_Block_Wid
         $this->setMassactionIdField('entity_id');
         $this->getMassactionBlock()->setFormFieldName('entity_ids');
         $this->getMassactionBlock()->setUseSelectAll(true);
+        $this->getMassactionBlock()->addItem('pending_categories', array(
+            'label'   => Mage::helper('mhub')->__('Pending Categories'),
+            'url'     => $this->getUrl('*/adminhtml_category/massPending'),
+            'confirm' => Mage::helper('mhub')->__('Are you sure?')
+        ));
         $this->getMassactionBlock()->addItem('remove_categories', array(
             'label'   => Mage::helper('mhub')->__('Remove Categories'),
             'url'     => $this->getUrl('*/adminhtml_category/massRemove'),

@@ -183,6 +183,53 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
                             'value'          => $mageProduct->getSpecialPrice (),
                         ));
                     }
+
+                    /*
+                     * Associations
+                     */
+                    $collection = Mage::getModel ('mhub/product_association')->getCollection ()
+                        ->addFieldToFilter ('parent_sku', array ('eq' => $productId))
+                    ;
+
+                    $collection->getSelect ()->reset (Zend_Db_Select::COLUMNS)
+                        ->columns (array ('id' => 'entity_id', 'name' => 'sku'))
+                    ;
+
+                    $simpleSKUs = array_values ($collection->toOptionHash ());
+
+                    $collection = Mage::getModel ('catalog/product')->getCollection ()
+                        ->addAttributeToFilter (Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID, array ('in' => $simpleSKUs))
+                        ->addAttributeToSelect ('price')
+                        ->addAttributeToSelect ('special_price')
+                    ;
+
+                    $parentProduct->setPrice (PHP_INT_MAX)
+                        ->setSpecialPrice (new Zend_Db_Expr ('NULL'))
+                    ;
+
+                    foreach ($collection as $simpleProduct)
+                    {
+                        if ($simpleProduct && intval ($simpleProduct->getId ()) > 0)
+                        {
+                            // lowest price
+                            if ($simpleProduct->getPrice () < $parentProduct->getPrice ())
+                            {
+                                $parentProduct->setPrice ($simpleProduct->getPrice ())
+                                    ->setSpecialPrice ($simpleProduct->getSpecialPrice ())
+                                ;
+                            }
+
+                            // lowest special_price
+                            if (($simpleProduct->getSpecialPrice () < $parentProduct->getSpecialPrice ())
+                                || (!empty ($simpleProduct->getSpecialPrice ()) && empty ($parentProduct->getSpecialPrice ()))
+                            )
+                            {
+                                $parentProduct->setSpecialPrice ($simpleProduct->getSpecialPrice ());
+                            }
+                        }
+                    }
+
+                    $parentProduct->save ();
                 }
 
                 // status
