@@ -238,12 +238,15 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
         if (!empty ($data) && is_array ($data))
         {
+/*
             $collection = Mage::getModel ('sales/order_shipment_track')->getCollection ()
                 ->addAttributeToFilter ('entity_id',    array ('eq' => $data ['id']))
                 ->addAttributeToFilter ('track_number', array ('eq' => $code))
             ;
 
             $description = $collection->getFirstItem ()->getDescription ();
+*/
+            $description = Epicom_MHub_Helper_Data::CORREIOS_TRACKING_URL;
 
             $url = parse_url ($description);
             if (!empty ($url ['host']))
@@ -252,10 +255,11 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                 {
                     $client = new Zend_Http_Client ();
                     $client->setUri ($description);
+                    $client->setParameterPost ('objetos', $code);
 
-                    $response = $client->request ('GET');
+                    $response = $client->request ('POST');
 
-                    $description = $response->getBody ();
+                    $description = utf8_encode ($response->getBody ()); // windows-1252 really?
                 }
                 catch (Exception $e)
                 {

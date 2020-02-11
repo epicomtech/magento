@@ -123,6 +123,8 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
 
     const LOG = 'epicom_mhub.log';
 
+    const CORREIOS_TRACKING_URL = 'https://www2.correios.com.br/sistemas/rastreamento/newprint.cfm';
+
     public function api ($method, $post = null, $request = null, $store = null)
     {
         $timeout = $this->getStoreConfig ('timeout', $store);
