@@ -178,6 +178,13 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
             }
 		}
 
+        foreach ($request->getAllItems () as $quoteItem)
+        {
+            $request->setQuoteId ($quoteItem->getQuoteId ());
+
+            break;
+        }
+
         $this->_updateQuotes ($request, $result);
 
 		return $result;
@@ -295,20 +302,21 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
         $resource = Mage::getSingleton ('core/resource');
         $write    = $resource->getConnection ('core_write');
         $table    = $resource->getTableName ('epicom_mhub_quote');
-
+/*
         $session  = Mage::getSingleton ('checkout/session');
         $quote    = $session->getQuote ();
+*/
         $session  = Mage::getSingleton ('customer/session');
         $customer = $session->getCustomer ();
 
-        $write->delete ($table, "store_id = {$request->getStoreId ()} AND quote_id = {$quote->getId ()}");
+        $write->delete ($table, "store_id = {$request->getStoreId ()} AND quote_id = {$request->getQuoteId ()}");
 
         foreach ($result->getAllRates () as $rate)
         {
             $write->insert ($table, array(
                 'customer_id' => intval ($customer->getId ()),
                 'store_id'   => $request->getStoreId (),
-                'quote_id'   => $quote->getId (),
+                'quote_id'   => $request->getQuoteId (),
                 'postcode'   => $rate->getPostcode (),
                 'sku'        => $rate->getSku (),
                 'provider'   => $rate->getProvider (),
