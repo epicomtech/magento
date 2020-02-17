@@ -131,15 +131,18 @@ class Epicom_MHub_Model_Config
         return $item->getResource ()->getTypeId ();
     }
 
-    public function getShippingPrices ($postCode, $unique = false)
+    public function getShippingPrices ($request, $postCode, $unique = false)
     {
         $productWeightMode  = Mage::getStoreConfig ('mhub/product/weight_mode');
 
         $result = array ();
 
         $itemsWeight = 0;
-
+/*
         $items  = Mage::getSingleton ('checkout/session')->getQuote ()->getAllItems ();
+*/
+        $items = $request->getAllItems();
+
         foreach ($items as $_item)
         {
             $result [$_item->getProductId ()] = $_item->getQty ();

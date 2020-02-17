@@ -81,7 +81,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
         try
         {
-		    $shipping = Mage::getModel ('mhub/config')->getShippingPrices ($postCode, $unique);
+		    $shipping = Mage::getModel ('mhub/config')->getShippingPrices ($request, $postCode, $unique);
         }
         catch (Exception $e)
         {
