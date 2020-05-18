@@ -172,6 +172,8 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             ),
         );
 
+        $freightSplit = Mage::getStoreConfigFlag ('mhub/order/freight_split');
+
         /**
          * 0: magento_carrier
          * 1: epicom_item_id
@@ -204,7 +206,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             ->columns ('t.*')
         ;
 
-        if (!$mhubQuoteItems->count ())
+        if (!$mhubQuoteItems->count () && $freightSplit)
         {
             throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Internal Error! No quote item was found. Store %s Quote %s Order %s',
                 $mageOrder->getStoreId (), $mageOrder->getQuoteId (), $mageOrder->getIncrementId ()
@@ -261,12 +263,15 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
             $itemQuote = $mhubQuoteItems->getItemByColumnValue ('sku', $productId);
 
-            if (!$itemQuote || !$itemQuote->getId ())
+            if ((!$itemQuote || !$itemQuote->getId ()) && $freightSplit)
             {
                 throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Internal Error! No quote item INFORMATION was found. Store %s Quote %s Order %s',
                     $mageOrder->getStoreId (), $mageOrder->getQuoteId (), $mageOrder->getIncrementId ()
                 ), 9999);
             }
+
+            if ($freightSplit)
+            {
 
             $shippingAmount      = $itemQuote->getPrice ();
             $shippingDescription = $itemQuote->getTitle ();
@@ -279,6 +284,15 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             {
                 $this->_providers [] = $itemQuote->getProvider ();
             }
+
+            }
+            else
+            {
+
+                $shippingAmount      = $itemsPos % $itemsCount == 0 ? $mageOrder->getBaseShippingAmount() : 0;
+                $shippingDescription = $itemsPos % $itemsCount == 0 ? $mageOrder->getShippingDescription() : 0;
+
+            } // freightSplit
 
             $itemsAmount += floatval ($shippingAmount);
 

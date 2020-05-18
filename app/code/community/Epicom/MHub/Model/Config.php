@@ -97,7 +97,7 @@ class Epicom_MHub_Model_Config
         $select = $read->select ()
             ->from (array ('eaov' => $tableAttributeOptionValue), array ('option_id' => 'eaov.option_id'))
             ->join (array ('eao' => $tableAttributeOption), 'eaov.option_id = eao.option_id', null, null)
-            ->where ("eao.attribute_id = {$attributeId} AND eaov.store_id = {$storeId} AND BINARY eaov.value = '{$tValue}'");
+            ->where ("eao.attribute_id = {$attributeId} AND eaov.store_id = {$storeId} AND BINARY eaov.value = ?", $tValue);
 
         $children = $read->fetchAll ($select);
 

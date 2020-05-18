@@ -435,6 +435,7 @@
                 <cancel_filter>canceled</cancel_filter>
                 <sent_filter>complete</sent_filter>
                 <cashback_filter>closed</cashback_filter>
+                <freight_split>1</freight_split>
             </order>
             <shipment>
                 <nf_status>processing</nf_status>
