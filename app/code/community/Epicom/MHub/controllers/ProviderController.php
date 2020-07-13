@@ -13,7 +13,7 @@ class Epicom_MHub_ProviderController extends Epicom_MHub_Controller_Action
     {
         parent::_construct ();
 
-        Mage::app ()->setCurrentStore (Mage_Core_Model_App::ADMIN_STORE_ID);
+        // Mage::app ()->setCurrentStore (Mage_Core_Model_App::ADMIN_STORE_ID);
 
         $rawData = $this->getRequest ()->getRawBody ();
         if (empty ($rawData)) die (__('Data not specified'));

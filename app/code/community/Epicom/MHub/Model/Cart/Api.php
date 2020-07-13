@@ -87,7 +87,7 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
 
         foreach ($quote->getShippingAddress ()->getGroupedAllShippingRates () as $code => $rates)
         {
-            if ($code == Epicom_Mhub_Model_Shipping_Carrier_Epicom::CODE) continue;
+            if ($code == Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE) continue;
 
             foreach ($rates as $_rate)
             {
