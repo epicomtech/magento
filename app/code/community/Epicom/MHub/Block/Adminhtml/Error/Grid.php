@@ -55,15 +55,15 @@ class Epicom_MHub_Block_Adminhtml_Error_Grid extends Mage_Adminhtml_Block_Widget
             'index'   => 'code',
             'type'    => 'number',
         ));
-        $this->addColumn('message', array(
-            'header'  => Mage::helper('mhub')->__('Message'),
-            'index'   => 'message',
-        ));
         $this->addColumn('created_at', array(
             'header' => Mage::helper('mhub')->__('Created At'),
             'index'  => 'created_at',
             'type'   => 'datetime',
             'width'  => '100px',
+        ));
+        $this->addColumn('message', array(
+            'header'  => Mage::helper('mhub')->__('Message'),
+            'index'   => 'message',
         ));
 
         $this->addExportType ('*/*/exportCsv', Mage::helper ('mhub')->__('CSV'));

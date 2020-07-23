@@ -162,7 +162,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
             curl_setopt ($curl, CURLOPT_CUSTOMREQUEST, $request);
         }
 
-        curl_setopt ($curl, CURLOPT_FAILONERROR, true);
+        // curl_setopt ($curl, CURLOPT_FAILONERROR, true);
 
         $result = curl_exec ($curl);
         $response = json_decode ($result);
