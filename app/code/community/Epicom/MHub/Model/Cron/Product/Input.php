@@ -402,6 +402,17 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                     }
                 }
 
+                foreach ($productsSkusResult->grupos as $id => $group)
+                {
+                    if ($group->nome != Epicom_MHub_Helper_Data::PRODUCT_FIXED_GROUP_NAME)
+                    {
+                        foreach ($group->atributos as $attribute)
+                        {
+                            $mageProduct->setData ($attribute->codigoAtributoCategoria, $attribute->codigoValorAtributoCategoria);
+                        }
+                    }
+                }
+
                 $mageProduct->save ();
 /*
                 // stock
@@ -539,6 +550,8 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
                         foreach ($group->atributos as $attribute)
                         {
+                            $parentProduct->setData ($attribute->codigoAtributoCategoria, $attribute->codigoValorAtributoCategoria);
+
                             $attributesResult .= $attribute->nome . ' ' . $attribute->valor . PHP_EOL;
                         }
                     }
