@@ -40,12 +40,25 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
             $productQty  = intval ($_item ['quantidade']);
 
             $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute ($productCodeAttribute, $productCode);
+
             if (!$mageProduct || !$mageProduct->getId ())
             {
                 $this->_fault ('product_not_exists');
             }
 
-            $stockItem = Mage::getModel ('cataloginventory/stock_item')->assignProduct ($mageProduct);
+            $stockItem = Mage::getModel ('cataloginventory/stock_item')
+                ->loadByProduct ($mageProduct)
+                ->assignProduct ($mageProduct)
+            ;
+
+            if (!$stockItem->getIsInStock () || !$stockItem->getQty ())
+            {
+                continue; // skip
+            }
+            else if ($stockItem->getIsInStock () && $productQty > $stockItem->getQty ())
+            {
+                $productQty = intval ($stockItem->getQty ());
+            }
 
             $mageQuote->addProduct ($mageProduct, $productQty);
 
