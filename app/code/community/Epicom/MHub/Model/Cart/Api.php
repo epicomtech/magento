@@ -108,10 +108,19 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
                 {
                     $this->_shippingAmount += $_rate->getPrice ();
 
+                    preg_match ('/(.*)([-])(.*)/', $_rate->getMethodTitle (), $matches);
+
+                    $deliveryType = trim ($matches [1]);
+                    $deliveryTime = preg_replace ('[\D]', '', $matches [3]);
+
                     $result [] = array(
+                        /*
                         'diasParaEntrega'    => Mage::getStoreConfig ("carriers/epicom/delivery_time"),
                         'entrega'            => Mage::getStoreConfig ("carriers/{$code}/title"),
-                        'transportadora'     => $_rate->getCode (),
+                        */
+                        'entrega'            => $_rate->getCode (),
+                        'transportadora'     => $deliveryType,
+                        'diasParaEntrega'    => $deliveryTime,
                         'valorTotalFrete'    => $_rate->getPrice (),
                         'valorTotalPedido'   => $quote->getBaseSubtotal (),
                         'valorTotal'         => $quote->getBaseSubtotal () + $_rate->getPrice (),
