@@ -189,7 +189,9 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
             ->setFrontendInputTypeFilter(array ('in' => array ('select', 'multiselect', 'text')))
         ;
 
-        $select = $collection->getSelect()->group('main_table.attribute_id');
+        $select = $collection->getSelect()
+            // ->group('main_table.attribute_id')
+        ;
 
         $attributeIds = Mage::getStoreConfig ('mhub/attributes/product');
         $attributeIds = !empty ($attributeIds) ? $attributeIds : '0';
@@ -197,7 +199,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
         if ($categoryUseAttributeSet)
         {
             $select->where(
-                "main_table.attribute_id IN ({$attributeIds}) OR (entity_attribute.attribute_set_id = {$category->getAttributeSetId()} AND main_table.is_required = 1)"
+                "main_table.attribute_id IN ({$attributeIds}) OR (entity_attribute.attribute_set_id = {$category->getAttributeSetId()})"
             );
         }
         else
@@ -213,6 +215,11 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 
                 if ($attribute->getSourceModel())
                 {
+                    if (!Mage::getModel ($attribute->getSourceModel ()))
+                    {
+                        continue; // skip
+                    }
+
                     $options = $attribute->getSource()->getAllOptions ();
                 }
                 else
@@ -228,6 +235,11 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 
                 foreach ($options as $_option)
                 {
+                    if (!is_string ($_option ['value']))
+                    {
+                        continue; // skip
+                    }
+
                     if (!empty ($_option ['value']))
                     {
                         $values [] = array(
@@ -235,6 +247,11 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
                             'Nome'   => $_option ['label'],
                         );
                     }
+                }
+
+                if (empty ($values))
+                {
+                    continue; // skip
                 }
 
                 $attributeCode          = $attribute->getAttributeCode ();
