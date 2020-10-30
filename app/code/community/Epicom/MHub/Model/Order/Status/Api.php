@@ -9,6 +9,11 @@ class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_
 {
     const ORDERS_INFO_METHOD = 'pedidos/{orderId}';
 
+    public function __construct ()
+    {
+        Mage::app ()->setCurrentStore (Mage_Core_Model_App::ADMIN_STORE_ID);
+    }
+
     public function approve ($orderCode, $orderCodeEpicom, $marketplace, $recipient)
     {
         if (/* empty ($orderCode) || */ empty ($orderCodeEpicom) || empty ($marketplace) || empty ($recipient))

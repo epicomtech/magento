@@ -15,6 +15,11 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
      */
     const SHIPPING_DESCRIPTION_REGEX = '/(.*)([\d])(.*)/';
 
+    public function __construct ()
+    {
+        Mage::app ()->setCurrentStore (Mage_Core_Model_App::ADMIN_STORE_ID);
+    }
+
     public function create ($marketplace, $orderCode, $createdAt, $items, $recipient, $shipping)
     {
         if (empty ($marketplace) || empty ($orderCode) || empty ($createdAt)
