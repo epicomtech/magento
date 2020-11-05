@@ -411,6 +411,8 @@
                 <height>mhub_product_height</height>
                 <width>mhub_product_width</width>
                 <length>mhub_product_length</length>
+                <price>price</price>
+                <special_price>special_price</special_price>
             </product>
             <cart>
                 <cache_enabled>1</cache_enabled>

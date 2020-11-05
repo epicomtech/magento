@@ -37,6 +37,8 @@
 "Product Height","Altura do Produto"
 "Product Length","Comprimento do Produto"
 "Product Width","Largura do Produto"
+"Product Price","Preço do Produto"
+"Product Special Price","Preço Especial do Produto"
 "Please enter a valid ZIP code.","Por favor, insira um CEP válido."
 "Delivered within %d day%s","Entregue até %d dia%s"
 "Use Attribute Set","Usar Conjunto de Atributos"

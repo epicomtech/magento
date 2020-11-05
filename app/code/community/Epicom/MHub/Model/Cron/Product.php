@@ -25,6 +25,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
     protected $_heightAttribute    = null;
     protected $_widthAttribute     = null;
     protected $_lengthAttribute    = null;
+    protected $_priceAttribute     = null;
+    protected $_specialAttribute   = null;
 
     public function _construct ()
     {
@@ -39,6 +41,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         $this->_heightAttribute    = Mage::getStoreConfig ('mhub/product/height');
         $this->_widthAttribute     = Mage::getStoreConfig ('mhub/product/width');
         $this->_lengthAttribute    = Mage::getStoreConfig ('mhub/product/length');
+        $this->_priceAttribute     = Mage::getStoreConfig ('mhub/product/price');
+        $this->_specialAttribute    = Mage::getStoreConfig ('mhub/product/special_price');
     }
 
     private function readMHubProductsMagento ()
@@ -290,6 +294,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 $this->_heightAttribute,
                 $this->_widthAttribute,
                 $this->_lengthAttribute,
+                $this->_priceAttribute,
+                $this->_specialAttribute
             ))
             ->joinTable (array ('stock' => 'cataloginventory/stock_item'),
                 'product_id = entity_id', array ('qty', 'is_in_stock'), null, 'left')
@@ -464,8 +470,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             /**
              * Availability
              */
-            $priceFrom = $mageProduct->getSpecialPrice () ? $mageProduct->getPrice () : null;
-            $priceTo   = $mageProduct->getSpecialPrice () ? $mageProduct->getSpecialPrice () : $mageProduct->getPrice ();
+            $priceFrom = $mageProduct->getData ($this->_specialAttribute) ? $mageProduct->getData ($this->_priceAttribute) : null;
+            $priceTo   = $mageProduct->getData ($this->_specialAttribute) ? $mageProduct->getData ($this->_specialAttribute) : $mageProduct->getData ($this->_priceAttribute);
 
             $post = array(
                 'nome'       => $mageProduct->getName (),
