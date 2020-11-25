@@ -96,7 +96,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             }
             catch (Exception $e)
             {
-                return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Product was not added: %s', $e->getMessage ()), null /* add_product_fault */);
+                return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Product was not added: %s', $e->getCustomMessage ()), null /* add_product_fault */);
             }
         }
 
@@ -224,7 +224,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         }
         catch (Exception $e)
         {
-            return $this->_error ($mhubOrder, $e->getMessage (), null /* others */);
+            return $this->_error ($mhubOrder, $e->getCustomMessage (), null /* others */);
         }
 
         $mageOrder = Mage::getModel ('sales/order')->loadByIncrementId ($incrementId)
