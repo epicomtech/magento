@@ -51,6 +51,10 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 
         $quoteId = Mage::getModel ('checkout/cart_api')->create ($storeId);
 
+        $quote = Mage::getModel ('sales/quote')->load ($quoteId)
+            ->setIsSuperMode (true)
+        ;
+
         foreach ($items as $_item)
         {
             $productCode  = strval   ($_item ['codigo']);
@@ -59,6 +63,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             $productQty   = intval   ($_item ['quantidade']);
 
             $mageProduct = Mage::getModel ('catalog/product')->loadByAttribute ($productCodeAttribute, $productCode);
+
             if (!$mageProduct || !$mageProduct->getId ())
             {
                 return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Product not exists: %s', $productCode), null /* product_not_exists */);
@@ -81,8 +86,14 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
                 return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Invalid Product Qty: %s', $productQty), null /* invalid_product_qty */);
             }
 
+            $productByItem = $this->_getProduct ($mageProduct->getId (), $storeId, 'id');
+
+            $productRequest = new Varien_Object ();
+            $productRequest->setQty ($productQty);
+
             try
             {
+/*
                 Mage::getModel ('checkout/cart_product_api')->add (
                     $quoteId,
                     array(
@@ -93,10 +104,19 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
                     ),
                     $storeId
                 );
+*/
+                $result = $quote->addProduct ($productByItem, $productRequest);
+
+                if (is_string ($result))
+                {
+                    throw Mage::exception ('Epicom_MHub', $result);
+                }
+
+                $quote->collectTotals ()->save ();
             }
             catch (Exception $e)
             {
-                return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Product was not added: %s', $e->getCustomMessage ()), null /* add_product_fault */);
+                return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Product was not added: %s', $e->getMessage ()), null /* add_product_fault */);
             }
         }
 
@@ -279,6 +299,17 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         }
 
         return $result;
+    }
+
+    protected function _getProduct ($productId, $storeId = null, $identifierType = null)
+    {
+        $product = Mage::helper ('catalog/product')->getProduct(
+            $productId,
+            $storeId,
+            $identifierType
+        );
+
+        return $product;
     }
 
     public function _getRegionByCode ($regionCode, $attribute, $countryId = 'BR')
