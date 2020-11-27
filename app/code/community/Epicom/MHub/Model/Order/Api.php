@@ -105,14 +105,23 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
                     $storeId
                 );
 */
-                $result = $quote->addProduct ($productByItem, $productRequest);
+                $result = $quote->addProductAdvanced ($productByItem, $productRequest, Mage_Catalog_Model_Product_Type_Abstract::PROCESS_MODE_LITE);
 
                 if (is_string ($result))
                 {
                     throw Mage::exception ('Epicom_MHub', $result);
                 }
+                {
+                    $result
+                        ->setIsSuperMode(true)
+                        ->setOriginalCustomPrice ($productPrice)
+                        ->setCustomPrice ($productPrice)
+                        ->setQty ($productQty)
+                        ->save ()
+                    ;
+                }
 
-                $quote->collectTotals ()->save ();
+                // $quote->collectTotals ()->save ();
             }
             catch (Exception $e)
             {
