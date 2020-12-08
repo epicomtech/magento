@@ -416,9 +416,9 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             foreach ($mageProduct->getMediaGalleryImages () as $_image)
             {
                 $post ['imagens'][] = array(
-                    'zoom'  => (string) Mage::helper ('catalog/image')->init ($mageProduct, 'image',       $_image->getFile ()),
-                    'maior' => (string) Mage::helper ('catalog/image')->init ($mageProduct, 'small_image', $_image->getFile ()),
-                    'menor' => (string) Mage::helper ('catalog/image')->init ($mageProduct, 'thumbnail',   $_image->getFile ()),
+                    'zoom'  => (string) $_image->getUrl (), // Mage::helper ('catalog/image')->init ($mageProduct, 'image',       $_image->getFile ()),
+                    'maior' => (string) $_image->getUrl (), // Mage::helper ('catalog/image')->init ($mageProduct, 'small_image', $_image->getFile ()),
+                    'menor' => (string) $_image->getUrl (), // Mage::helper ('catalog/image')->init ($mageProduct, 'thumbnail',   $_image->getFile ()),
                     'order' => $_image->getPosition (),
                 );
             }
@@ -428,9 +428,9 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 foreach ($parentProduct->getMediaGalleryImages () as $_image)
                 {
                     $post ['imagens'][] = array(
-                        'zoom'  => (string) Mage::helper ('catalog/image')->init ($parentProduct, 'image',       $_image->getFile ()),
-                        'maior' => (string) Mage::helper ('catalog/image')->init ($parentProduct, 'small_image', $_image->getFile ()),
-                        'menor' => (string) Mage::helper ('catalog/image')->init ($parentProduct, 'thumbnail',   $_image->getFile ()),
+                        'zoom'  => (string) $_image->getUrl (), // Mage::helper ('catalog/image')->init ($parentProduct, 'image',       $_image->getFile ()),
+                        'maior' => (string) $_image->getUrl (), // Mage::helper ('catalog/image')->init ($parentProduct, 'small_image', $_image->getFile ()),
+                        'menor' => (string) $_image->getUrl (), // Mage::helper ('catalog/image')->init ($parentProduct, 'thumbnail',   $_image->getFile ()),
                         'order' => $_image->getPosition (),
                     );
                 }
