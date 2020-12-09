@@ -127,6 +127,10 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
                         'valorTotalImpostos' => 0,
                     );
                 }
+                else
+                {
+                    throw Mage::exception ('Epicom_MHub', $_rate->getErrorMessage (), 9999);
+                }
             }
         }
 

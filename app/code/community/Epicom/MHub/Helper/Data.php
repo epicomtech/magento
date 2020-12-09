@@ -121,6 +121,8 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
 
     const XML_PATH_MHUB_CUSTOMER_GROUP = 'mhub/customer/group';
 
+    const XML_PATH_MHUB_QUOTE_TAXVAT_SUFFIX = 'mhub/quote/taxvat_suffix';
+
     const LOG = 'epicom_mhub.log';
 
     const CORREIOS_TRACKING_URL = 'https://www2.correios.com.br/sistemas/rastreamento/newprint.cfm';

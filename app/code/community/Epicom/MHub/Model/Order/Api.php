@@ -151,7 +151,11 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             ;
         }
 
-        $mageCustomer->setTaxvat ($customerTaxvat)
+        $customerGroup = Mage::getStoreConfig (Epicom_MHub_Helper_Data::XML_PATH_MHUB_CUSTOMER_GROUP);
+        $taxvatSuffix  = Mage::getStoreConfig (Epicom_MHub_Helper_Data::XML_PATH_MHUB_QUOTE_TAXVAT_SUFFIX);
+
+        $mageCustomer->setTaxvat ($customerTaxvat . $taxvatSuffix)
+            ->setGroupId ($customerGroup)
             ->setFirstname (substr ($customerName, 0, $_customerPos))
             ->setLastname  (substr ($customerName, $_customerPos + 1))
         ;
@@ -259,6 +263,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         $mageOrder = Mage::getModel ('sales/order')->loadByIncrementId ($incrementId)
             ->setCreatedAt ($createdAt)
             ->setData (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID, $orderCode)
+            ->setCustomerGroupId ($customerGroup)
             ->save ()
         ;
 
@@ -269,6 +274,20 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             ->setSyncedAt (date ('c'))
             ->save ()
         ;
+
+        if ($mageCustomer && $mageCustomer->getId ())
+        {
+            $resource = Mage::getSingleton ('core/resource');
+            $write    = $resource->getConnection ('core_write');
+            $table    = $resource->getTableName ('customer/entity');
+
+            $bind = array(
+                'group'    => $customerGroup,
+                'customer' => $mageCustomer->getId (),
+            );
+
+            $write->query (sprintf ('UPDATE %s SET group_id = :group WHERE entity_id = :customer', $table), $bind);
+        }
 
         $result = array(
             'codigoDoPedido'      => $incrementId,
