@@ -9,6 +9,8 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
 {
     protected $_shippingAmount = 0;
 
+    protected $_errorMessages = array ();
+
     public function calculate ($marketplace, $zip, $unique, $items)
     {
         if (empty ($marketplace) || empty ($zip) || !isset ($unique) || empty ($items))
@@ -89,6 +91,8 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
         $result ['valorFrete']            = $this->_shippingAmount;
         $result ['valorTotaldosProdutos'] = $mageQuote->getBaseSubtotal ();
 
+        $result ['erros'] = $this->_errorMessages;
+
         return json_encode ($result);
     }
 
@@ -129,7 +133,7 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
                 }
                 else
                 {
-                    throw Mage::exception ('Epicom_MHub', $_rate->getErrorMessage (), 9999);
+                    $this->_errorMessages [] = $_rate->debug ();
                 }
             }
         }
