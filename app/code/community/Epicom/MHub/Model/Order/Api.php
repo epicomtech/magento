@@ -138,10 +138,19 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         $_customerPos   = strpos ($customerName, " ");
         $customerEmail  = $recipient ['emailDestinatario'];
         $customerTaxvat = $recipient ['cpfCnpjDestinatario'];
-
+/*
         $mageCustomer = Mage::getModel ('customer/customer')
             ->setWebsiteId ($defaultStore->getWebsiteId ())
             ->loadByEmail ($customerEmail)
+        ;
+*/
+        $taxvatSuffix  = Mage::getStoreConfig (Epicom_MHub_Helper_Data::XML_PATH_MHUB_QUOTE_TAXVAT_SUFFIX);
+
+        $mageCustomer = Mage::getModel ('customer/customer')
+            ->getCollection ()
+            ->addAttributeToSelect ('*')
+            ->addAttributeToFilter ('taxvat',  $customerTaxvat . $taxvatSuffix)
+            ->getFirstItem ()
         ;
 
         if (!$mageCustomer || !$mageCustomer->getId ())
@@ -152,7 +161,6 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         }
 
         $customerGroup = Mage::getStoreConfig (Epicom_MHub_Helper_Data::XML_PATH_MHUB_CUSTOMER_GROUP);
-        $taxvatSuffix  = Mage::getStoreConfig (Epicom_MHub_Helper_Data::XML_PATH_MHUB_QUOTE_TAXVAT_SUFFIX);
 
         $mageCustomer->setTaxvat ($customerTaxvat . $taxvatSuffix)
             ->setGroupId ($customerGroup)
