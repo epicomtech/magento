@@ -271,5 +271,61 @@ class Epicom_MHub_Model_Observer
             $block->sortColumnsByOrder ();
         }
     }
+
+    public function invoiceSaveAfter (Varien_Event_Observer $observer)
+    {
+        $invoice = $observer->getEvent ()->getInvoice ();
+
+        if ($invoice->getBaseFeeAmount ())
+        {
+            $order = $invoice->getOrder();
+
+            $order->setFeeAmountInvoiced ($order->getFeeAmountInvoiced () + $invoice->getFeeAmount ());
+            $order->setBaseFeeAmountInvoiced ($order->getBaseFeeAmountInvoiced () + $invoice->getBaseFeeAmount ());
+        }
+
+        if ($invoice->getBaseDiscountAmount ())
+        {
+            $order = $invoice->getOrder();
+
+            $order->setDiscountAmountInvoiced ($order->getDiscountAmountInvoiced () + $invoice->getDiscountAmount ());
+            $order->setBaseDiscountAmountInvoiced ($order->getBaseDiscountAmountInvoiced () + $invoice->getBaseDiscountAmount ());
+        }
+
+        return $this;
+    }
+
+    public function creditmemoSaveAfter (Varien_Event_Observer $observer)
+    {
+        $creditmemo = $observer->getEvent ()->getCreditmemo ();
+
+        if ($creditmemo->getFeeAmount ())
+        {
+            $order = $creditmemo->getOrder ();
+
+            $order->setFeeAmountRefunded ($order->getFeeAmountRefunded () + $creditmemo->getFeeAmount ());
+            $order->setBaseFeeAmountRefunded ($order->getBaseFeeAmountRefunded () + $creditmemo->getBaseFeeAmount ());
+        }
+
+        if ($creditmemo->getDiscountAmount ())
+        {
+            $order = $creditmemo->getOrder ();
+
+            $order->setDiscountAmountRefunded ($order->getDiscountAmountRefunded () + $creditmemo->getDiscountAmount ());
+            $order->setBaseDiscountAmountRefunded ($order->getBaseDiscountAmountRefunded () + $creditmemo->getBaseDiscountAmount ());
+        }
+
+        return $this;
+    }
+
+    public function updatePaypalTotal (Varien_Event_Observer $observer)
+    {
+        $cart = $observer->getEvent ()->getPaypalCart ();
+
+        $cart->updateTotal (Mage_Paypal_Model_Cart::TOTAL_SUBTOTAL, $cart->getSalesEntity ()->getFeeAmount ());
+        $cart->updateTotal (Mage_Paypal_Model_Cart::TOTAL_SUBTOTAL, $cart->getSalesEntity ()->getDiscountAmount ());
+
+        return $this;
+    }
 }
 

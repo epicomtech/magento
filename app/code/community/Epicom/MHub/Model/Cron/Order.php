@@ -314,6 +314,8 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             -- $itemsPos;
         }
 
+        $post ['valorJuros'] = $mageOrder->getBaseFeeAmount ();
+
         $baseDiscountAmount = abs ($mageOrder->getBaseDiscountAmount ());
 
         $post ['valorDesconto'] = $baseDiscountAmount;

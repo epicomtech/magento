@@ -20,10 +20,11 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         Mage::app ()->setCurrentStore (Mage_Core_Model_App::ADMIN_STORE_ID);
     }
 
-    public function create ($marketplace, $orderCode, $createdAt, $items, $recipient, $shipping)
+    public function create ($marketplace, $orderCode, $createdAt, $items, $recipient, $shipping, $discount, $fee)
     {
         if (empty ($marketplace) || empty ($orderCode) || empty ($createdAt)
-            || empty ($items) || empty ($recipient) || empty ($shipping))
+            || empty ($items) || empty ($recipient) || empty ($shipping)
+            || !isset ($discount) || !isset ($fee))
         {
             $this->_fault ('invalid_request_param');
         }
@@ -265,7 +266,9 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         }
         catch (Exception $e)
         {
-            return $this->_error ($mhubOrder, $e->getCustomMessage (), null /* others */);
+            $errorMessage = $e->getCustomMessage () ? $e->getCustomMessage () : $e->getMessage();
+
+            return $this->_error ($mhubOrder, $errorMessage, null /* others */);
         }
 
         $mageOrder = Mage::getModel ('sales/order')->loadByIncrementId ($incrementId)
@@ -319,6 +322,8 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             /**
              * Freight
              */
+            if (empty ($_shipping)) continue;
+
             preg_match (self::SHIPPING_DESCRIPTION_REGEX, $_item ['formaEntrega'], $_shipping);
 
             $_daysForDelivery = preg_replace ('[\D]', "", $_shipping [2]);
@@ -328,7 +333,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
                 $result ['diasParaEntrega'] = $_daysForDelivery;
             }
 
-            if (floatval ($_item ['precoFrete']) > $result ['valorFrete'])
+            if (floatval ($_item ['precoFrete']) > $result ['valorDoFrete'])
             {
                 $result ['valorFrete'] = $_item ['precoFrete'];
             }

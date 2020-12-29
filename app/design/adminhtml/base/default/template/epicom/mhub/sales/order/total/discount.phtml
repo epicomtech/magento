@@ -1,0 +1,19 @@
+<?php
+/**
+ * @package     Epicom_MHub
+ * @copyright   Copyright (c) 2020 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author      Eneias Ramos de Melo <eneias@gamuza.com.br>
+ */
+?>
+
+<?php $this->setPriceDataObject ($this->getSource ()); ?>
+
+<?php if ((float) $this->getSource ()->getDiscountAmount ()): ?>
+    <tr>
+        <td class="label"><?php echo Mage::helper ('mhub')->__('Discount') ?></td>
+        <td>
+            <?php echo $this->displayPrices ($this->getSource ()->getBaseDiscountAmount (), $this->getSource ()->getDiscountAmount ()); ?>
+        </td>
+    </tr>
+<?php endif; ?>
+

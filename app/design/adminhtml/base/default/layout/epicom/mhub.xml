@@ -73,5 +73,46 @@
             <block type="mhub/adminhtml_error" name="error" />
         </reference>
     </admin_mhub_adminhtml_error_index>
+
+    <adminhtml_sales_order_invoice_new>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="fee" template="epicom/mhub/sales/order/total/fee.phtml" />
+            <block type="adminhtml/sales_order_totals_item" name="discount" template="epicom/mhub/sales/order/total/discount.phtml" />
+        </reference>
+    </adminhtml_sales_order_invoice_new>
+    <adminhtml_sales_order_invoice_updateqty>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="fee" template="epicom/mhub/sales/order/total/fee.phtml" />
+            <block type="adminhtml/sales_order_totals_item" name="discount" template="epicom/mhub/sales/order/total/discount.phtml" />
+        </reference>
+    </adminhtml_sales_order_invoice_updateqty>
+    <adminhtml_sales_order_invoice_view>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="fee" template="epicom/mhub/sales/order/total/fee.phtml" />
+            <block type="adminhtml/sales_order_totals_item" name="discount" template="epicom/mhub/sales/order/total/discount.phtml" />
+        </reference>
+    </adminhtml_sales_order_invoice_view>
+    <adminhtml_sales_order_creditmemo_new>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="fee" template="epicom/mhub/sales/order/total/fee.phtml" />
+            <block type="adminhtml/sales_order_totals_item" name="discount" template="epicom/mhub/sales/order/total/discount.phtml" />
+        </reference>
+    </adminhtml_sales_order_creditmemo_new>
+    <adminhtml_sales_order_creditmemo_updateqty>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="fee" template="epicom/mhub/sales/order/total/fee.phtml" />
+            <block type="adminhtml/sales_order_totals_item" name="discount" template="epicom/mhub/sales/order/total/discount.phtml" />
+        </reference>
+    </adminhtml_sales_order_creditmemo_updateqty>
+    <adminhtml_sales_order_creditmemo_view>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="fee.refunded" template="epicom/mhub/sales/order/refunded/fee.phtml">
+                <action method="setDisplayArea"><area>footer</area></action>
+            </block>
+            <block type="adminhtml/sales_order_totals_item" name="discount.refunded" template="epicom/mhub/sales/order/refunded/discount.phtml">
+                <action method="setDisplayArea"><area>footer</area></action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_creditmemo_view>
 </layout>
 

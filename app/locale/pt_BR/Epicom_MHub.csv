@@ -251,4 +251,8 @@
 "Pending Shipment(s)","Entrega(s) Pendente(s)"
 "Freight Split","Split de Frete"
 "Taxvat Suffix","Sufixo para CPF/CNPJ"
+"Fee","Juros"
+"Fee Amount","Valor dos Juros"
+"Fee Refunded","Juros Devolvidos"
+"Discount Refunded","Desconto Devolvido"
 

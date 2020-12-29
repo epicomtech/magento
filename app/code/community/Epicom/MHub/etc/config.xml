@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Epicom_MHub>
-            <version>0.1.21</version>
+            <version>0.1.23</version>
         </Epicom_MHub>
     </modules>
     <global>
@@ -107,6 +107,18 @@
                         <mhub_product_manufacturer />
                     </product_attributes>
                 </item>
+                <totals>
+                    <fee>
+                        <class>mhub/sales_quote_address_total_fee</class>
+                        <renderer>mhub/checkout_totals_fee</renderer>
+                        <admin_renderer>mhub/adminhtml_sales_order_create_totals_fee</admin_renderer>
+                    </fee>
+                    <discount>
+                        <class>mhub/sales_quote_address_total_discount</class>
+                        <renderer>mhub/checkout_totals_discount</renderer>
+                        <admin_renderer>mhub/adminhtml_sales_order_create_totals_discount</admin_renderer>
+                    </discount>
+                </totals>
             </quote>
             <order>
                 <item>
@@ -119,8 +131,42 @@
                     </product_attributes>
                 </item>
             </order>
+            <order_invoice>
+                <totals>
+                    <fee>
+                        <class>mhub/sales_order_total_invoice_fee</class>
+                    </fee>
+                    <discount>
+                        <class>mhub/sales_order_total_invoice_discount</class>
+                    </discount>
+                </totals>
+            </order_invoice>
+            <order_creditmemo>
+                <totals>
+                    <fee>
+                        <class>mhub/sales_order_total_creditmemo_fee</class>
+                    </fee>
+                    <discount>
+                        <class>mhub/sales_order_total_creditmemo_discount</class>
+                    </discount>
+                </totals>
+            </order_creditmemo>
         </sales>
         <fieldsets>
+            <sales_convert_quote_address>
+                <fee_amount>
+                    <to_order>*</to_order>
+                </fee_amount>
+                <base_fee_amount>
+                    <to_order>*</to_order>
+                </base_fee_amount>
+                <discount_amount>
+                    <to_order>*</to_order>
+                </discount_amount>
+                <base_discount_amount>
+                    <to_order>*</to_order>
+                </base_discount_amount>
+            </sales_convert_quote_address>
             <sales_convert_quote_item>
                 <mhub_product_id>
                     <to_order_item>*</to_order_item>
@@ -150,6 +196,26 @@
                 </mhub_product_manufacturer>
             </sales_convert_order_item>
         </fieldsets>
+        <pdf>
+            <totals>
+                <fee translate="title" module="mhub">
+                    <title>Fee Amount</title>
+                    <source_field>fee_amount</source_field>
+                    <font_size>7</font_size>
+                    <display_zero>0</display_zero>
+                    <sort_order>650</sort_order>
+                    <amount_prefix></amount_prefix>
+                </fee>
+                <discount translate="title" module="mhub">
+                    <title>Discount Amount</title>
+                    <source_field>discount_amount</source_field>
+                    <font_size>7</font_size>
+                    <display_zero>0</display_zero>
+                    <sort_order>660</sort_order>
+                    <amount_prefix></amount_prefix>
+                </discount>
+            </totals>
+        </pdf>
         <template>
             <email>
                 <mhub_error_email_template translate="label" module="mhub">
@@ -213,6 +279,22 @@
                     </epicom_mhub_sales_order_place_after>
                 </observers>
             </sales_order_place_after>
+            <sales_order_invoice_save_after>
+                <observers>
+                    <epicom_mhub_sales_order_invoice_save_after>
+                        <class>mhub/observer</class>
+                        <method>invoiceSaveAfter</method>
+                    </epicom_mhub_sales_order_invoice_save_after>
+                </observers>
+            </sales_order_invoice_save_after>
+            <sales_order_creditmemo_save_after>
+                <observers>
+                    <epicom_mhub_sales_order_creditmemo_save_after>
+                        <class>mhub/observer</class>
+                        <method>creditmemoSaveAfter</method>
+                    </epicom_mhub_sales_order_creditmemo_save_after>
+                </observers>
+            </sales_order_creditmemo_save_after>
         </events>
     </global>
     <admin>
@@ -264,6 +346,13 @@
                 </args>
             </mhub>
         </routers>
+        <layout>
+            <updates>
+                <mhub>
+                    <file>epicom/mhub.xml</file>
+                </mhub>
+            </updates>
+        </layout>
         <translate>
             <modules>
                 <Epicom_MHub>
@@ -464,6 +553,12 @@
                 <delivered_notified>1</delivered_notified>
             </complete>
         </mhub>
+        <sales>
+            <totals_sort>
+                <fee>15</fee>
+                <discount>16</discount>
+            </totals_sort>
+        </sales>
     </default>
 </config>
 

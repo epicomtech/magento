@@ -41,7 +41,9 @@ class Epicom_MHub_ProviderController extends Epicom_MHub_Controller_Action
             $this->_jsonData ['dataCriacao'],
             $this->_jsonData ['itens'],
             $this->_jsonData ['destinatario'],
-            $this->_jsonData ['entrega']
+            $this->_jsonData ['entrega'],
+            $this->_jsonData ['valorDesconto'],
+            $this->_jsonData ['valorJuros']
         );
 
         $this->getResponse ()->setBody (json_encode ($result));
