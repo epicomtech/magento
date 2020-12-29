@@ -80,12 +80,12 @@ class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_
 
         if (!strcmp ($mageOrder->getStatus (), $orderStatus))
         {
-            return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order has been canceled'), null /* order_has_canceled */);
+            return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order has been canceled'), null /* order_has_canceled */, 200);
         }
 
         if (!$mageOrder->canCancel ())
         {
-            return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order cannot be canceled'), null /* order_cannot_cancel */);
+            return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order cannot be canceled'), null /* order_cannot_cancel */, 200);
         }
 
         $orderComment  = Mage::getStoreConfig ('mhub/shipment/canceled_comment');
@@ -155,7 +155,7 @@ class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_
 
         if (!$mageOrder->canShip ())
         {
-            return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order has shipped'), null /* order_has_shipped */);
+            return $this->_error ($mhubOrderStatus, Mage::helper ('mhub')->__('Order has shipped'), null /* order_has_shipped */, 200);
         }
 
         $itemsQty = array ();
