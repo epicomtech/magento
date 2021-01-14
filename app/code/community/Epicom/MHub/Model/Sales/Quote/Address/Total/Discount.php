@@ -6,7 +6,7 @@
  */
 
 class Epicom_MHub_Model_Sales_Quote_Address_Total_Discount
-    extends Mage_Sales_Model_Quote_Address_Total_Abstract
+    extends Mage_SalesRule_Model_Quote_Discount
 {
     protected $_code = 'discount';
 
@@ -26,13 +26,25 @@ class Epicom_MHub_Model_Sales_Quote_Address_Total_Discount
 
         $quote = $address->getQuote ();
 
+        /**
+         * Cart
+         */
+        if (!Mage::app ()->getStore ()->isAdmin ())
+        {
+            $address->setCouponCode ($quote->getCouponCode ());
+
+            return Mage_SalesRule_Model_Quote_Discount::collect ($address);
+        }
+
         if (Epicom_MHub_Model_Discount::canApply ($address))
         {
             $amount  = $quote->getDiscountAmount ();
-            $discount     = Epicom_MHub_Model_Discount::getDiscount ();
+            $discount = Epicom_MHub_Model_Discount::getDiscount ();
             $balance = $discount - $amount;
 
             $balance = Epicom_MHub_Model_Discount::getBalance ();
+
+            if (!$balance) return $this;
 
             $address->setDiscountAmount ($balance);
             $address->setBaseDiscountAmount ($balance);
