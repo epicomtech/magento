@@ -215,6 +215,8 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             'postcode'   => $shipping ['cepEntrega'],
             'country_id' => 'BR',
             'telephone'  => $shipping ['telefoneEntrega'],
+            'is_default_billing' => '1',
+            'is_default_shipping' => '1'
         ));
 
         $customerAddressId = null;
