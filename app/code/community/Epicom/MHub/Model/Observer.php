@@ -96,10 +96,14 @@ class Epicom_MHub_Model_Observer
                 );
 
                 Mage::helper ('mhub')->api ($productsSkusAvailablePatchMethod, $post, 'PATCH');
+
+                Mage::getSingleton ('adminhtml/session')->addSuccess ('The product has been successfully disabled at Epicom.');
             }
             catch (Exception $e)
             {
-                throw Mage::exception ('Epicom_MHub', $e->getMessage (), $e->getCode ());
+                // throw Mage::exception ('Epicom_MHub', $e->getMessage (), $e->getCode ());
+
+                Mage::getSingleton ('adminhtml/session')->addError ($e->getMessage ());
             }
         }
     }
