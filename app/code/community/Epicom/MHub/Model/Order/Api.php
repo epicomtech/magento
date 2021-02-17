@@ -136,7 +136,11 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         $customerMode   = Mage::getStoreConfig ('mhub/quote/customer_mode');
 
         $customerName   = $recipient ['nomeDestinatario'];
-        $_customerPos   = strpos ($customerName, " ");
+        $_customerPos   = strpos ($customerName, " ") !== false
+            ? strpos ($customerName, " ") : strlen ($customerName)
+        ;
+        $customerFirst  = substr ($customerName, 0, $_customerPos);
+        $customerLast   = substr ($customerName, $_customerPos + 1);
         $customerEmail  = $recipient ['emailDestinatario'];
         $customerTaxvat = $recipient ['cpfCnpjDestinatario'];
 /*
@@ -165,8 +169,8 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 
         $mageCustomer->setTaxvat ($customerTaxvat . $taxvatSuffix)
             ->setGroupId ($customerGroup)
-            ->setFirstname (substr ($customerName, 0, $_customerPos))
-            ->setLastname  (substr ($customerName, $_customerPos + 1))
+            ->setFirstname ($customerFirst ? $customerFirst : '-')
+            ->setLastname  ($customerLast  ? $customerLast  : '-')
         ;
 
         $mageCustomer->setMode ($customerMode);
@@ -200,8 +204,8 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         }
 
         $customerAddress = Mage::getModel ('customer/address')->setData (array (
-            'firstname'  => substr ($customerName, 0, $_customerPos),
-            'lastname'   => substr ($customerName, $_customerPos + 1),
+            'firstname'  => $customerFirst ? $customerFirst : '-',
+            'lastname'   => $customerLast  ? $customerLast  : '-',
             'company'    => $shipping ['referenciaEntrega'],
             'street'     => array(
                 $shipping ['logradouroEntrega'],
@@ -275,6 +279,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 
         $mageOrder = Mage::getModel ('sales/order')->loadByIncrementId ($incrementId)
             ->setCreatedAt ($createdAt)
+            ->setData (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM,    true)
             ->setData (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID, $orderCode)
             ->setCustomerGroupId ($customerGroup)
             ->save ()
