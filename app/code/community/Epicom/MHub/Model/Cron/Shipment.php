@@ -10,6 +10,8 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
     const SHIPMENTS_POST_METHOD  = 'pedidos/{orderId}/entregas';
     const SHIPMENTS_PATCH_METHOD = 'pedidos/{orderId}/entregas/{shipmentId}';
 
+    const SHIPMENTS_EVENTS_POST_METHOD = 'pedidos/{orderId}/entregas/{shipmentId}/eventos';
+
     private function readMHubShipmentsMagento ()
     {
         $orderStatus = Mage::getStoreConfig ('mhub/order/sent_filter');
@@ -28,10 +30,8 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
             );
 
         $collection->addAttributeToFilter ('sfo.status', array ('eq' => $orderStatus));
-        /*
         $collection->addAttributeToFilter ('sfo.' . Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true));
         $collection->addAttributeToFilter ('sfo.' . Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID, array ('notnull' => true));
-        */
 
         $select = $collection->getSelect ()
             ->joinLeft(
@@ -56,7 +56,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
                 ->setExternalOrderId ($shipment->getData (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID))
                 ->setExternalShipmentId ($shipment->getData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID))
                 ->setOperation (Epicom_MHub_Helper_Data::OPERATION_OUT)
-                ->setEvent (Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_CREATED)
+                ->setEvent (Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_SENT)
                 ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
                 ->setMessage (new Zend_Db_Expr ('NULL'))
                 ->setUpdatedAt (date ('c'))
@@ -106,7 +106,9 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
         $shipmentId = $shipment->getShipmentId ();
 
         $mageShipment = Mage::getModel ('sales/order_shipment');
+
         $loaded = $mageShipment->load ($shipmentId);
+
         if (!$loaded || !$loaded->getId ())
         {
             return false;
@@ -152,6 +154,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
         }
 
         $mhubNf = Mage::getModel ('mhub/nf')->load ($mageOrder->getIncrementId (), 'order_increment_id');
+
         if ($mhubNf && $mhubNf->getId ())
         {
             $post = array_merge ($post, array (
@@ -172,7 +175,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
 
         $mageShipmentItems = Mage::getResourceModel ('sales/order_shipment_item_collection')
             ->setShipmentFilter ($mageShipment->getId ())
-            // ->addFieldToFilter ($productCodeAttribute, array ('notnull' => true))
+            ->addFieldToFilter ($productCodeAttribute, array ('notnull' => true))
         ;
 
         $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
@@ -198,6 +201,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
         /**
          * GET
          */
+        /*
         try
         {
             $shipmentsPostMethod = str_replace ('{orderId}', $extOrderId, self::SHIPMENTS_POST_METHOD);
@@ -231,6 +235,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
         {
             // nothing_here
         }
+        */
 
         /**
          * POST
@@ -241,7 +246,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
 
             $result = $this->getHelper ()->api ($shipmentsPostMethod, $post, null, $shipment->getStoreId ());
 
-            $extShipmentId = $result [0]->id;
+            $extShipmentId = $result->id;
 
             $mageShipment->setData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_IS_EPICOM, true)
                 ->setData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID, $extShipmentId)
@@ -252,15 +257,51 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
         {
             if ($e->getCode () == 409 /* Resource Exists */)
             {
-                $shipmentsPatchMethod = str_replace (array ('{orderId}', '{shipmentId}'), array ($extOrderId, $shipment->getExternalShipmentId ()), self::SHIPMENTS_PATCH_METHOD);
+                $extShipmentId = $mageOrder->getData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID);
+
+                $shipmentsPatchMethod = str_replace (array ('{orderId}', '{shipmentId}'), array ($extOrderId, $extShipmentId), self::SHIPMENTS_PATCH_METHOD);
 
                 $this->getHelper ()->api ($shipmentsPatchMethod, $post, 'PATCH', $shipment->getStoreId ());
+
+                $mageShipment->setData (Epicom_MHub_Helper_Data::SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID, $extShipmentId)->save ();
             }
             else
             {
                 throw Mage::exception ('Epicom_MHub', $e->getMessage (), $e->getCode ());
             }
         }
+
+        /**
+         * Shippped Event
+         */
+        $shipmentsEventsPostMethod = str_replace (array ('{orderId}', '{shipmentId}'), array ($extOrderId, $extShipmentId), self::SHIPMENTS_EVENTS_POST_METHOD);
+
+        $post = array (
+            'tipo'      => Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_SENT,
+            'descricao' => null,
+            'data'      => date ('c'),
+        );
+
+        Mage::helper ('mhub')->api ($shipmentsEventsPostMethod, $post);
+
+        /**
+         * Order Status
+         */
+        $mhubOrder = Mage::getModel ('mhub/order_status')
+            ->setOrderId ($shipment->getOrderId ())
+            ->setOrderIncrementId ($shipment->getOrderIncrementId ())
+            ->setOrderExternalId ($extOrderId)
+            ->setOperation (Epicom_MHub_Helper_Data::OPERATION_OUT)
+            ->setStatus (Epicom_MHub_Helper_Data::STATUS_OKAY)
+            ->setMessage (new Zend_Db_Expr ('NULL'))
+            ->setUpdatedAt (date ('c'))
+        ;
+
+        $orderStatus   = Mage::getStoreConfig ('mhub/shipment/sent_status');
+        $orderComment  = Mage::getStoreConfig ('mhub/shipment/sent_comment');
+        $orderNotified = Mage::getStoreConfigFlag ('mhub/shipment/sent_notified');
+
+        $mageOrder->addStatusToHistory ($orderStatus, $orderComment, $orderNotified)->save ();
 
         return $extShipmentId;
     }
@@ -293,11 +334,12 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
         }
 
         $result = $this->readMHubShipmentsMagento ();
+
         if (!$result) return false;
 
         $collection = $this->readMHubShipmentsCollection ();
-        $length = $collection->count ();
-        if (!$length) return false;
+
+        if (!$collection->count ()) return false;
 
         $this->updateShipments ($collection);
 

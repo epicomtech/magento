@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Epicom_MHub>
-            <version>0.1.23</version>
+            <version>0.1.24</version>
         </Epicom_MHub>
     </modules>
     <global>
@@ -419,6 +419,10 @@
                 <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runOrderStatus</model></run>
             </epicom_mhub_order_status>
+            <epicom_mhub_order_nf>
+                <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
+                <run><model>mhub/cron::runOrderNF</model></run>
+            </epicom_mhub_order_nf>
             <epicom_mhub_order_shipment>
                 <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runOrderShipment</model></run>
