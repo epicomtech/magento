@@ -139,7 +139,7 @@ class Epicom_MHub_Model_Cron_Shipment extends Epicom_MHub_Model_Cron_Abstract
 
         foreach ($mageShipment->getAllTracks () as $track)
         {
-            if (!strcmp ($track->getCarrierCode (), Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE))
+            // if (!strcmp ($track->getCarrierCode (), Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE))
             {
                 $post ['tracking'] = $track->getTrackNumber ();
                 $post ['linkRastreioEntrega'] = Mage::helper ('shipping')->getTrackingPopupUrlBySalesModel ($mageOrder);
