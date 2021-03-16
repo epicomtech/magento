@@ -16,16 +16,23 @@ class Epicom_MHub_Model_Fee extends Varien_Object
 
     public static function canApply ($address)
     {
-        return true;
+        $jsonData = self::getJsonData ();
+
+        return array_key_exists ('valorJuros', $jsonData);
     }
 
     public static function getBalance ()
     {
-        $rawData = Mage::app ()->getRequest ()->getRawBody ();
-
-        $jsonData = json_decode ($rawData, true);
+        $jsonData = self::getJsonData ();
 
         return floatval ($jsonData ['valorJuros']);
+    }
+
+    public static function getJsonData ()
+    {
+        $rawData = Mage::app ()->getRequest ()->getRawBody ();
+
+        return json_decode ($rawData, true);
     }
 }
 
