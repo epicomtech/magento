@@ -45,7 +45,7 @@ class Epicom_MHub_Model_Cart_Api extends Mage_Api_Model_Resource_Abstract
 
             if (!$mageProduct || !$mageProduct->getId ())
             {
-                $this->_fault ('product_not_exists');
+                continue; // $this->_fault ('product_not_exists');
             }
 
             $stockItem = Mage::getModel ('cataloginventory/stock_item')
