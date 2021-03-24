@@ -91,7 +91,6 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             foreach ($collection as $product)
             {
                 $productId  = $product->getId();
-                $productSku = $product->getSku();
 
                 $mhubProductCollection = Mage::getModel ('mhub/product')->getCollection ()
                     ->addFieldToFilter ('product_id', $productId)
@@ -100,10 +99,12 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
                 $mhubProduct = $mhubProductCollection->getFirstItem ();
 
-                $productCode = preg_replace ('/[^A-Za-z0-9_\-\/\.]+/', "", $product->getData ($this->_codeAttribute));
+                $productSku  = $product->getSku();
+                $productCode = $product->getData ($this->_codeAttribute);
+                $productCode = preg_replace ('/[^A-Za-z0-9_\-\.]+/', "", $productCode ? $productCode : $productSku);
 
                 $mhubProduct->setProductId ($productId)
-                    ->setExternalCode ($productCode ? $productCode : $productSku)
+                    ->setExternalCode ($productCode)
                     ->setExternalSku ($product->getData ($this->_idAttribute))
                     ->setOperation ($productOperation)
                     ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
@@ -331,8 +332,9 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
         foreach ($collection as $mageProduct)
         {
-            $productCode = preg_replace ('/[^A-Za-z0-9_\-\/\.]+/', "", $mageProduct->getData ($this->_codeAttribute));
-            if (empty ($productCode)) $productCode = $mageProduct->getSku ();
+            $productSku  = $mageProduct->getSku ();
+            $productCode = $mageProduct->getData ($this->_codeAttribute);
+            $productCode = preg_replace ('/[^A-Za-z0-9_\-\.]+/', "", $productCode ? $productCode : $productSku);
 
             $productQty = intval ($mageProduct->getQty ());
 
