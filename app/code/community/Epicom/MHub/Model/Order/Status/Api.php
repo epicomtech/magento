@@ -102,15 +102,15 @@ class Epicom_MHub_Model_Order_Status_Api extends Epicom_MHub_Model_Api_Resource_
                 throw Mage::exception ('Epicom_MHub', Mage::helper ('mhub')->__('Epicom information is empty!'), 9999);
             }
 
-            $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
+            $productCodeAttribute = Mage::getStoreConfig ('mhub/product/code');
 
             $itemsQty = 0;
 
             foreach ($response->itens as $item)
             {
-                foreach ($mageOrder->getAllItems as $orderItem)
+                foreach ($mageOrder->getAllItems () as $orderItem)
                 {
-                    if (!strcmp ($orderItem->getData ($productIdAttribute), $item->id))
+                    if (!strcmp ($orderItem->getData ($productCodeAttribute), $item->codigo))
                     {
                         $orderItem->cancel ();
 

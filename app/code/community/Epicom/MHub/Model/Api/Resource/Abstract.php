@@ -21,5 +21,10 @@ abstract class Epicom_MHub_Model_Api_Resource_Abstract extends Mage_Api_Model_Re
 
         if ($fault) $this->_fault ($fault);
     }
+
+    protected function getHelper()
+    {
+        return Mage::helper('mhub');
+    }
 }
 
