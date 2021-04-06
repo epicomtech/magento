@@ -295,6 +295,15 @@
                     </epicom_mhub_sales_order_creditmemo_save_after>
                 </observers>
             </sales_order_creditmemo_save_after>
+            <!-- Gamuza_Millennium -->
+            <gamuza_millennium_nf_after>
+                <observers>
+                    <epicom_mhub_gamuza_millennium_nf_after>
+                        <class>mhub/observer</class>
+                        <method>gamuzaMillenniumNfAfter</method>
+                    </epicom_mhub_gamuza_millennium_nf_after>
+                </observers>
+            </gamuza_millennium_nf_after>
         </events>
     </global>
     <admin>

@@ -276,6 +276,32 @@ class Epicom_MHub_Model_Observer
         }
     }
 
+    public function gamuzaMillenniumNfAfter (Varien_Event_Observer $observer)
+    {
+        $event = $observer->getEvent ();
+
+        $nf = Mage::getModel ('mhub/nf')->load ($event->getOrderIncrementId(), 'order_increment_id');
+
+        if (!$nf || !$nf->getId ())
+        {
+            $nf->setOrderIncrementId ($event->getOrderIncrementId ())
+                ->setWebsiteId ($event->getWebsiteId ())
+                ->setStoreId ($event->getStoreId ())
+                ->setSkus ($event->getSkus ())
+                ->setNumber ($event->getNumber ())
+                ->setSeries ($event->getSeries ())
+                ->setAccessKey ($event->getAccessKey ())
+                ->setCfop ($event->getCfop ())
+                ->setLink ($event->getSefazLink ())
+                ->setIssuedAt ($event->getIssuedAt ())
+                ->setOperation (Epicom_MHub_Helper_Data::OPERATION_OUT)
+                ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
+                ->setUpdatedAt (date ('c'))
+                ->save()
+            ;
+        }
+    }
+
     public function invoiceSaveAfter (Varien_Event_Observer $observer)
     {
         $invoice = $observer->getEvent ()->getInvoice ();
