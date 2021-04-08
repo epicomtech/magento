@@ -8,7 +8,7 @@
 $installer = $this;
 $installer->startSetup ();
 
-function updateMHubProviderTable ($installer, $model)
+function updateMHubProviderTable2 ($installer, $model)
 {
     $table = $installer->getTable ($model);
 
@@ -23,7 +23,7 @@ function updateMHubProviderTable ($installer, $model)
     ;
 }
 
-updateMHubProviderTable ($installer, Epicom_MHub_Helper_Data::PROVIDER_TABLE);
+updateMHubProviderTable2 ($installer, Epicom_MHub_Helper_Data::PROVIDER_TABLE);
 
 $installer->endSetup ();
 

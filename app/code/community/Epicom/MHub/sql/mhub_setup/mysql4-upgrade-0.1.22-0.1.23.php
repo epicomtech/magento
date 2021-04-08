@@ -8,7 +8,7 @@
 $installer = $this;
 $installer->startSetup ();
 
-function updateSalesTable ($installer, $model)
+function updateSalesTable2 ($installer, $model)
 {
     $table = $installer->getTable ($model);
 
@@ -30,7 +30,7 @@ function updateSalesTable ($installer, $model)
         ));
 }
 
-updateSalesTable ($installer, 'sales/quote');
+updateSalesTable2 ($installer, 'sales/quote');
 
 function updateSalesInvoicedTable ($installer, $model)
 {

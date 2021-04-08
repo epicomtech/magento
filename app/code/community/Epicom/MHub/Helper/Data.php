@@ -257,5 +257,40 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $postCode;
     }
+
+    public function updateProductsTimestamp ($order)
+    {
+        $paymentBillet = Mage::getStoreConfig ('mhub/payment/billet');
+
+        if (empty ($paymentBillet))
+        {
+            return false;
+        }
+
+        $paymentMethod = $order->getPayment ()->getMethod ();
+
+        if (strcmp ($paymentBillet, $paymentMethod))
+        {
+            return false;
+        }
+
+        $resource = Mage::getSingleton ('core/resource');
+
+        $write = $resource->getConnection ('core_write');
+        $table = $resource->getTableName ('catalog/product');
+
+        $orderItems = Mage::getResourceModel ('sales/order_item_collection')
+            ->setOrderFilter ($order)
+        ;
+
+        foreach ($orderItems as $item)
+        {
+            $query = sprintf ("UPDATE {$table} SET updated_at = '%s' WHERE entity_id = %s LIMIT 1",
+                date ('Y-m-d H:i:s'), $item->getProductId ()
+            );
+
+            $write->query ($query);
+        }
+    }
 }
 

@@ -197,6 +197,14 @@ class Epicom_MHub_Model_Observer
             $write->delete ($table, "store_id = {$order->getStoreId ()} AND customer_id = {$order->getCustomerId ()}");
         }
         */
+        Mage::helper ('mhub')->updateProductsTimestamp ($order);
+    }
+
+    public function salesOrderCancelAfter (Varien_Event_Observer $observer)
+    {
+        $order = $observer->getOrder ();
+
+        Mage::helper ('mhub')->updateProductsTimestamp ($order);
     }
 
     /**
