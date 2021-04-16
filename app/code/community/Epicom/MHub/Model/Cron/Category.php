@@ -235,7 +235,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 
                 foreach ($options as $_option)
                 {
-                    if (!is_string ($_option ['value']))
+                    if (!is_string ($_option ['value']) || !is_string ($_option ['label']))
                     {
                         continue; // skip
                     }
