@@ -258,6 +258,38 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
         return $postCode;
     }
 
+    public function validateTaxvat ($taxvat)
+    {
+        $taxvat = preg_replace ('/[^0-9]/is', '', $taxvat);
+
+        if (strlen($taxvat) != 11)
+        {
+            return false;
+        }
+
+        if (preg_match('/(\d)\1{10}/', $taxvat))
+        {
+            return false;
+        }
+
+        for ($t = 9; $t < 11; $t++)
+        {
+            for ($d = 0, $c = 0; $c < $t; $c++)
+            {
+                $d += $taxvat[$c] * (($t + 1) - $c);
+            }
+
+            $d = ((10 * $d) % 11) % 10;
+
+            if ($taxvat[$c] != $d)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function updateProductsTimestamp ($order)
     {
         $paymentBillet = Mage::getStoreConfig ('mhub/payment/billet');

@@ -143,6 +143,11 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         $customerLast   = substr ($customerName, $_customerPos + 1);
         $customerEmail  = $recipient ['emailDestinatario'];
         $customerTaxvat = $recipient ['cpfCnpjDestinatario'];
+
+        if (!$this->getHelper ()->validateTaxvat ($customerTaxvat))
+        {
+            return $this->_error ($mhubOrder, $this->getHelper ()->__('Invalid customer taxvat: %s', $customerTaxvat), null /* invalid_customer_taxvat */);
+        }
 /*
         $mageCustomer = Mage::getModel ('customer/customer')
             ->setWebsiteId ($defaultStore->getWebsiteId ())
