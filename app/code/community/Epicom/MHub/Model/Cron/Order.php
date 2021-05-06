@@ -15,8 +15,9 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
     protected $_providers = array ();
 
-    private function readMHubOrdersMagento ()
+    private function readMHubOrdersMagento ($scopeId = null)
     {
+        $storeId = $this->getStoreConfig ('store_view', $scopeId);
         /*
         $orderStatus = Mage::getStoreConfig ('mhub/order/reserve_filter');
         */
@@ -24,7 +25,9 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         $confirmFilter = Mage::getStoreConfig ('mhub/order/confirm_filter'); // creditcard
         $erpFilter     = Mage::getStoreConfig ('mhub/order/erp_filter'); // ERP
 
-        $collection = Mage::getModel ('sales/order')->getCollection ();
+        $collection = Mage::getModel ('sales/order')->getCollection ()
+            ->addFieldToFilter('main_table.store_id', array ('eq' => $storeId))
+        ;
 
         if ($this->_orderId)
         {
@@ -39,7 +42,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             $collection->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true));
         }
 
-        $select = $collection->getSelect ()
+        $collection->getSelect ()
             ->joinLeft(
                 array ('mhub' => Epicom_MHub_Helper_Data::ORDER_TABLE),
                 'main_table.entity_id = mhub.order_id',
@@ -56,6 +59,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             $mhubOrder->setOrderId ($orderId)
                 ->setWebsiteId ($websiteId)
                 ->setStoreId ($order->getStoreId ())
+                ->setScopeId ($scopeId)
                 ->setOrderIncrementId ($order->getIncrementId())
                 ->setOrderExternalId ($order->getExtOrderId())
                 ->setUpdatedAt (date ('c'))
@@ -69,10 +73,15 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
         return true;
     }
 
-    private function readMHubOrdersCollection ()
+    private function readMHubOrdersCollection ($scopeId = null)
     {
-        $collection = Mage::getModel ('mhub/order')->getCollection ();
-        $select = $collection->getSelect ()->where ('synced_at < updated_at OR synced_at IS NULL');
+        $storeId = $this->getStoreConfig ('store_view', $scopeId);
+
+        $collection = Mage::getModel ('mhub/order')->getCollection ()
+            ->addFieldToFilter ('store_id', array ('eq' => $storeId))
+        ;
+
+        $collection->getSelect ()->where ('synced_at < updated_at OR synced_at IS NULL');
 
         if ($this->_orderId)
         {
@@ -125,15 +134,11 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
     {
         $orderId = $order->getOrderId ();
 
-        $mageOrder = Mage::getModel ('sales/order');
-        $loaded = $mageOrder->load ($orderId);
-        if (!$loaded || !$loaded->getId ())
+        $mageOrder = Mage::getModel ('sales/order')->load ($orderId);
+
+        if (!$mageOrder || !$mageOrder->getId ())
         {
             return false;
-        }
-        else
-        {
-            $mageOrder = $loaded;
         }
 
         /**
@@ -314,7 +319,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
             -- $itemsPos;
         }
 
-        $post ['valorJuros'] = $mageOrder->getBaseFeeAmount ();
+        $post ['valorJuros'] = floatval ($mageOrder->getBaseFeeAmount ());
 
         $baseDiscountAmount = abs ($mageOrder->getBaseDiscountAmount ());
 
@@ -326,7 +331,7 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
         try
         {
-            $result = $this->getHelper ()->api (self::ORDERS_POST_METHOD, $post, null, $order->getStoreId ());
+            $result = $this->getHelper ()->api (self::ORDERS_POST_METHOD, $post, null, $order->getScopeId ());
 
             $extOrderId = $result->id;
 
@@ -372,19 +377,30 @@ class Epicom_MHub_Model_Cron_Order extends Epicom_MHub_Model_Cron_Abstract
 
     public function run ()
     {
-        if (!$this->getStoreConfig ('active') || !$this->getHelper ()->isMarketplace ())
+        $collection = Mage::getModel ('core/config_data')->getCollection ()
+            ->addFieldToFilter ('path', array('eq' => Epicom_MHub_Helper_Data::XML_PATH_MHUB_SETTINGS_ACTIVE))
+            ->addValueFilter(1)
+        ;
+
+        foreach ($collection as $config)
         {
-            return false;
+            $scopeId = $config->getScopeId ();
+
+            if (!$this->getHelper ()->isMarketplace ($scopeId))
+            {
+                continue;
+            }
+
+            $result = $this->readMHubOrdersMagento ($scopeId);
+
+            if (!$result) continue;
+
+            $collection = $this->readMHubOrdersCollection ($scopeId);
+
+            if (!$collection->getSize ()) continue;
+
+            $this->updateOrders ($collection);
         }
-
-        $result = $this->readMHubOrdersMagento ();
-        if (!$result) return false;
-
-        $collection = $this->readMHubOrdersCollection ();
-        $length = $collection->count ();
-        if (!$length) return false;
-
-        $this->updateOrders ($collection);
 
         return true;
     }

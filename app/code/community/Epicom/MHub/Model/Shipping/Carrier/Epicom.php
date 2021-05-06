@@ -12,10 +12,16 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
     protected $_code = self::CODE;
 
+    protected $_marketplaceCollection = null;
+
+    protected $_displayRates   = null;
     protected $_uniqueShipping = null;
 
     public function _construct ()
     {
+        $this->_marketplaceCollection = Mage::getModel ('mhub/config')->getMarketplaceCollection ();
+
+        $this->_displayRates   = Mage::getStoreConfigFlag ('mhub/cart/display_rates');
         $this->_uniqueShipping = Mage::getStoreConfigFlag ('mhub/cart/unique_shipping');
     }
 
@@ -65,13 +71,22 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
             return $result;
         }
-
+/*
         if (!Mage::helper ('mhub')->isMarketplace ()) return false;
+*/
+        if (!$this->_marketplaceCollection->getSize ()) return false;
+
+        foreach ($this->_marketplaceCollection as $marketplace)
+        {
+
+        $scopeId = $marketplace->getScopeId ();
+
+        $storeId = $this->getStoreConfig ('store_view', $scopeId);
 
         /**
          * via Magento Cart
          */
-        $unique = Mage::getStoreConfigFlag ('mhub/cart/unique_shipping');
+        $unique = Mage::getStoreConfigFlag ('mhub/cart/unique_shipping', $scopeId);
         /*
         if (is_array ($jsonData) && !strcmp ($appRequest->getActionName (), 'calcularCarrinho'))
         {
@@ -81,7 +96,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
         try
         {
-		    $shipping = Mage::getModel ('mhub/config')->getShippingPrices ($request, $postCode, $unique);
+		    $shipping = Mage::getModel ('mhub/config')->getShippingPrices ($request, $postCode, $unique, $scopeId);
         }
         catch (Exception $e)
         {
@@ -187,7 +202,12 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
         $this->_updateQuotes ($request, $result);
 
-		return $result;
+        } // _marketplaceCollection
+
+        if ($this->_displayRates)
+        {
+            return $result;
+        }
 	}
 
 	public function getAllowedMethods ()

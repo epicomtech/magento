@@ -54,7 +54,7 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
          * Availability
          */
         $productsAvailabilityMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_AVAILABILITY_METHOD);
-        $productsAvailabilityResult = $this->getHelper ()->api ($productsAvailabilityMethod, null, null, $product->getStoreId ());
+        $productsAvailabilityResult = $this->getHelper ()->api ($productsAvailabilityMethod, null, null, $product->getScopeId ());
 
         if (empty ($productsAvailabilityResult))
         {
@@ -288,7 +288,7 @@ class Epicom_MHub_Model_Cron_Product_Availability extends Epicom_MHub_Model_Cron
 
         try
         {
-            Mage::helper ('mhub')->api (self::PRODUCTS_TRACKING_METHOD, $post, 'PUT', $product->getStoreId ());
+            Mage::helper ('mhub')->api (self::PRODUCTS_TRACKING_METHOD, $post, 'PUT', $product->getScopeId ());
         }
         catch (Exception $e)
         {

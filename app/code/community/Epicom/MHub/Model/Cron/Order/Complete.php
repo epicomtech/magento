@@ -9,7 +9,9 @@ class Epicom_MHub_Model_Cron_Order_Complete extends Epicom_MHub_Model_Cron_Abstr
 {
     public function run ()
     {
-        if (!$this->getHelper ()->isMarketplace ())
+        $collection = Mage::getModel ('mhub/config')->getMarketplaceCollection ();
+
+        if (!$collection->getSize ())
         {
             return false;
         }
@@ -17,13 +19,20 @@ class Epicom_MHub_Model_Cron_Order_Complete extends Epicom_MHub_Model_Cron_Abstr
         $deliveredStatus = Mage::getStoreConfig ('mhub/shipment/delivered_status');
 
         $collection = Mage::getModel ('sales/order')->getCollection ()
-            /*
             ->addAttributeToFilter (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true))
-            */
             ->addAttributeToFilter ('main_table.status', array ('in' => array ($deliveredStatus)))
         ;
 
-        $collection->getSelect ()->where ('is_epicom IS NOT NULL OR ext_order_id IS NOT NULL');
+        $collection->getSelect ()->where ('is_epicom IS NOT NULL AND ext_order_id IS NOT NULL');
+
+        $collection->getSelect ()
+            ->join(
+                array ('mhub' => Epicom_MHub_Helper_Data::ORDER_STATUS_TABLE),
+                'main_table.entity_id = mhub.order_id',
+                array ('scope_id' => 'mhub.scope_id')
+            )
+            ->where ('mhub.operation = ?', Epicom_MHub_Helper_Data::OPERATION_OUT)
+        ;
 
         foreach ($collection as $order)
         {

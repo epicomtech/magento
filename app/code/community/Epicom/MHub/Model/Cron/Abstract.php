@@ -51,9 +51,9 @@ class Epicom_MHub_Model_Cron_Abstract
         return $result;
     }
 
-    protected function getStoreConfig ($key)
+    protected function getStoreConfig ($key, $storeId = null)
     {
-        return $this->getHelper ()->getStoreConfig ($key);
+        return $this->getHelper ()->getStoreConfig ($key, $storeId);
     }
 
     protected function getCoreResource ()

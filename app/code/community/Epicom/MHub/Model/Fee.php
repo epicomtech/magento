@@ -18,7 +18,7 @@ class Epicom_MHub_Model_Fee extends Varien_Object
     {
         $jsonData = self::getJsonData ();
 
-        return array_key_exists ('valorJuros', $jsonData);
+        return is_array ($jsonData) && array_key_exists ('valorJuros', $jsonData);
     }
 
     public static function getBalance ()

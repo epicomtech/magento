@@ -52,6 +52,12 @@ class Epicom_MHub_Block_Adminhtml_Category_Grid extends Mage_Adminhtml_Block_Wid
             'type'    => 'options',
             'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
         ));
+        $this->addColumn('scope_id', array(
+            'header'  => Mage::helper('mhub')->__('Scope'),
+            'index'   => 'scope_id',
+            'type'    => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
+        ));
         $this->addColumn('category_id', array(
             'header'  => Mage::helper('mhub')->__('Category ID'),
             'index'   => 'category_id',

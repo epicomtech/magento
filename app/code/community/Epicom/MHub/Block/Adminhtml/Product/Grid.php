@@ -76,6 +76,12 @@ class Epicom_MHub_Block_Adminhtml_Product_Grid extends Mage_Adminhtml_Block_Widg
             'type'    => 'options',
             'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
         ));
+        $this->addColumn('scope_id', array(
+            'header'  => Mage::helper('mhub')->__('Scope'),
+            'index'   => 'scope_id',
+            'type'    => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
+        ));
         $this->addColumn('type_id', array(
             'header' => Mage::helper('mhub')->__('Type'),
             'index'  => 'type_id',

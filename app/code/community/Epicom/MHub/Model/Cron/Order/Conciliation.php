@@ -49,7 +49,9 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
 
     public function run ()
     {
-        if (!$this->getHelper ()->isMarketplace ())
+        $collection = Mage::getModel ('mhub/config')->getMarketplaceCollection ();
+
+        if (!$collection->getSize ())
         {
             return false;
         }
@@ -61,7 +63,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
             ->addAttributeToFilter ('main_table.status', array ('neq' => $cancelFilter))
         ;
 
-        $collection->getSelect ()->where ('is_epicom IS NOT NULL OR ext_order_id IS NOT NULL');
+        $collection->getSelect ()->where ('is_epicom IS NOT NULL AND ext_order_id IS NOT NULL');
 
         $collection->getSelect ()
             // ->limit (self::COLLECTION_PAGE_SIZE)
@@ -74,6 +76,15 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                 'base_shipping_amount',
                 'store_id',
             ))
+        ;
+
+        $collection->getSelect ()
+            ->join(
+                array ('mhub' => Epicom_MHub_Helper_Data::ORDER_STATUS_TABLE),
+                'main_table.entity_id = mhub.order_id',
+                array ('scope_id' => 'mhub.scope_id')
+            )
+            ->where ('mhub.operation = ?', Epicom_MHub_Helper_Data::OPERATION_OUT)
         ;
 
         $filename = tempnam ('/tmp', 'epicom_mhub-order_conciliation-');
@@ -90,6 +101,8 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                 $filename = $args ['filename'];
 
                 $productIdAttribute = $args ['product_id_attribute'];
+
+                $scopeId = $args ['row']['scope_id'];
 
                 $order = Mage::getModel ('sales/order')
                     ->setData ($args ['row'])
@@ -116,7 +129,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
 
                     $ordersInfoMethod = str_replace ('{orderId}', $extOrderId, self::ORDERS_INFO_METHOD);
 
-                    $response = $this->getHelper ()->api ($ordersInfoMethod, null, null, $order->getStoreId ());
+                    $response = $this->getHelper ()->api ($ordersInfoMethod, null, null, $scopeId);
 
                     if (empty ($response))
                     {
@@ -155,7 +168,7 @@ class Epicom_MHub_Model_Cron_Order_Conciliation extends Epicom_MHub_Model_Cron_A
                             {
                                 $shipmentsInfoMethod = str_replace ('{orderId}', $extOrderId, self::SHIPMENTS_INFO_METHOD);
 
-                                $shipmentsInfoResponse = $this->getHelper ()->api ($shipmentsInfoMethod, null, null, $order->getStoreId ());
+                                $shipmentsInfoResponse = $this->getHelper ()->api ($shipmentsInfoMethod, null, null, $scopeId);
 
                                 if (empty ($shipmentsInfoResponse)) break;
 

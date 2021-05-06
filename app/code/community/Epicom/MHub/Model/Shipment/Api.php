@@ -30,13 +30,17 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
             $this->_fault ('invalid_request_param');
         }
 
-        $websiteId = Mage::app ()->getWebsite ()->getId ();
-        $storeId   = Mage::app ()->getStore ()->getId ();
+        $scopeId = Mage::app ()->getStore ()->getId ();
+
+        $storeId = Mage::helper ('mhub')->getStoreConfig ('store_view', $scopeId);
+
+        $websiteId = Mage::app ()->getStore ($storeId)->getWebsite ()->getId ();
 
         // transaction
         $shipment = Mage::getModel ('mhub/shipment')
             ->setWebsiteId ($websiteId)
             ->setStoreId ($storeId)
+            ->setScopeId ($scopeId)
             ->setMethod ($type)
             ->setSendDate ($send_date)
             ->setParameters (json_encode ($parameters))
@@ -71,7 +75,7 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
         $helper = Mage::Helper ('mhub');
 
         $shipmentInfoMethod = str_replace (array ('{orderId}', '{shipmentId}'), array ($orderId, $shipmentId), self::ORDER_SHIPMENT_INFO_METHOD);
-        $shipmentInfoResult = $helper->api ($shipmentInfoMethod, null, null, $storeId);
+        $shipmentInfoResult = $helper->api ($shipmentInfoMethod, null, null, $scopeId);
 
         /**
          * Event Info
@@ -79,7 +83,7 @@ class Epicom_MHub_Model_Shipment_Api extends Mage_Api_Model_Resource_Abstract
         $helper = Mage::Helper ('mhub');
 
         $shipmentEventMethod = str_replace (array ('{orderId}', '{shipmentId}', '{eventId}'), array ($orderId, $shipmentId, $eventId), self::ORDER_SHIPMENT_EVENT_METHOD);
-        $shipmentEventResult = $helper->api ($shipmentEventMethod, null, null, $storeId);
+        $shipmentEventResult = $helper->api ($shipmentEventMethod, null, null, $scopeId);
 
         /**
          * Transaction

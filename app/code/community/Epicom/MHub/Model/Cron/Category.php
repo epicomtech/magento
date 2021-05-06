@@ -15,6 +15,13 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 
     const DEFAULT_QUEUE_LIMIT = 60;
 
+    protected $_marketplaceCollection = null;
+
+    public function _construct ()
+    {
+        $this->_marketplaceCollection = $this->getConfig ()->getMarketplaceCollection ();
+    }
+
     private function readMHubCategoriesMagento ()
     {
         $collection = Mage::getModel ('catalog/category')->getCollection ()
@@ -22,7 +29,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
             ->addAttributeToFilter (Epicom_MHub_Helper_Data::CATEGORY_ATTRIBUTE_ISACTIVE, array ('eq' => true))
         ;
 
-        $select = $collection->getSelect ()
+        $collection->getSelect ()
             ->joinLeft(
                 array ('mhub' => Epicom_MHub_Helper_Data::CATEGORY_TABLE),
                 'e.entity_id = mhub.category_id',
@@ -91,8 +98,9 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
         $limit = intval (Mage::getStoreConfig ('mhub/queue/category'));
 
         $collection = Mage::getModel ('mhub/category')->getCollection ();
-        $select = $collection->getSelect ();
-        $select->where ('synced_at < updated_at OR synced_at IS NULL')
+
+        $collection->getSelect ()
+            ->where ('synced_at < updated_at OR synced_at IS NULL')
                // ->group ('category_id')
                // ->order ('updated_at DESC')
             ->limit ($limit ? $limit : self::DEFAULT_QUEUE_LIMIT)
@@ -128,15 +136,11 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
     {
         $categoryId = $category->getCategoryId ();
 
-        $mageCategory = Mage::getModel ('catalog/category');
-        $loaded = $mageCategory->load ($categoryId);
-        if (!$loaded || !$loaded->getId ())
+        $mageCategory = Mage::getModel ('catalog/category')->load ($categoryId);
+
+        if (!$mageCategory || !$mageCategory->getId ())
         {
             return false;
-        }
-        else
-        {
-            $mageCategory = $loaded;
         }
 
         $parentCategory = $mageCategory->getParentCategory ();
@@ -172,13 +176,16 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
         /**
          * Attributes
          */
+        /*
         if (!$this->getHelper ()->isMarketplace ()) return true;
+        */
+        if (!$this->_marketplaceCollection->getSize ()) return true;
 
         $categoriesAttributesMethod = str_replace ('{categoryId}', $mageCategory->getId (), self::CATEGORIES_ATTRIBUTES_METHOD);
 
         $collection = Mage::getResourceModel ('eav/entity_attribute_collection');
         $collection->setAttributeSetFilter ($category->getAttributeSetId())
-            ->getSelect()->reset(Zend_Db_Select::WHERE) // just join
+            // ->getSelect()->reset(Zend_Db_Select::WHERE) // just join
         ;
 
         $entityTypeId = Mage::getModel('eav/entity')
@@ -209,6 +216,13 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
 
         if ($collection->count() > 0)
         {
+            foreach ($this->_marketplaceCollection as $marketplace)
+            {
+
+            $scopeId = $marketplace->getScopeId ();
+
+            $storeId = $this->getStoreConfig ('store_view', $scopeId);
+
             foreach ($collection as $attribute)
             {
                 $options = array();
@@ -264,7 +278,7 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
                     'atributoValorLivre' => count ($values) == 0 /* !$attribute->getSourceModel () */ ? true : false
                 );
 
-                $this->getHelper ()->api (self::ATTRIBUTES_METHOD, $post, 'PUT', $category->getStoreId ());
+                $this->getHelper ()->api (self::ATTRIBUTES_METHOD, $post, 'PUT', $scopeId /* $category->getStoreId () */);
 
                 /**
                  * Associations
@@ -285,8 +299,10 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
                     'CodigosValores'  => $allowedValues,
                 );
 
-                $this->getHelper ()->api ($categoriesAttributesMethod, $post, 'PUT', $category->getStoreId ());
+                $this->getHelper ()->api ($categoriesAttributesMethod, $post, 'PUT', $scopeId /* $category->getStoreId () */);
             }
+
+            } // _marketplaceCollection
         }
 
         return true;
@@ -312,11 +328,12 @@ class Epicom_MHub_Model_Cron_Category extends Epicom_MHub_Model_Cron_Abstract
         if (!$this->getStoreConfig ('active')) return false;
 
         $result = $this->readMHubCategoriesMagento ();
+
         if (!$result) return false;
 
         $collection = $this->readMHubCategoriesCollection ();
-        $length = $collection->count ();
-        if (!$length) return false;
+
+        if (!$collection->getSize ()) return false;
 
         $this->updateCategories ($collection);
 

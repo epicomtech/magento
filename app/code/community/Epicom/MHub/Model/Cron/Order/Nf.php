@@ -14,11 +14,30 @@ class Epicom_MHub_Model_Cron_Order_Nf extends Epicom_MHub_Model_Cron_Abstract
 
     private function readMHubNFsCollection ()
     {
-        $collection = Mage::getModel ('mhub/nf')->getCollection ();
+        $collection = Mage::getModel ('mhub/nf')->getCollection ()
+            ->addFieldToFilter ('operation', array ('eq' => Epicom_MHub_Helper_Data::OPERATION_OUT))
+        ;
 
         $collection->getSelect ()
-            ->where ('synced_at < updated_at OR synced_at IS NULL')
+            ->join(
+                array ('sfo' => Mage::getSingleton ('core/resource')->getTableName ('sales_flat_order')),
+                'main_table.order_increment_id = sfo.increment_id',
+                array (
+                    'order_increment_id' => 'sfo.increment_id',
+                    Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM,
+                    Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID,
+                )
+            )
+            ->where ('synced_at < main_table.updated_at OR synced_at IS NULL')
+            ->where ('main_table.status <> ?', Epicom_MHub_Helper_Data::STATUS_OKAY)
         ;
+
+        $confirmStatus = Mage::getStoreConfig ('mhub/order/confirm_filter');
+        $sentStatus    = Mage::getStoreConfig ('mhub/order/sent_filter');
+
+        $collection->addFieldToFilter ('sfo.status', array ('in' => array ($confirmStatus, $sentStatus)));
+        $collection->addFieldToFilter ('sfo.' . Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM, array ('notnull' => true));
+        $collection->addFieldToFilter ('sfo.' . Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID, array ('notnull' => true));
 
         return $collection;
     }

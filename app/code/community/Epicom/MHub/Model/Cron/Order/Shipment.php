@@ -24,11 +24,14 @@ class Epicom_MHub_Model_Cron_Order_Shipment extends Epicom_MHub_Model_Cron_Abstr
         Epicom_MHub_Helper_Data::API_SHIPMENT_EVENT_CANCELED
     );
 
-    private function readMHubOrderShipmentsCollection ()
+    private function readMHubOrderShipmentsCollection ($scopeId = null)
     {
+        $storeId = $this->getStoreConfig ('store_view', $scopeId);
+
         $limit = intval (Mage::getStoreConfig ('mhub/queue/shipment'));
 
         $collection = Mage::getModel ('mhub/shipment')->getCollection ()
+            ->addFieldToFilter ('store_id', array ('eq' => $storeId))
             ->addFieldToFilter ('event', array ('in' => $this->_events))
         ;
 
@@ -88,6 +91,7 @@ class Epicom_MHub_Model_Cron_Order_Shipment extends Epicom_MHub_Model_Cron_Abstr
 
         $websiteId  = $shipment->getWebsiteId ();
         $storeId    = $shipment->getStoreId ();
+        $scopeId    = $shipment->getScopeId ();
 
         /**
          * Order Info
@@ -110,7 +114,7 @@ class Epicom_MHub_Model_Cron_Order_Shipment extends Epicom_MHub_Model_Cron_Abstr
         $helper = Mage::Helper ('mhub');
 
         $shipmentInfoMethod = str_replace (array ('{orderId}', '{shipmentId}'), array ($orderId, $shipmentId), self::ORDER_SHIPMENT_INFO_METHOD);
-        $shipmentInfoResult = $helper->api ($shipmentInfoMethod, null, null, $storeId);
+        $shipmentInfoResult = $helper->api ($shipmentInfoMethod, null, null, $scopeId);
 
         /**
          * Event Info
@@ -118,7 +122,7 @@ class Epicom_MHub_Model_Cron_Order_Shipment extends Epicom_MHub_Model_Cron_Abstr
         $helper = Mage::Helper ('mhub');
 
         $shipmentEventMethod = str_replace (array ('{orderId}', '{shipmentId}', '{eventId}'), array ($orderId, $shipmentId, $eventId), self::ORDER_SHIPMENT_EVENT_METHOD);
-        $shipmentEventResult = $helper->api ($shipmentEventMethod, null, null, $storeId);
+        $shipmentEventResult = $helper->api ($shipmentEventMethod, null, null, $scopeId);
 
         /**
          * Transaction
@@ -154,6 +158,7 @@ class Epicom_MHub_Model_Cron_Order_Shipment extends Epicom_MHub_Model_Cron_Abstr
                 $mhubNf = Mage::getModel ('mhub/nf')
                     ->setWebsiteId ($websiteId)
                     ->setStoreId ($storeId)
+                    ->setScopeId ($scopeId)
                     ->setOrderIncrementId ($mageOrder->getIncrementId ())
                     ->setSkus (implode (',', $skus))
                     ->setNumber ($shipmentInfoResult->nfNumero)
@@ -164,7 +169,7 @@ class Epicom_MHub_Model_Cron_Order_Shipment extends Epicom_MHub_Model_Cron_Abstr
                     ->setIssuedAt ($shipmentInfoResult->nfDataEmissao)
                     ->setOperation (Epicom_MHub_Helper_Data::OPERATION_IN)
                     ->setStatus (Epicom_MHub_Helper_Data::STATUS_OKAY)
-                    ->setCreatedAt (date ('c'))
+                    ->setUpdatedAt (date ('c'))
                     ->save ();
                 ;
 
@@ -324,18 +329,30 @@ class Epicom_MHub_Model_Cron_Order_Shipment extends Epicom_MHub_Model_Cron_Abstr
 
     public function run ()
     {
-        if (!$this->getStoreConfig ('active') || !$this->getHelper ()->isMarketplace ())
-        {
-            return false;
-        }
-/*
-        $result = $this->readMHubOrderShipmentsMagento ();
-        if (!$result) return false;
-*/
-        $collection = $this->readMHubOrderShipmentsCollection ();
-        if (!$collection->getSize ()) return false;
+        $collection = Mage::getModel ('core/config_data')->getCollection ()
+            ->addFieldToFilter ('path', array('eq' => Epicom_MHub_Helper_Data::XML_PATH_MHUB_SETTINGS_ACTIVE))
+            ->addValueFilter(1)
+        ;
 
-        $this->updateOrderShipments ($collection);
+        foreach ($collection as $config)
+        {
+            $scopeId = $config->getScopeId ();
+
+            if (!$this->getHelper ()->isMarketplace ($scopeId))
+            {
+                continue;
+            }
+/*
+            $result = $this->readMHubOrderShipmentsMagento ();
+
+            if (!$result) continue;
+*/
+            $collection = $this->readMHubOrderShipmentsCollection ($scopeId);
+
+            if (!$collection->getSize ()) continue;
+
+            $this->updateOrderShipments ($collection);
+        }
 
         return true;
     }

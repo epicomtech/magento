@@ -75,15 +75,19 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         $this->_productManufacturerAttributeId = $this->getConfig ()->getAttributeId ($this->_productManufacturerAttribute);
     }
 
-    private function readMHubProductsCollection ()
+    private function readMHubProductsCollection ($scopeId = null)
     {
+        $storeId = $this->getStoreConfig('store_view', $scopeId);
+
         $limit = intval (Mage::getStoreConfig ('mhub/queue/product'));
 
         $collection = Mage::getModel ('mhub/product')->getCollection ()
             ->addFieldToFilter ('method', array ('in' => $this->_methods))
         ;
-        $select = $collection->getSelect ();
-        $select->where ('synced_at < updated_at OR synced_at IS NULL')
+
+        $collection->getSelect ()
+            ->where ('store_id = ?', $storeId)
+            ->where ('synced_at < updated_at OR synced_at IS NULL')
             ->where (sprintf ("operation = '%s' AND status != '%s'",
                 Epicom_MHub_Helper_Data::OPERATION_IN, Epicom_MHub_Helper_Data::STATUS_OKAY
             ))
@@ -174,7 +178,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
         $helper = Mage::Helper ('mhub');
 
         $productsInfoMethod = str_replace ('{productId}', $productId, self::PRODUCTS_INFO_METHOD);
-        $productsInfoResult = $helper->api ($productsInfoMethod, null, null, $product->getStoreId ());
+        $productsInfoResult = $helper->api ($productsInfoMethod, null, null, $product->getScopeId ());
 
         if (empty ($productsInfoResult))
         {
@@ -185,7 +189,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
          * SKU Info
          */
         $productsSkusMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_SKUS_METHOD);
-        $productsSkusResult = $helper->api ($productsSkusMethod, null, null, $product->getStoreId ());
+        $productsSkusResult = $helper->api ($productsSkusMethod, null, null, $product->getScopeId ());
 
         if (empty ($productsSkusResult))
         {
@@ -826,7 +830,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
                 }
 
                 $productsAvailabilityMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_AVAILABILITY_METHOD);
-                $productsAvailabilityResult = $helper->api ($productsAvailabilityMethod, null, null, $product->getStoreId ());
+                $productsAvailabilityResult = $helper->api ($productsAvailabilityMethod, null, null, $product->getScopeId ());
 
                 if (empty ($productsAvailabilityResult))
                 {
@@ -906,7 +910,7 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
         try
         {
-            $helper->api (self::PRODUCTS_TRACKING_METHOD, $post, 'PUT', $product->getStoreId ());
+            $helper->api (self::PRODUCTS_TRACKING_METHOD, $post, 'PUT', $product->getScopeId ());
         }
         catch (Exception $e)
         {
@@ -1041,18 +1045,29 @@ class Epicom_MHub_Model_Cron_Product_Input extends Epicom_MHub_Model_Cron_Abstra
 
     public function run ()
     {
-        if (!$this->getStoreConfig ('active') || !$this->getHelper ()->isMarketplace ())
-        {
-            return false;
-        }
-/*
-        $result = $this->readMHubProductsMagento ();
-        if (!$result) return false;
-*/
-        $collection = $this->readMHubProductsCollection ();
-        if (!$collection->getSize ()) return false;
+        $collection = Mage::getModel ('core/config_data')->getCollection ()
+            ->addFieldToFilter ('path', array('eq' => Epicom_MHub_Helper_Data::XML_PATH_MHUB_SETTINGS_ACTIVE))
+            ->addValueFilter(1)
+        ;
 
-        $this->updateProducts ($collection);
+        foreach ($collection as $config)
+        {
+            $scopeId = $config->getScopeId ();
+
+            if (!$this->getHelper ()->isMarketplace ($scopeId))
+            {
+                continue;
+            }
+/*
+            $result = $this->readMHubProductsMagento ();
+            if (!$result) continue;
+*/
+            $collection = $this->readMHubProductsCollection ($scopeId);
+
+            if (!$collection->getSize ()) continue;
+
+            $this->updateProducts ($collection);
+        }
 
         return true;
     }

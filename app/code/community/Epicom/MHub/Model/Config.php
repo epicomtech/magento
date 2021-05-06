@@ -131,9 +131,9 @@ class Epicom_MHub_Model_Config
         return $item->getResource ()->getTypeId ();
     }
 
-    public function getShippingPrices ($request, $postCode, $unique = false)
+    public function getShippingPrices ($request, $postCode, $unique = false, $scopeId = null)
     {
-        $productWeightMode  = Mage::getStoreConfig ('mhub/product/weight_mode');
+        $productWeightMode  = Mage::getStoreConfig ('mhub/product/weight_mode', $scopeId);
 
         $result = array ();
 
@@ -162,11 +162,11 @@ class Epicom_MHub_Model_Config
 
         if (empty ($result)) return false;
 
-        $minimumWeight = intval (Mage::getStoreConfig ('mhub/cart/minimum_weight'));
+        $minimumWeight = intval (Mage::getStoreConfig ('mhub/cart/minimum_weight', $scopeId));
 
         if ($itemsWeight < $minimumWeight) return false;
 
-        $productIdAttribute = Mage::getStoreConfig ('mhub/product/id');
+        $productIdAttribute = Mage::getStoreConfig ('mhub/product/id', $scopeId);
 
         $collection = Mage::getModel ('catalog/product')->getCollection ()
             ->addAttributeToFilter ('type_id', array ('in' => array(
@@ -195,7 +195,7 @@ class Epicom_MHub_Model_Config
 
         $id = md5 (json_encode ($post));
 
-        $cache = Mage::getStoreConfig ('mhub/cart/cache_enabled');
+        $cache = Mage::getStoreConfig ('mhub/cart/cache_enabled', $scopeId);
 
         if ($cache)
         {
@@ -208,7 +208,7 @@ class Epicom_MHub_Model_Config
 
         $uniqueParam = $unique ? 'true' : 'false';
 
-        $result = Mage::helper ('mhub')->api (self::CART_CALCULATE_METHOD . "?entregaUnica={$uniqueParam}", $post, null, $this->getStoreId ());
+        $result = Mage::helper ('mhub')->api (self::CART_CALCULATE_METHOD . "?entregaUnica={$uniqueParam}", $post, null, $scopeId);
 
         if ($unique)
         {
@@ -234,7 +234,7 @@ class Epicom_MHub_Model_Config
 
         if ($cache)
         {
-            $lifetime = Mage::getStoreConfig ('mhub/cart/cache_lifetime');
+            $lifetime = Mage::getStoreConfig ('mhub/cart/cache_lifetime', $scopeId);
 
             Mage::app ()->saveCache (serialize ($result), $id, array (self::COLLECTIONS_CACHE_TAG, $lifetime));
         }
@@ -242,9 +242,27 @@ class Epicom_MHub_Model_Config
         return $result;
     }
 
-    public function getStoreId ()
+    public function getMarketplaceCollection ()
     {
-        return Mage::app ()->getStore ()->getId ();
+        $collection = Mage::getModel ('core/config_data')->getCollection ()
+            ->addFieldToFilter ('path', array('eq' => Epicom_MHub_Helper_Data::XML_PATH_MHUB_SETTINGS_ACTIVE))
+            ->addValueFilter (1)
+        ;
+
+        $scopeIds = array ();
+
+        foreach ($collection as $config)
+        {
+            $scopeIds [] = $config->getScopeId ();
+        }
+
+        $collection = Mage::getModel ('core/config_data')->getCollection ()
+            ->addFieldToFilter ('scope_id', array ('in' => $scopeIds))
+            ->addFieldToFilter ('path',  array ('eq' => Epicom_MHub_Helper_Data::XML_PATH_MHUB_SETTINGS_MODE))
+            ->addFieldToFilter ('value', array ('eq' => Epicom_MHub_Helper_Data::API_MODE_MARKETPLACE))
+        ;
+
+        return $collection;
     }
 }
 

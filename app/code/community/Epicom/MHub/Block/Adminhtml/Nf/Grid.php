@@ -46,6 +46,12 @@ class Epicom_MHub_Block_Adminhtml_NF_Grid extends Mage_Adminhtml_Block_Widget_Gr
             'type'    => 'options',
             'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
         ));
+        $this->addColumn('scope_id', array(
+            'header'  => Mage::helper('mhub')->__('Scope'),
+            'index'   => 'scope_id',
+            'type'    => 'options',
+            'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
+        ));
 		$this->addColumn ('order_increment_id', array(
 		    'header'  => Mage::helper ('mhub')->__('Order Inc. ID'),
 		    'index'   => 'order_increment_id',

@@ -31,12 +31,16 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
             $this->_fault ('invalid_request_param');
         }
 
-        $websiteId = Mage::app ()->getWebsite ()->getId ();
-        $storeId   = Mage::app ()->getStore ()->getId ();
+        $scopeId = Mage::app ()->getStore ()->getId ();
+
+        $storeId = Mage::helper ('mhub')->getStoreConfig ('store_view', $scopeId);
+
+        $websiteId = Mage::app ()->getStore ($storeId)->getWebsite ()->getId ();
 
         $product = Mage::getModel ('mhub/product')
             ->setWebsiteId ($websiteId)
             ->setStoreId ($storeId)
+            ->setScopeId ($scopeId)
             ->setOperation (Epicom_MHub_Helper_Data::OPERATION_IN)
             ->setMethod ($type)
             ->setSendDate ($send_date)
@@ -55,13 +59,13 @@ class Epicom_MHub_Model_Product_Api extends Mage_Api_Model_Resource_Abstract
         $helper = Mage::Helper ('mhub');
 
         $productsInfoMethod = str_replace ('{productId}', $productId, self::PRODUCTS_INFO_METHOD);
-        $productsInfoResult = $helper->api ($productsInfoMethod, null, null, $storeId);
+        $productsInfoResult = $helper->api ($productsInfoMethod, null, null, $scopeId);
 
         /**
          * SKU Info
          */
         $productsSkusMethod = str_replace (array ('{productId}', '{productSku}'), array ($productId, $productSku), self::PRODUCTS_SKUS_METHOD);
-        $productsSkusResult = $helper->api ($productsSkusMethod, null, null, $storeId);
+        $productsSkusResult = $helper->api ($productsSkusMethod, null, null, $scopeId);
 
         /**
          * Load

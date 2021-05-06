@@ -119,6 +119,9 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const STATUS_OKAY    = 'okay';
     const STATUS_ERROR   = 'error';
 
+    const XML_PATH_MHUB_SETTINGS_ACTIVE = 'mhub/settings/active';
+    const XML_PATH_MHUB_SETTINGS_MODE   = 'mhub/settings/mode';
+
     const XML_PATH_MHUB_CUSTOMER_GROUP = 'mhub/customer/group';
 
     const XML_PATH_MHUB_QUOTE_TAXVAT_SUFFIX = 'mhub/quote/taxvat_suffix';

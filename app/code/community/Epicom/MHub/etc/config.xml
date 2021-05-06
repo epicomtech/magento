@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Epicom_MHub>
-            <version>0.1.24</version>
+            <version>0.1.25</version>
         </Epicom_MHub>
     </modules>
     <global>
@@ -468,6 +468,13 @@
                 <delivery_time>5</delivery_time>
                 <sallowspecific>0</sallowspecific>
             </epicom>
+            <epicom_marketplace>
+                <active>1</active>
+                <model>mhub/shipping_carrier_epicom_marketplace</model>
+                <title>Epicom Marketplace</title>
+                <name>epicom_marketplace</name>
+                <sallowspecific>0</sallowspecific>
+            </epicom_marketplace>
         </carriers>
         <customer>
             <address>
@@ -489,6 +496,7 @@
             <settings>
                 <url><![CDATA[https://sandboxmhubapi.epicom.com.br/v1/]]></url>
                 <mode>marketplace</mode>
+                <store_view>0</store_view>
                 <ssl>1</ssl>
                 <timeout>60</timeout>
             </settings>
@@ -570,6 +578,7 @@
                 <canceled_notified>1</canceled_notified>
             </shipment>
             <complete>
+                <delivered_status>delivered</delivered_status>
                 <delivered_comment>O pedido foi entregue com sucesso.</delivered_comment>
                 <delivered_notified>1</delivered_notified>
             </complete>
