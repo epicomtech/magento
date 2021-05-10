@@ -14,14 +14,12 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
 
     protected $_marketplaceCollection = null;
 
-    protected $_displayRates   = null;
     protected $_uniqueShipping = null;
 
     public function _construct ()
     {
         $this->_marketplaceCollection = Mage::getModel ('mhub/config')->getMarketplaceCollection ();
 
-        $this->_displayRates   = Mage::getStoreConfigFlag ('mhub/cart/display_rates');
         $this->_uniqueShipping = Mage::getStoreConfigFlag ('mhub/cart/unique_shipping');
     }
 
@@ -200,14 +198,18 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
             break;
         }
 
+        if (!$request->getQuoteId ())
+        {
+            $result->reset ();
+
+            break;
+        }
+
         $this->_updateQuotes ($request, $result);
 
         } // _marketplaceCollection
 
-        if ($this->_displayRates)
-        {
-            return $result;
-        }
+        return $result;
 	}
 
 	public function getAllowedMethods ()
