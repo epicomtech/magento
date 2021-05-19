@@ -20,7 +20,7 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
     protected function _prepareCollection()
     {
         $collection = Mage::getResourceModel('mhub/sales_quote_address_rate_collection')
-            ->addFieldToFilter('carrier', array('eq' => Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE))
+            // ->addFieldToFilter('carrier', array('eq' => Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE))
         ;
 
         $collection->getSelect()->join(

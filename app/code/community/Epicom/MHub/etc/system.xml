@@ -109,7 +109,7 @@
                         </sort_order>
                     </fields>
                 </epicom>
-                <epicom_marketplace translate="label" module="mhub">
+                <zzz_epicom_marketplace translate="label" module="mhub">
                     <label>Epicom Marketplace</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>1100</sort_order>
@@ -188,7 +188,7 @@
                             <show_in_store>1</show_in_store>
                         </sort_order>
                     </fields>
-                </epicom_marketplace>
+                </zzz_epicom_marketplace>
             </groups>
         </carriers>
         <payment>

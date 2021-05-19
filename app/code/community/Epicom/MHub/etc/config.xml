@@ -461,20 +461,18 @@
     <default>
         <carriers>
             <epicom>
-                <active>1</active>
                 <model>mhub/shipping_carrier_epicom</model>
                 <title>Epicom</title>
                 <name>epicom</name>
                 <delivery_time>5</delivery_time>
                 <sallowspecific>0</sallowspecific>
             </epicom>
-            <epicom_marketplace>
-                <active>1</active>
+            <zzz_epicom_marketplace>
                 <model>mhub/shipping_carrier_epicom_marketplace</model>
                 <title>Epicom Marketplace</title>
                 <name>epicom_marketplace</name>
                 <sallowspecific>0</sallowspecific>
-            </epicom_marketplace>
+            </zzz_epicom_marketplace>
         </carriers>
         <customer>
             <address>

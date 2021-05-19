@@ -9,7 +9,7 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom_Marketplace
     extends Epicom_MHub_Model_Shipping_Carrier_Epicom
     implements Mage_Shipping_Model_Carrier_Interface
 {
-    const CODE   = 'epicom_marketplace';
+    const CODE   = 'zzz_epicom_marketplace';
     const METHOD = 'shipping_method';
 
     protected $_code   = self::CODE;
@@ -68,6 +68,45 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom_Marketplace
             if ($quote->getDays () > $deliveryDays)
             {
                 $deliveryDays = $quote->getDays ();
+            }
+        }
+
+        $quote = Mage::getModel ('sales/quote')->load ($request->getQuoteId ());
+
+        if (!$quote || !$quote->getId ())
+        {
+            return false;
+        }
+
+        $address = $quote->getShippingAddress () ? $quote->getShippingAddress () : $quote->getBilllingAddress ();
+
+        $collection = $address->getShippingRatesCollection ()
+            ->addFieldToFilter ('carrier', array ('nin' => array (parent::CODE, self::CODE)))
+        ;
+
+        $collection->getSelect ()->order (sprintf ("price %s", $direction));
+
+        if (!$collection->count ())
+        {
+            return false;
+        }
+
+        foreach ($collection as $rate)
+        {
+            if (in_array ($rate->getCarrier (), array (parent::CODE, self::CODE)))
+            {
+                continue;
+            }
+
+            if (!isset ($shippingDays))
+            {
+                $deliveryPrice += $rate->getPrice ();
+                $shippingDays   = preg_replace ('[\D]', "", $rate->getMethodTitle ());
+
+                if ($shippingDays > $deliveryDays)
+                {
+                    $deliveryDays = $shippingDays;
+                }
             }
         }
 
