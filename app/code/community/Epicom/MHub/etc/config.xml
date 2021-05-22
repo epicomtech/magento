@@ -466,13 +466,8 @@
                 <name>epicom</name>
                 <delivery_time>5</delivery_time>
                 <sallowspecific>0</sallowspecific>
+                <sort_order>1000</sort_order>
             </epicom>
-            <zzz_epicom_marketplace>
-                <model>mhub/shipping_carrier_epicom_marketplace</model>
-                <title>Epicom Marketplace</title>
-                <name>epicom_marketplace</name>
-                <sallowspecific>0</sallowspecific>
-            </zzz_epicom_marketplace>
         </carriers>
         <customer>
             <address>
