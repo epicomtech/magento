@@ -513,10 +513,9 @@
                 -->
                 <summary>mhub_product_summary</summary>
                 <url>mhub_product_url</url>
-                <!--
-                <out_of_line>mhub_product_out_of_line</out_of_line>
-                -->
-                <manufacturer>manufacturer</manufacturer><!-- mhub_product_manufacturer -->
+                <description>description</description>
+                <!-- mhub_product_manufacturer -->
+                <manufacturer>manufacturer</manufacturer>
                 <model>mhub_product_model</model>
                 <offer_title>mhub_product_offer_title</offer_title>
                 <height>mhub_product_height</height>

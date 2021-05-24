@@ -227,23 +227,6 @@ $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_AT
     'group'            => Mage::helper ('mhub')->__('Epicom')
 ));
 
-$installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_OUT_OF_LINE,  array(
-    'type'             => 'int',
-    'label'            => Mage::helper ('mhub')->__('Product Out Of Line'),
-    'input'            => 'select',
-    'source'           => 'eav/entity_attribute_source_boolean',
-    'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-    'visible'          => true,
-    'required'         => false,
-    'user_defined'     => true,
-    'searchable'       => false,
-    'filterable'       => false,
-    'comparable'       => false,
-    'visible_on_front' => false,
-    'unique'           => false,
-    'group'            => Mage::helper ('mhub')->__('Epicom')
-));
-
 $installer->addAttribute ('catalog_product', Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_MANUFACTURER,  array(
     'type'             => 'varchar',
     'label'            => Mage::helper ('mhub')->__('Product Manufacturer'),

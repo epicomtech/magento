@@ -20,7 +20,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
     protected $_codeAttribute      = null;
     protected $_modelAttribute     = null;
     protected $_eanAttribute       = null;
-    // protected $_outOfLineAttribute = null;
+    protected $_descriptionAttribute = null;
     protected $_offerTitleAttribute = null;
     protected $_heightAttribute    = null;
     protected $_widthAttribute     = null;
@@ -36,7 +36,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         $this->_codeAttribute      = Mage::getStoreConfig ('mhub/product/code');
         $this->_modelAttribute     = Mage::getStoreConfig ('mhub/product/model');
         $this->_eanAttribute       = Mage::getStoreConfig ('mhub/product/ean');
-        // $this->_outOfLineAttribute = Mage::getStoreConfig ('mhub/product/out_of_line');
+        $this->_descriptionAttribute = Mage::getStoreConfig ('mhub/product/description');
         $this->_offerTitleAttribute = Mage::getStoreConfig ('mhub/product/offer_title');
         $this->_heightAttribute    = Mage::getStoreConfig ('mhub/product/height');
         $this->_widthAttribute     = Mage::getStoreConfig ('mhub/product/width');
@@ -186,7 +186,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             'codigo'          => $product->getExternalCode (),
             'nome'            => $mageProduct->getName (),
             'nomeReduzido'    => substr ($mageProduct->getData ($this->_offerTitleAttribute), 0, 60), // $mageProduct->getShortDescription (),
-            'descricao'       => $mageProduct->getDescription (),
+            'descricao'       => strval ($mageProduct->getData ($this->_descriptionAttribute)), // $mageProduct->getDescription (),
             'codigoCategoria' => $mageCategoryId,
             'codigoMarca'     => $mageProduct->getData ($brandAttribute),
             'palavrasChave'   => $mageProduct->getMetaKeyword (),
@@ -291,7 +291,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 $this->_codeAttribute,
                 $this->_modelAttribute,
                 $this->_eanAttribute,
-                // $this->_outOfLineAttribute,
+                $this->_descriptionAttribute,
                 $this->_offerTitleAttribute,
                 $this->_heightAttribute,
                 $this->_widthAttribute,
@@ -357,7 +357,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 'codigo'          => $productCode,
                 'modelo'          => $mageProduct->getData ($this->_modelAttribute),
                 'ean'             => $mageProduct->getData ($this->_eanAttribute),
-                'foraDeLinha'     => false, // boolval ($mageProduct->getData ($this->_outOfLineAttribute)),
+                'foraDeLinha'     => false,
                 'estoque'         => $productQty > 0 ? $productQty : 0,
                 'dimensoes' => array(
                     /*

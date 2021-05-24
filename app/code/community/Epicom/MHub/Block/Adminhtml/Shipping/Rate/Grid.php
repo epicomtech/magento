@@ -36,6 +36,7 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
             'sfq.entity_id = sfqa.quote_id',
             array(
                 'store_id', 'customer_email',
+                'quote_id' => 'sfq.entity_id',
 	        )
         );
 
@@ -73,6 +74,14 @@ class Epicom_MHub_Block_Adminhtml_Shipping_Rate_Grid extends Mage_Adminhtml_Bloc
             'type'   => 'number',
             'index'  => 'address_id',
             'filter_index' => 'main_table.address_id',
+        ));
+        $this->addColumn('quote_id', array(
+            'header' => Mage::helper('mhub')->__('Quote ID'),
+            'align'  => 'right',
+            'width'  => '50px',
+            'type'   => 'number',
+            'index'  => 'quote_id',
+            'filter_index' => 'sfq.entity_id',
         ));
         $this->addColumn ('store_id', array(
             'header' => Mage::helper ('mhub')->__('Store'),
