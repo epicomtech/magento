@@ -15,6 +15,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const ORDER_STATUS_TABLE    = 'epicom_mhub_order_status';
     const SHIPMENT_TABLE        = 'epicom_mhub_shipment';
     const NF_TABLE              = 'epicom_mhub_nf';
+    const MARKETPLACE_TABLE     = 'epicom_mhub_marketplace';
     const PROVIDER_TABLE        = 'epicom_mhub_provider';
     const QUOTE_TABLE           = 'epicom_mhub_quote';
     const ERROR_TABLE           = 'epicom_mhub_error';
@@ -47,6 +48,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
 
     const ORDER_ATTRIBUTE_SYNCED_IN  = 'mhub_synced_in';
     const ORDER_ATTRIBUTE_SYNCED_OUT = 'mhub_synced_out';
+    const ORDER_ATTRIBUTE_MARKETPLACE_ID = 'mhub_marketplace_id';
 
     const SHIPMENT_ATTRIBUTE_IS_EPICOM       = 'is_epicom';
     const SHIPMENT_ATTRIBUTE_EXT_SHIPMENT_ID = 'ext_shipment_id';

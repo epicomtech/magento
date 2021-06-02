@@ -19,7 +19,7 @@ class Epicom_MHub_Block_Adminhtml_Provider_Edit extends Mage_Adminhtml_Block_Wid
 		$this->_updateButton ('delete', 'label', Mage::helper ('mhub')->__('Delete Provider'));
 
 		$this->_addButton ('saveandcontinue', array(
-			'label'   => Mage::helper ('mhub')->__('Save And Continue Edit'),
+			'label'   => Mage::helper ('mhub')->__('Save and Continue Edit'),
 			'onclick' => 'saveAndContinueEdit ()',
 			'class'   => 'save',
 		), -100);

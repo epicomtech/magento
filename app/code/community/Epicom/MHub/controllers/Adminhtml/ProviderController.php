@@ -15,7 +15,7 @@ class Epicom_MHub_Adminhtml_ProviderController extends Mage_Adminhtml_Controller
 	protected function _initAction ()
 	{
 		$this->loadLayout ()->_setActiveMenu ('epicom/mhub/provider')
-            ->_addBreadcrumb (Mage::helper ('mhub')->__('Provider Manager'), Mage::helper ('mhub')->__('Provider Manager'))
+            ->_addBreadcrumb (Mage::helper ('mhub')->__('Providers Manager'), Mage::helper ('mhub')->__('Providers Manager'))
         ;
 
 		return $this;
@@ -24,7 +24,7 @@ class Epicom_MHub_Adminhtml_ProviderController extends Mage_Adminhtml_Controller
 	public function indexAction ()
 	{
 	    $this->_title ($this->__('MHub'));
-	    $this->_title ($this->__('Provider Manager'));
+	    $this->_title ($this->__('Providers Manager'));
 
 		$this->_initAction ();
 
@@ -46,7 +46,7 @@ class Epicom_MHub_Adminhtml_ProviderController extends Mage_Adminhtml_Controller
 			$this->loadLayout ();
 
 			$this->_setActiveMenu ('epicom/mhub/provider');
-			$this->_addBreadcrumb (Mage::helper('mhub')->__('Provider Manager'), Mage::helper ('mhub')->__('Provider Manager'));
+			$this->_addBreadcrumb (Mage::helper('mhub')->__('Providers Manager'), Mage::helper ('mhub')->__('Providers Manager'));
 			$this->_addBreadcrumb (Mage::helper('mhub')->__('Provider Description'), Mage::helper ('mhub')->__('Provider Description'));
 			$this->getLayout ()->getBlock ('head')->setCanLoadExtJs (true);
 			$this->_addContent ($this->getLayout ()->createBlock ('mhub/adminhtml_provider_edit'));
@@ -82,7 +82,7 @@ class Epicom_MHub_Adminhtml_ProviderController extends Mage_Adminhtml_Controller
 	    $this->loadLayout ();
 
 	    $this->_setActiveMenu ('epicom/mhub/provider');
-	    $this->_addBreadcrumb (Mage::helper ('mhub')->__('Provider Manager'), Mage::helper ('mhub')->__('Provider Manager'));
+	    $this->_addBreadcrumb (Mage::helper ('mhub')->__('Providers Manager'), Mage::helper ('mhub')->__('Providers Manager'));
 	    $this->_addBreadcrumb (Mage::helper ('mhub')->__('Provider Description'), Mage::helper ('mhub')->__('Provider Description'));
 	    $this->getLayout ()->getBlock ('head')->setCanLoadExtJs (true);
 	    $this->_addContent ($this->getLayout ()->createBlock ('mhub/adminhtml_provider_edit'));

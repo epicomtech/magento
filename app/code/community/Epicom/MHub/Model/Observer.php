@@ -280,7 +280,30 @@ class Epicom_MHub_Model_Observer
                 'index'  => 'ext_order_id',
             ), 'is_epicom');
 
+            $block->addColumnAfter ('mhub_marketplace_id', array(
+                'header'  => Mage::helper ('mhub')->__('Marketplace'),
+                'width'   => '70px',
+                'index'   => 'mhub_marketplace_id',
+                'type'    => 'options',
+                'options' => Mage::getModel ('mhub/adminhtml_system_config_source_marketplace')->toArray (),
+            ), 'ext_order_id');
+
             $block->sortColumnsByOrder ();
+        }
+    }
+
+    public function adminhtmlCatalogProductEditPrepareForm ($observer)
+    {
+        $event = $observer->getEvent ();
+        $form  = $event->getForm ();
+
+        $marketplacePrice = $form->getElement('marketplace_price');
+
+        if ($marketplacePrice)
+        {
+            $marketplacePrice->setRenderer(
+                Mage::app()->getLayout()->createBlock('mhub/adminhtml_catalog_product_edit_tab_price_group')
+            );
         }
     }
 

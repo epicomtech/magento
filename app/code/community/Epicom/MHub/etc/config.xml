@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Epicom_MHub>
-            <version>0.1.25</version>
+            <version>0.1.30</version>
         </Epicom_MHub>
     </modules>
     <global>
@@ -49,6 +49,15 @@
                     <product>
                         <table>epicom_mhub_product</table>
                     </product>
+                    <product_attribute_marketplace_price>
+                        <table>catalog_product_entity_marketplace_price</table>
+                    </product_attribute_marketplace_price>
+                    <product_index_marketplace_price>
+                        <table>catalog_product_index_marketplace_price</table>
+                    </product_index_marketplace_price>
+                    <marketplace>
+                        <table>epicom_mhub_marketplace</table>
+                    </marketplace>
                     <provider>
                         <table>epicom_mhub_provider</table>
                     </provider>
@@ -351,6 +360,14 @@
                     </epicom_mhub_adminhtml_block_html_before>
                 </observers>
             </adminhtml_block_html_before>
+            <adminhtml_catalog_product_edit_prepare_form>
+                <observers>
+                    <epicom_mhub_adminhtml_catalog_product_edit_prepare_form>
+                        <class>mhub/observer</class>
+                        <method>adminhtmlCatalogProductEditPrepareForm</method>
+                    </epicom_mhub_adminhtml_catalog_product_edit_prepare_form>
+                </observers>
+            </adminhtml_catalog_product_edit_prepare_form>
         </events>
     </adminhtml>
     <frontend>
@@ -424,6 +441,10 @@
                 <schedule><cron_expr>0 5 * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runManufacturer</model></run>
             </epicom_mhub_manufacturer>
+            <epicom_mhub_marketplace>
+                <schedule><cron_expr>0 10 * * *</cron_expr></schedule>
+                <run><model>mhub/cron::runMarketplace</model></run>
+            </epicom_mhub_marketplace>
             <epicom_mhub_provider>
                 <schedule><cron_expr>0 * * * *</cron_expr></schedule>
                 <run><model>mhub/cron::runProvider</model></run>

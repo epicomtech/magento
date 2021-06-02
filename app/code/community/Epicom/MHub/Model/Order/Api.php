@@ -32,6 +32,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         $mhubOrder = Mage::getModel ('mhub/order')->setOrderExternalId ($orderCode)
             ->setOperation (Epicom_MHub_Helper_Data::OPERATION_IN)
             ->setStatus (Epicom_MHub_Helper_Data::STATUS_PENDING)
+            ->setMarketplace ($marketplace)
             ->setUpdatedAt (date ('c'))
             ->save ()
         ;
@@ -286,6 +287,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             ->setCreatedAt ($createdAt)
             ->setData (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_IS_EPICOM,    true)
             ->setData (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_EXT_ORDER_ID, $orderCode)
+            ->setData (Epicom_MHub_Helper_Data::ORDER_ATTRIBUTE_MARKETPLACE_ID, $marketplace)
             ->setCustomerGroupId ($customerGroup)
             ->save ()
         ;

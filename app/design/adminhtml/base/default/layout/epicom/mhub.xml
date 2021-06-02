@@ -48,6 +48,11 @@
             <block type="mhub/adminhtml_nf" name="nf" />
         </reference>
     </admin_mhub_adminhtml_nf_index>
+    <admin_mhub_adminhtml_marketplace_index>
+        <reference name="content">
+            <block type="mhub/adminhtml_marketplace" name="marketplace" />
+        </reference>
+    </admin_mhub_adminhtml_marketplace_index>
     <admin_mhub_adminhtml_provider_index>
         <reference name="content">
             <block type="mhub/adminhtml_provider" name="provider" />

@@ -1,0 +1,172 @@
+<?php
+/**
+ * @package     Epicom_MHub
+ * @copyright   Copyright (c) 2021 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author      Eneias Ramos de Melo <eneias@gamuza.com.br>
+ */
+?>
+<?php
+/** @var $this Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Group */
+$_htmlId = $this->getElement()->getHtmlId();
+$_htmlClass = $this->getElement()->getClass();
+$_htmlName = $this->getElement()->getName();
+$_readonly = $this->getElement()->getReadonly();
+$_priceValueValidation = $this->getPriceValidation('validate-zero-or-greater');
+$_showWebsite= $this->isMultiWebsites();
+?>
+<tr>
+    <td class="label"><?php echo $this->getElement()->getLabel(); ?></td>
+    <td colspan="10" class="grid tier">
+    <table cellspacing="0" class="data border" id="marketplace_prices_table">
+        <?php if ($_showWebsite) : ?>
+        <col width="135" />
+        <?php endif; ?>
+        <col width="120" />
+        <col />
+        <col width="1" />
+        <thead>
+            <tr class="headings">
+                <th <?php if (!$_showWebsite): ?>style="display: none;"<?php endif; ?>><?php echo Mage::helper('catalog')->__('Website'); ?></th>
+                <th><?php echo Mage::helper('catalog')->__('Customer Group'); ?></th>
+                <th><?php echo Mage::helper('catalog')->__('Marketplace Channel'); ?></th>
+                <th><?php echo $this->getPriceColumnHeader(Mage::helper('catalog')->__('Marketplace Price')); ?></th>
+                <th><?php echo $this->getPriceColumnHeader(Mage::helper('catalog')->__('Special Price')); ?></th>
+                <th><?php echo Mage::helper('catalog')->__('Is Active'); ?></th>
+                <th class="last"><?php echo Mage::helper('catalog')->__('Action'); ?></th>
+            </tr>
+        </thead>
+        <tbody id="<?php echo $_htmlId; ?>_container"></tbody>
+        <tfoot>
+            <tr>
+                <td <?php if (!$_showWebsite): ?>style="display: none;"<?php endif; ?>></td>
+                <td colspan="4" class="a-right"><?php echo $this->getAddButtonHtml(); ?></td>
+            </tr>
+        </tfoot>
+    </table>
+
+<script type="text/javascript">
+//<![CDATA[
+var groupPriceRowTemplate = '<tr>'
+    + '<td<?php if (!$_showWebsite): ?> style="display:none"<?php endif; ?>>'
+    + '<select class="<?php echo $_htmlClass; ?> required-entry" name="<?php echo $_htmlName; ?>[{{index}}][website_id]" id="marketplace_price_row_{{index}}_website">'
+    <?php foreach ($this->getWebsites() as $_websiteId => $_info) : ?>
+    + '<option value="<?php echo $_websiteId; ?>"><?php echo $this->jsQuoteEscape($this->escapeHtml($_info['name'])); ?><?php if (!empty($_info['currency'])) : ?> [<?php echo $this->escapeHtml($_info['currency']); ?>]<?php endif; ?></option>'
+    <?php endforeach; ?>
+    + '</select></td>'
+    + '<td><select class="<?php echo $_htmlClass; ?> custgroup required-entry" name="<?php echo $_htmlName; ?>[{{index}}][cust_group]" id="marketplace_price_row_{{index}}_cust_group">'
+    <?php foreach ($this->getCustomerGroups() as $_groupId => $_groupName): ?>
+    + '<option value="<?php echo $_groupId; ?>"><?php echo $this->jsQuoteEscape($this->escapeHtml($_groupName)); ?></option>'
+    <?php endforeach; ?>
+    + '</select></td>'
+    + '<td><select class="<?php echo $_htmlClass; ?> mktplchannel required-entry" name="<?php echo $_htmlName; ?>[{{index}}][mktpl_channel]" id="marketplace_price_row_{{index}}_mktpl_channel">'
+    <?php foreach ($this->getMarketplaceChannels() as $_channelId => $_channelName): ?>
+    + '<option value="<?php echo $_channelId; ?>"><?php echo $this->jsQuoteEscape($this->escapeHtml($_channelName)); ?></option>'
+    <?php endforeach; ?>
+    + '</select></td>'
+    + '<td><input class="<?php echo $_htmlClass; ?> required-entry <?php echo $_priceValueValidation; ?>" type="text" name="<?php echo $_htmlName; ?>[{{index}}][price]" value="{{price}}" id="marketplace_price_row_{{index}}_price" /></td>'
+    + '<td><input class="<?php echo $_htmlClass; ?> required_entry <?php echo $_priceValueValidation; ?>" type="text" name="<?php echo $_htmlName; ?>[{{index}}][special]" value="{{special}}" id="marketplace_price_row_{{index}}_special" /></td>'
+    + '<td><select class="<?php echo $_htmlClass; ?> isactive required-entry" name="<?php echo $_htmlName; ?>[{{index}}][is_active]" id="marketplace_price_row_{{index}}_is_active">'
+    <?php foreach ($this->getYesNo() as $_optionId => $_optionName): ?>
+    + '<option value="<?php echo $_optionId; ?>"><?php echo $this->jsQuoteEscape($this->escapeHtml($_optionName)); ?></option>'
+    <?php endforeach; ?>
+    + '</select></td>'
+    + '<td class="last"><input type="hidden" name="<?php echo $_htmlName; ?>[{{index}}][delete]" class="delete" value="" id="marketplace_price_row_{{index}}_delete" />'
+    + '<button title="<?php echo $this->jsQuoteEscape(Mage::helper('catalog')->__('Delete Group Price')); ?>" type="button" class="scalable delete icon-btn delete-product-option" id="marketplace_price_row_{{index}}_delete_button" onclick="return marketplacePriceControl.deleteItem(event);">'
+    + '<span><?php echo $this->jsQuoteEscape(Mage::helper('catalog')->__('Delete')); ?></span></button></td>'
+    + '</tr>';
+
+var marketplacePriceControl = {
+    template: new Template(groupPriceRowTemplate, new RegExp('(^|.|\\r|\\n)({{\\s*(\\w+)\\s*}})', '')),
+    itemsCount: 0,
+    addItem : function () {
+        <?php if ($_readonly): ?>
+        if (arguments.length < 6) {
+            return;
+        }
+        <?php endif; ?>
+        var data = {
+            website_id: '<?php echo $this->getDefaultWebsite(); ?>',
+            group: '<?php echo $this->getDefaultCustomerGroup(); ?>',
+            channel: '<?php echo $this->getDefaultMarketplaceChannel(); ?>',
+            price: '',
+            special: '',
+            active: 1,
+            readOnly: false,
+            index: this.itemsCount++
+        };
+
+        if(arguments.length >= 6) {
+            data.website_id = arguments[0];
+            data.group = arguments[1];
+            data.channel = arguments[2];
+            data.price = arguments[3];
+            data.special = arguments[4];
+            data.active = arguments[5];
+        }
+        if (arguments.length == 7) {
+            data.readOnly = arguments[6];
+        }
+
+        Element.insert($('<?php echo $_htmlId; ?>_container'), {
+            bottom : this.template.evaluate(data)
+        });
+
+        $('marketplace_price_row_' + data.index + '_is_active').value = data.active;
+        $('marketplace_price_row_' + data.index + '_mktpl_channel').value = data.channel;
+        $('marketplace_price_row_' + data.index + '_cust_group').value = data.group;
+        $('marketplace_price_row_' + data.index + '_website').value    = data.website_id;
+
+        <?php if ($this->isShowWebsiteColumn() && !$this->isAllowChangeWebsite()): ?>
+        var websiteElement = $('marketplace_price_row_' + data.index + '_website');
+        var websiteCaption = websiteElement.options[websiteElement.selectedIndex].text;
+
+        websiteElement.insert({after:'<span class="website-name">' + websiteCaption + '</span>'});
+        websiteElement.hide();
+        <?php endif;?>
+
+        if (data.readOnly == '1') {
+            ['website', 'cust_group', 'mktpl_channel', 'price', 'special', 'is_active', 'delete'].each(function(element_suffix) {
+                $('marketplace_price_row_' + data.index + '_' + element_suffix).disabled = true;
+            });
+            $('marketplace_price_row_' + data.index + '_delete_button').hide();
+        }
+
+        <?php if ($_readonly): ?>
+        $('<?php echo $_htmlId; ?>_container').select('input', 'select').each(this.disableElement);
+        $('<?php echo $_htmlId; ?>_container').up('table').select('button').each(this.disableElement);
+        <?php else: ?>
+        $('<?php echo $_htmlId; ?>_container').select('input', 'select').each(function(element) {
+            Event.observe(element, 'change', element.setHasChanges.bind(element));
+        });
+        <?php endif; ?>
+    },
+    disableElement: function(element) {
+        element.disabled = true;
+        element.addClassName('disabled');
+    },
+    deleteItem: function(event) {
+        var tr = Event.findElement(event, 'tr');
+        if (tr) {
+            Element.select(tr, '.delete').each(function(element) {
+                element.value='1';
+            });
+            Element.select(tr, ['input', 'select']).each(function(element) {
+                element.hide();
+            });
+            Element.hide(tr);
+            Element.addClassName(tr, 'no-display template');
+        }
+        return false;
+    }
+};
+<?php foreach ($this->getValues() as $_item) : ?>
+marketplacePriceControl.addItem('<?php echo $_item['website_id']; ?>', '<?php echo $_item['cust_group']; ?>', '<?php echo $_item['mktpl_channel']; ?>', '<?php echo sprintf('%.2f', $_item['price']); ?>', '<?php echo $_item['special']; ?>', '<?php echo $_item['is_active']; ?>', <?php echo (int)!empty($_item['readonly']); ?>);
+<?php endforeach; ?>
+<?php if ($_readonly) : ?>
+$('<?php echo $_htmlId; ?>_container').up('table').select('button')
+    .each(marketplacePriceControl.disableElement);
+<?php endif; ?>
+//]]>
+</script>
+</td></tr>
+

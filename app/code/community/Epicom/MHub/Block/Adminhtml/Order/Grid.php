@@ -52,6 +52,12 @@ class Epicom_MHub_Block_Adminhtml_Order_Grid extends Mage_Adminhtml_Block_Widget
             'type'    => 'options',
             'options' => Mage::getSingleton ('adminhtml/system_store')->getStoreOptionHash (true),
         ));
+        $this->addColumn('marketplace', array(
+            'header'  => Mage::helper('mhub')->__('Marketplace'),
+            'index'   => 'marketplace',
+            'type'    => 'options',
+            'options' => Mage::getModel ('mhub/adminhtml_system_config_source_marketplace')->toArray (),
+        ));
         $this->addColumn('order_id', array(
             'header' => Mage::helper('mhub')->__('Order ID'),
             'index'  => 'order_id',

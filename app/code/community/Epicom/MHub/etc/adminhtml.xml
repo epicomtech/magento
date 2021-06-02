@@ -65,24 +65,29 @@
                             <sort_order>70</sort_order>
                             <action>admin_mhub/adminhtml_nf</action>
                         </nf>
+                       <marketplace translate="title" module="mhub">
+                            <title>Manage Marketplaces</title>
+                            <sort_order>80</sort_order>
+                            <action>admin_mhub/adminhtml_marketplace</action>
+                        </marketplace>
                        <provider translate="title" module="mhub">
                             <title>Manage Providers</title>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <action>admin_mhub/adminhtml_provider</action>
                         </provider>
                        <quote translate="title" module="mhub">
                             <title>Manage Quotes</title>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <action>admin_mhub/adminhtml_quote</action>
                         </quote>
                        <shipping_rate translate="title" module="mhub">
                             <title>Manage Shipping Rates</title>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <action>admin_mhub/adminhtml_shipping_rate</action>
                         </shipping_rate>
                        <product_association translate="title" module="mhub">
                             <title>Manage Product Associations</title>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <action>admin_mhub/adminhtml_product_association</action>
                         </product_association>
                         <error translate="title" module="mhub">
@@ -146,21 +151,25 @@
                                         <title>Manage NFs</title>
                                         <sort_order>70</sort_order>
                                     </nf>
+                                    <marketplace translate="title" module="mhub">
+                                        <title>Manage Marketplaces</title>
+                                        <sort_order>80</sort_order>
+                                    </marketplace>
                                     <provider translate="title" module="mhub">
                                         <title>Manage Providers</title>
-                                        <sort_order>80</sort_order>
+                                        <sort_order>90</sort_order>
                                     </provider>
                                     <quote translate="title" module="mhub">
                                         <title>Manage Quotes</title>
-                                        <sort_order>90</sort_order>
+                                        <sort_order>100</sort_order>
                                     </quote>
                                     <shipping_rate translate="title" module="mhub">
                                         <title>Manage Shipping Rates</title>
-                                        <sort_order>100</sort_order>
+                                        <sort_order>110</sort_order>
                                     </shipping_rate>
                                     <product_association translate="title" module="mhub">
                                         <title>Manage Product Assotiactions</title>
-                                        <sort_order>110</sort_order>
+                                        <sort_order>120</sort_order>
                                     </product_association>
                                     <error translate="title" module="mhub">
                                         <title>Manage Errors</title>

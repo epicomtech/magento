@@ -476,15 +476,48 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             $priceFrom = $mageProduct->getData ($this->_specialAttribute) ? $mageProduct->getData ($this->_priceAttribute) : null;
             $priceTo   = $mageProduct->getData ($this->_specialAttribute) ? $mageProduct->getData ($this->_specialAttribute) : $mageProduct->getData ($this->_priceAttribute);
 
+            $marketplaceProduct = new Varien_Object ();
+            $marketplaceProduct->addData (array(
+                'value'            => $mageProduct->getData ($this->_priceAttribute),
+                'special_price'    => $mageProduct->getData ($this->_specialAttribute),
+                'is_active'        => $mageProduct->getStatus (),
+                'marketplace_code' => null,
+            ));
+
+            $marketplaceItems = array ($marketplaceProduct);
+
+            $marketplaceCollection = Mage::getModel ('mhub/product_attribute_marketplace_price')->getCollection ()
+                ->addFieldToFilter ('main_table.entity_id', array ('eq' => $mageProduct->getId ()))
+            ;
+
+            $marketplaceCollection->getSelect ()
+                ->join(
+                    array ('marketplace' => Epicom_MHub_Helper_Data::MARKETPLACE_TABLE),
+                    'main_table.marketplace_id = marketplace.external_id',
+                    array ('code')
+                )
+            ;
+
+            foreach ($marketplaceCollection as $marketplace)
+            {
+                $marketplaceItems [] = $marketplace;
+            }
+
+            foreach ($marketplaceItems as $marketplace)
+            {
+
+            $priceFrom = $marketplace->getSpecialPrice () ? $marketplace->getValue () : null;
+            $priceTo   = $marketplace->getSpecialPrice () ? $marketplace->getSpecialPrice () : $marketplace->getValue ();
+
             $post = array(
                 'nome'       => $mageProduct->getName (),
                 /*
                 'disponivel' => boolval ($mageProduct->getIsInStock ()),
                 */
-                'disponivel' => $mageProduct->getStatus () == Mage_Catalog_Model_Product_Status::STATUS_ENABLED,
+                'disponivel' => $marketplace->getIsActive () == Mage_Catalog_Model_Product_Status::STATUS_ENABLED,
                 'precoDe'    => $priceFrom,
                 'preco'      => $priceTo,
-                'codigoMarketplace' => null, // TODO : marketplace support
+                'codigoMarketplace' => $marketplace->getCode (),
             );
 
             try
@@ -497,8 +530,6 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             {
                 if ($e->getCode () == 409 /* Resource Exists */)
                 {
-                    $marketplaceCode = null; // TODO : marketplace support
-
                     $productsSkusAvailablePatchMethod = str_replace (
                         array ('{productCode}', '{productSku}', '{marketplaceCode}'),
                         array ($product->getExternalCode (), $productCode, $marketplaceCode),
@@ -512,6 +543,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                     throw Mage::exception ('Epicom_MHub', $e->getMessage (), $e->getCode ());
                 }
             }
+
+            } // marketplaceItems
         }
 
         return $productsInfoResult->id;

@@ -37,6 +37,11 @@ class Epicom_MHub_Model_Cron
         Mage::getModel ('mhub/cron_manufacturer')->run ();
     }
 
+    public function runMarketplace ()
+    {
+        Mage::getModel ('mhub/cron_marketplace')->run ();
+    }
+
     public function runProvider ()
     {
         Mage::getModel ('mhub/cron_provider')->run ();
