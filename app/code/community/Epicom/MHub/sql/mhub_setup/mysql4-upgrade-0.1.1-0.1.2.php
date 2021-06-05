@@ -315,16 +315,17 @@ $entities = array(
 );
 
 $options = array(
-    'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,
+    'type'     => Varien_Db_Ddl_Table::TYPE_VARCHAR,
+    'length'   => 255,
     'visible'  => true,
     'required' => false
 );
 
-foreach ($entities as $_entity)
+foreach ($entities as $entity)
 {
-    $installer->addAttribute ($_entity, Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID,   $options);
-    $installer->addAttribute ($_entity, Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SKU,  $options);
-    $installer->addAttribute ($_entity, Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_CODE, $options);
+    $installer->addAttribute ($entity, Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_ID,   $options);
+    $installer->addAttribute ($entity, Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_SKU,  $options);
+    $installer->addAttribute ($entity, Epicom_MHub_Helper_Data::PRODUCT_ATTRIBUTE_CODE, $options);
 }
 
 $coreConfig = Mage::getModel ('core/config');
