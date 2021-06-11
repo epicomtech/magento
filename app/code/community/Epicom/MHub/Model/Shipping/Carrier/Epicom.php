@@ -65,6 +65,8 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                 ->setCost (0)
             ;
 
+            $this->_updateShippingInformation ($deliveryMethod, $method);
+
             $result->append ($method);
 
             return $result;
@@ -348,6 +350,21 @@ class Epicom_MHub_Model_Shipping_Carrier_Epicom extends Mage_Shipping_Model_Carr
                 'days'       => $rate->getDays (),
                 'created_at' => date ('c'),
             ));
+        }
+    }
+
+    private function _updateShippingInformation ($deliveryMethod, $method)
+    {
+        $shipping = Mage::getModel ('mhub/shipping')->load ($deliveryMethod, 'name');
+
+        if ($shipping && $shipping->getId ())
+        {
+            $method->setData ('shipping_id', $shipping->getExternalId ())
+                ->setData ('shipping_carrier_name', $shipping->getCarrier ())
+                ->setData ('shipping_service', $shipping->getName ())
+            ;
+
+            return $shipping;
         }
     }
 }

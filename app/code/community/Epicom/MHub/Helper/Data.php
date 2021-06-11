@@ -17,6 +17,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const NF_TABLE              = 'epicom_mhub_nf';
     const MARKETPLACE_TABLE     = 'epicom_mhub_marketplace';
     const PROVIDER_TABLE        = 'epicom_mhub_provider';
+    const SHIPPING_TABLE        = 'epicom_mhub_shipping';
     const QUOTE_TABLE           = 'epicom_mhub_quote';
     const ERROR_TABLE           = 'epicom_mhub_error';
 

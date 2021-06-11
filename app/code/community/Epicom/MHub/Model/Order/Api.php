@@ -85,7 +85,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
 
             if ($productQty > $stockItem->getQty () || !$stockItem->getIsInStock ())
             {
-                return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Invalid Product Qty: %s', $productQty), null /* invalid_product_qty */);
+                return $this->_error ($mhubOrder, Mage::helper ('mhub')->__('Invalid Product Qty: %s', $productCode), null /* invalid_product_qty */);
             }
 
             $productByItem = $this->_getProduct ($mageProduct->getId (), $storeId, 'id');

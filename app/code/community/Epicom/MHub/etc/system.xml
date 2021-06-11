@@ -112,6 +112,7 @@
             </groups>
         </carriers>
         <payment>
+            <tab>epicom</tab>
             <groups>
                 <epicom translate="label" module="mhub">
                     <label>Epicom</label>
