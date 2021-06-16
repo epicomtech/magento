@@ -264,6 +264,9 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             }
         }
 
+        try
+        {
+
         Mage::getModel ('checkout/cart_shipping_api')->setShippingMethod (
             $quoteId, str_repeat (Epicom_MHub_Model_Shipping_Carrier_Epicom::CODE . '_', 2) . 'provider', $storeId
         );
@@ -272,8 +275,6 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
             $quoteId, array ('method' => Epicom_MHub_Model_Payment_Method_Epicom::CODE), $storeId
         );
 
-        try
-        {
             $incrementId = Mage::getModel ('checkout/cart_api')->createOrder ($quoteId, $storeId);
         }
         catch (Exception $e)
