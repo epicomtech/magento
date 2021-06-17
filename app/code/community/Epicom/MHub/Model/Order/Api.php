@@ -145,7 +145,7 @@ class Epicom_MHub_Model_Order_Api extends Epicom_MHub_Model_Api_Resource_Abstrac
         $customerEmail  = $recipient ['emailDestinatario'];
         $customerTaxvat = $recipient ['cpfCnpjDestinatario'];
 
-        if (!$this->getHelper ()->validateTaxvat ($customerTaxvat))
+        if (!$this->getHelper ()->validateCPF ($customerTaxvat) && !$this->getHelper ()->validateCNPJ ($customerTaxvat))
         {
             return $this->_error ($mhubOrder, $this->getHelper ()->__('Invalid customer taxvat: %s', $customerTaxvat), null /* invalid_customer_taxvat */);
         }

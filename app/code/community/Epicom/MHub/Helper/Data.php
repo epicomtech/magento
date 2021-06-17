@@ -263,7 +263,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
         return $postCode;
     }
 
-    public function validateTaxvat ($taxvat)
+    public function validateCPF ($taxvat)
     {
         $taxvat = preg_replace ('/[^0-9]/is', '', $taxvat);
 
@@ -293,6 +293,46 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return true;
+    }
+
+    function validateCNPJ ($taxvat)
+    {
+	    $taxvat = preg_replace('/[^0-9]/', '', (string) $taxvat);
+
+	    if (strlen($taxvat) != 14)
+        {
+		    return false;
+        }
+
+	    if (preg_match('/(\d)\1{13}/', $taxvat))
+        {
+		    return false;
+        }
+
+	    for ($i = 0, $j = 5, $sum = 0; $i < 12; $i++)
+	    {
+		    $sum += $taxvat[$i] * $j;
+
+		    $j = ($j == 2) ? 9 : $j - 1;
+	    }
+
+	    $rest = $sum % 11;
+
+	    if ($taxvat[12] != ($rest < 2 ? 0 : 11 - $rest))
+        {
+		    return false;
+        }
+
+	    for ($i = 0, $j = 6, $sum = 0; $i < 13; $i++)
+	    {
+		    $sum += $taxvat[$i] * $j;
+
+		    $j = ($j == 2) ? 9 : $j - 1;
+	    }
+
+	    $rest = $sum % 11;
+
+	    return $taxvat[13] == ($rest < 2 ? 0 : 11 - $rest);
     }
 
     public function updateProductsTimestamp ($order)
