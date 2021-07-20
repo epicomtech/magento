@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Epicom_MHub>
-            <version>0.1.32</version>
+            <version>0.1.33</version>
         </Epicom_MHub>
     </modules>
     <global>
@@ -64,6 +64,9 @@
                     <product_association>
                         <table>epicom_mhub_product_association</table>
                     </product_association>
+                    <product_allowed>
+                        <table>epicom_mhub_product_allowed</table>
+                    </product_allowed>
                     <order>
                         <table>epicom_mhub_order</table>
                     </order>

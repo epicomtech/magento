@@ -28,6 +28,8 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
     protected $_priceAttribute     = null;
     protected $_specialAttribute   = null;
 
+    protected $_hasProductAllowed = false;
+
     public function _construct ()
     {
         parent::_construct ();
@@ -43,6 +45,11 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         $this->_lengthAttribute    = Mage::getStoreConfig ('mhub/product/length');
         $this->_priceAttribute     = Mage::getStoreConfig ('mhub/product/price');
         $this->_specialAttribute    = Mage::getStoreConfig ('mhub/product/special_price');
+
+        $collection = Mage::getModel ('mhub/product_allowed')->getCollection ();
+        $collection->getSelect ()->limit (1);
+
+        $this->_hasProductAllowed = $collection->getSize ();
     }
 
     private function readMHubProductsMagento ()
@@ -121,8 +128,9 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         $limit = intval (Mage::getStoreConfig ('mhub/queue/product'));
 
         $collection = Mage::getModel ('mhub/product')->getCollection ();
-        $select = $collection->getSelect ();
-        $select->where ('synced_at < updated_at OR synced_at IS NULL')
+
+        $collection->getSelect ()
+               ->where ('synced_at < updated_at OR synced_at IS NULL')
                ->where (sprintf ("operation = '%s'", Epicom_MHub_Helper_Data::OPERATION_OUT))
                ->where ('external_code IS NOT NULL')
                ->group ('product_id')
@@ -161,17 +169,24 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
 
     private function updateMHubProduct (Epicom_MHub_Model_Product $product, $brandAttribute = null)
     {
+        if ($this->_hasProductAllowed)
+        {
+            $allowedCollection = Mage::getModel ('mhub/product_allowed')->getCollection ()
+                ->addFieldToFilter ('code', $product->getExternalCode ())
+            ;
+
+            $allowedCollection->getSelect ()->limit (1);
+
+            if (!$allowedCollection->getSize ()) return false;
+        }
+
         $productId = $product->getProductId ();
 
-        $mageProduct = Mage::getModel ('catalog/product');
-        $loaded = $mageProduct->load ($productId);
-        if (!$loaded || !$loaded->getId ())
+        $mageProduct = Mage::getModel ('catalog/product')->load ($productId);
+
+        if (!$mageProduct || !$mageProduct->getId ())
         {
             return false;
-        }
-        else
-        {
-            $mageProduct = $loaded;
         }
 
         $collection = Mage::getModel ('catalog/category')->getCollection ()
@@ -219,6 +234,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                 foreach ($group as $code)
                 {
                     $value = strval ($mageProduct->getResource ()->getAttribute ($code)->getFrontend ()->getOption ($mageProduct->getData ($code)));
+
                     if (!empty ($value))
                     {
                         $attribute = Mage::getModel ('catalog/entity_attribute')->loadByCode (Mage_Catalog_Model_Product::ENTITY, $code);
@@ -336,11 +352,24 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             $productCode = $mageProduct->getData ($this->_codeAttribute);
             $productCode = preg_replace ('/[^A-Za-z0-9_\-\.]+/', "", $productCode ? $productCode : $productSku);
 
+            if ($this->_hasProductAllowed)
+            {
+                $allowedCollection = Mage::getModel ('mhub/product_allowed')->getCollection ()
+                    ->addFieldToFilter ('code', $product->getExternalCode ())
+                    ->addFieldToFilter ('sku',  $productCode)
+                ;
+
+                $allowedCollection->getSelect ()->limit (1);
+
+                if (!$allowedCollection->getSize ()) continue;
+            }
+
             $productQty = intval ($mageProduct->getQty ());
 
             $productWeight = floatval ($mageProduct->getWeight ());
 
             $productWeightMode = Mage::getStoreConfig ('mhub/product/weight_mode');
+
             if (!strcmp ($productWeightMode, Epicom_MHub_Helper_Data::PRODUCT_WEIGHT_KILO) && $productWeight > 0)
             {
                 $productWeight = intval ($productWeight * 1000);
@@ -384,6 +413,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                     foreach ($group as $code)
                     {
                         $value = strval ($mageProduct->getResource ()->getAttribute ($code)->getFrontend ()->getOption ($mageProduct->getData ($code)));
+
                         if (!empty ($value))
                         {
                             $attribute = Mage::getModel ('catalog/entity_attribute')->loadByCode (Mage_Catalog_Model_Product::ENTITY, $code);
@@ -406,6 +436,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
                     $name = $variation ['frontend_label'];
 
                     $value = strval ($mageProduct->getResource ()->getAttribute ($code)->getFrontend ()->getOption ($mageProduct->getData ($code)));
+
                     if (!empty ($value))
                     {
                         $post ['variacoes'][] = array ('nome' => $name, 'valor' => $value);
@@ -578,11 +609,12 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
         }
 
         $result = $this->readMHubProductsMagento ();
+
         if (!$result) return false;
 
         $collection = $this->readMHubProductsCollection ();
-        $length = $collection->count ();
-        if (!$length) return false;
+
+        if (!$collection->getSize ()) return false;
 
         $this->updateProducts ($collection);
 

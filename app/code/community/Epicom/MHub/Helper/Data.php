@@ -22,6 +22,7 @@ class Epicom_MHub_Helper_Data extends Mage_Core_Helper_Abstract
     const ERROR_TABLE           = 'epicom_mhub_error';
 
     const PRODUCT_ASSOCIATION_TABLE = 'epicom_mhub_product_association';
+    const PRODUCT_ALLOWED_TABLE     = 'epicom_mhub_product_allowed';
 
     const CATEGORY_ATTRIBUTE_SET          = 'mhub_category_attributeset';
     const CATEGORY_ATTRIBUTE_ISACTIVE     = 'mhub_category_isactive';
