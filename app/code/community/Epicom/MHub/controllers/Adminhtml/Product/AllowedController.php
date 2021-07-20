@@ -7,7 +7,7 @@
 
 class Epicom_MHub_Adminhtml_Product_AllowedController extends Mage_Adminhtml_Controller_Action
 {
-    public const PRODUCT_ALLOWED_QTY = 1000000;
+    const PRODUCT_ALLOWED_QTY = 1000000;
 
     protected function _isAllowed()
     {
