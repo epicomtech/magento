@@ -356,7 +356,7 @@ class Epicom_MHub_Model_Cron_Product extends Epicom_MHub_Model_Cron_Abstract
             {
                 $allowedCollection = Mage::getModel ('mhub/product_allowed')->getCollection ()
                     ->addFieldToFilter ('code', $product->getExternalCode ())
-                    ->addFieldToFilter ('sku',  $productCode)
+                    // ->addFieldToFilter ('sku',  $productCode)
                 ;
 
                 $allowedCollection->getSelect ()->limit (1);
